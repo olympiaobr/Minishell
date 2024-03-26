@@ -36,3 +36,4 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type)
 	append_token(token_list, new_token);
 	return (0);
 }
+

@@ -41,4 +41,9 @@ typedef struct s_token
 	struct s_token	*next;
 }					t_token;
 
+typedef struct data_all
+{
+	t_token	*token_list;
+}	t_data;
+
 #endif
