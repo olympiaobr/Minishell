@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 16:53:46 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:26:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,14 @@ typedef struct data_all
 //lexing functions
 void lexing_input(t_data data);
 int	whitespace_chars(char c);
-
+void	quote_status(char c, int *in_single_q, int *in_double_q);
+int	create_and_append_token(t_token **token_list, char *input, token_type type);
+token_type	determine_type(char *operator);
+void	tokenize_operator(t_data *data, char *str, size_t *idx);
+void	tokenize_word(t_data *data, char *str, size_t *idx,	int is_command_parsed);
+void	tokenize_rest(t_data *data, char *str, size_t *idx, int len);
+void	tokenize_input(t_data *data, char *input);
+t_token	*allocate_token(token_type type, char *val);
+void	append_token(t_token **token_list, t_token *new_token);
+ int	shell_operators(int c);
 #endif
