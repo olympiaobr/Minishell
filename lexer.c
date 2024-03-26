@@ -6,12 +6,12 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 15:46:41 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:07:09 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-/* int	shell_operators(int c)
+ int	shell_operators(int c)
 {
 	char	*operators;
 
@@ -51,4 +51,4 @@ int	only_whitespaces(char *str)
 		index++;
 	}
 	return (1);
-} */
+} 
