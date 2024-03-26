@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/25 17:49:20 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:12:43 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,6 @@ int main(int argc, char *argv[])
 
 	read_line = readline("minishell: ");
 	printf("%s\n", read_line);
+	free(read_line);
 	return(0);
 }
