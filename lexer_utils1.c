@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:19 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 16:08:26 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:56:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,4 @@ void	append_token(t_token **token_list, t_token *new_token)
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
-} 
-
-int	create_and_append_token(t_token **token_list, char *input, token_type type)
-{
-	t_token	*new_token;
-
-	new_token = allocate_token(type, input);
-	if (new_token == NULL)
-	{
-		return (-1);
-	}
-	append_token(token_list, new_token);
-	return (0);
 }
