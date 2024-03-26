@@ -1,14 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_utils.c                                      :+:      :+:    :+:   */
+/*   lexer_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/26 12:43:45 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 12:43:47 by olobresh         ###   ########.fr       */
+/*   Created: 2024/03/26 13:25:19 by olobresh          #+#    #+#             */
+/*   Updated: 2024/03/26 13:25:21 by olobresh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "includes/minishell.h"
 
 int	whitespace_chars(char c)
@@ -76,15 +77,16 @@ void	append_token(t_token **token_list, t_token *new_token)
 		current = current->next;
 	current->next = new_token;
 }
-int create_and_append_token(t_token **token_list, char *input, token_type type)
+
+int	create_and_append_token(t_token **token_list, char *input, token_type type)
 {
-    t_token *new_token;
+	t_token	*new_token;
 
 	new_token = allocate_token(type, input);
- 	if (new_token == NULL)
+	if (new_token == NULL)
 	{
-        return (-1);
-    }
-    append_token(token_list, new_token);
-    return (0);
+		return (-1);
+	}
+	append_token(token_list, new_token);
+	return (0);
 }
