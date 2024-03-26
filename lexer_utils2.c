@@ -12,16 +12,16 @@
 
 #include "includes/minishell.h"
 
-void quote_status(char c, int *in_single_quote, int *in_double_quote)
+void	quote_status(char c, int *in_single_q, int *in_double_q)
 {
-    if (c == '\'' && !(*in_double_quote))
-    {
-        *in_single_quote = !(*in_single_quote);
-    }
-    else if (c == '\"' && !(*in_single_quote))
-    {
-        *in_double_quote = !(*in_double_quote);
-    }
+	if (c == '\'' && !(*in_double_q))
+	{
+		*in_single_q = !(*in_single_q);
+	}
+	else if (c == '\"' && !(*in_single_q))
+	{
+		*in_double_q = !(*in_double_q);
+	}
 }
 
 int	create_and_append_token(t_token **token_list, char *input, token_type type)
