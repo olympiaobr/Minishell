@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/25 14:32:08 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/03/26 15:46:41 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "includes/minishell.h"
 
-int	shell_operators(int c)
+
+/* int	shell_operators(int c)
 {
 	char	*operators;
 
@@ -51,4 +51,4 @@ int	only_whitespaces(char *str)
 		index++;
 	}
 	return (1);
-}
+} */

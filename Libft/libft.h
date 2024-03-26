@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:03:09 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/15 14:17:52 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 14:54:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,9 @@ int		print_pointer(unsigned long long int nbr);
 
 char	*get_next_line(int fd);
 int		gft_strlen(const char *s);
+char	*gft_strdup(const char *s1);
+char	*gft_strjoin(char const *s1, char const *s2);
+char	*gft_strchr(const char *s, int c);
 char	*ft_substring(char const *s, unsigned int start, unsigned int len);
 
 t_list	*ft_lstnew(void *content);

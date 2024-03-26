@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 11:44:16 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:01:14 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@
 
 typedef enum token_type
 {
-	T_COMMAND
+	T_COMMAND,
     T_PIPE,
     T_IN,      // <
     T_OUT,      // >
 	T_ENV,
 	T_HEREDOC, // <<
-    T_ APPEND,  // >>
+    T_APPEND // >>
 } token_type;
 
 
@@ -41,5 +41,7 @@ typedef struct s_token
 	char				*value;
 	struct s_token		*next;
 }	t_token;
+
+
 
 #endif

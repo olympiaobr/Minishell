@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:19 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 13:25:21 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/03/26 15:46:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 
-int	whitespace_chars(char c)
+/* int	whitespace_chars(char c)
 {
 	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
 		|| c == '\r');
@@ -76,7 +76,7 @@ void	append_token(t_token **token_list, t_token *new_token)
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
-}
+} */
 
 int	create_and_append_token(t_token **token_list, char *input, token_type type)
 {

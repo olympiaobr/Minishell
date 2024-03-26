@@ -6,13 +6,13 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/31 14:45:28 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/15 14:09:52 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 14:54:25 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strchr(const char *s, int c)
+char	*gft_strchr(const char *s, int c)
 {
 	int		i;
 	char	cc;
@@ -34,7 +34,7 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*gft_strjoin(char const *s1, char const *s2)
 {
 	size_t	i;
 	size_t	j;
@@ -63,7 +63,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (memory);
 }
 
-char	*ft_strdup(const char *s1)
+char	*gft_strdup(const char *s1)
 {
 	size_t	i;
 	size_t	len;
