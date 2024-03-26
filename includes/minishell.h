@@ -23,16 +23,23 @@
 # include <readline/history.h>
 # include <stdbool.h>
 
-typedef enum{
-	TOKEN_COMMAND, 
-	TOKEN_ARGUMENT, 
-	TOKEN_OPERATOR, 
-} TokenType;
-
-typedef struct
+typedef enum token_type
 {
-	char *value;
-	TokenType type;
-} Token;
+	T_COMMAND
+    T_PIPE,
+    T_IN,      // <
+    T_OUT,      // >
+	T_ENV,
+	T_HEREDOC, // <<
+    T_ APPEND,  // >>
+} token_type;
+
+
+typedef struct s_token
+{
+	token_type		type;
+	char				*value;
+	struct s_token		*next;
+}	t_token;
 
 #endif
