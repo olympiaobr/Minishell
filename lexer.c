@@ -9,6 +9,7 @@
 /*   Updated: 2024/03/25 14:32:08 by olobresh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "includes/minishell.h"
 
 int	shell_operators(int c)
 {
@@ -30,10 +31,10 @@ char	*extract_next_word(char *str)
 	int	start;
 
 	i = 0;
-	while (str[i] && ft_iswhitespace(str[i]))
+	while (str[i] && whitespace_chars(str[i]))
 		i++;
 	start = i;
-	while (str[i] && !ft_iswhitespace(str[i]) && !shell_operators(str[i]))
+	while (str[i] && !whitespace_chars(str[i]) && !shell_operators(str[i]))
 		i++;
 	return (ft_substr(str, start, i - start));
 }
@@ -45,7 +46,7 @@ int	only_whitespaces(char *str)
 	index = 0;
 	while (str[index] != '\0')
 	{
-		if (!ft_iswhitespace(str[index]))
+		if (!whitespace_chars(str[index]))
 			return (0);
 		index++;
 	}
