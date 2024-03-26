@@ -31,7 +31,7 @@ typedef enum token_type
 	T_OUT, // >
 	T_ENV,
 	T_HEREDOC, // <<
-	T_ APPEND, // >>
+	T_APPEND, // >>
 }					token_type;
 
 typedef struct s_token
