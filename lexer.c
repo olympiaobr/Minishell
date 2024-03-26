@@ -6,10 +6,12 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 16:07:09 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:52:17 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Libft/libft.h"
+#include "includes/minishell.h"
 
  int	shell_operators(int c)
 {
@@ -52,3 +54,18 @@ int	only_whitespaces(char *str)
 	}
 	return (1);
 } 
+
+void lexing_input(t_data data)
+{
+	char *input_string = data.user_input;
+	int i = 0;
+	while (find_whitespace())
+	{
+		i++;
+	}
+	while (input_string[i] != '\0')
+	{
+		
+	}
+		
+}
