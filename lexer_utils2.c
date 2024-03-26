@@ -62,8 +62,91 @@ token_type	determine_type(char *operator)
 	}
 	return (T_COMMAND);
 }
+// Identifies and tokenizes operators in the input string, appending them to the token list.
+void	tokenize_operator(t_data *data, char *str, size_t *idx)
+{
+	size_t	len;
+	t_token	*op_token;
 
+	if (shell_operators(str[*idx]))
+	{
+		if (shell_operators(str[*idx + 1]))
+		{
+			len = 2;
+		}
+		else
+		{
+			len = 1;
+		}
+		op_token = allocate_token(determine_type(str[*idx]), ft_substr(str,
+					*idx, len));
+		if (op_token != NULL)
+		{
+			append_token(&(data->token_list), op_token);
+		}
+		*idx += len;
+	}
+}
+// Extracts the next word from the input string and tokenizes it as a command or argument.
+void	tokenize_word(t_data *data, char *str, size_t *idx,
+		int is_command_parsed)
+{
+	char		*word;
+	size_t		word_length;
+	token_type	type;
 
+	word = extract_next_word(str + *idx);
+	if (word != NULL && *word != '\0')
+	{
+		if (is_command_parsed)
+		{
+			type = T_ARGUMENT;
+		}
+		else
+		{
+			type = T_COMMAND;
+			is_command_parsed = 1;
+		}
+		create_and_append_token(&(data->token_list), word, type);
+		word_length = ft_strlen(word);
+		*idx += word_length;
+		free(word);
+	}
+}
+// Tokenizes the remaining unprocessed part of the input string as a command.
+void	tokenize_rest(t_data *data, char *str, size_t *idx, int len)
+{
+	char	*remaining;
+
+	if (len > 0)
+	{
+		remaining = ft_substr(str, *idx, len);
+		if (remaining != NULL)
+		{
+			create_and_append_token(&(data->token_list), remaining, T_COMMAND);
+			*idx += len;
+			free(remaining);
+		}
+	}
+}
+
+void	tokenize_input(t_data *data, char *input)
+{
+	size_t	idx;
+	int		input_length;
+	int		is_command_parsed;
+
+	idx = 0;
+	input_length = ft_strlen(input);
+	is_command_parsed = 0;
+	while (idx < input_length)
+	{
+		tokenize_operator(data, input, &idx);
+		tokenize_word(data, input, &idx, is_command_parsed);
+		is_command_parsed = 1;
+		tokenize_rest(data, input, &idx, input_length - idx);
+	}
+}
 
 /* maybe for another time?
  Example: handling command input "ls -la /home",
