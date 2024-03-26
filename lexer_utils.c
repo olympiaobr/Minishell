@@ -35,7 +35,7 @@ t_token	*init_token(token_type type)
 	return (t);
 }
 
-t_token	*allocate_trimmed_token(token_type type, char *val)
+t_token	*allocate_token(token_type type, char *val)
 {
 	char	*trimmed_val;
 	t_token	*token;
@@ -75,4 +75,16 @@ void	append_token(t_token **token_list, t_token *new_token)
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
+}
+int create_and_append_token(t_token **token_list, char *input, token_type type)
+{
+    t_token *new_token;
+
+	new_token = allocate_token(type, input);
+ 	if (new_token == NULL)
+	{
+        return (-1);
+    }
+    append_token(token_list, new_token);
+    return (0);
 }
