@@ -62,11 +62,14 @@ token_type	determine_type(char *operator)
 	}
 	return (T_COMMAND);
 }
-// Identifies and tokenizes operators in the input string, appending them to the token list.
+
+// Identifies and tokenizes operators in the input string,
+// appending them to the token list.
 void	tokenize_operator(t_data *data, char *str, size_t *idx)
 {
-	size_t	len;
-	t_token	*op_token;
+	size_t		len;
+	char		*substr_operator;
+	token_type	type;
 
 	if (shell_operators(str[*idx]))
 	{
@@ -78,16 +81,19 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 		{
 			len = 1;
 		}
-		op_token = allocate_token(determine_type(&str[*idx]), ft_substr(str,
-					*idx, len));
-		if (op_token != NULL)
+		substr_operator = ft_substr(str, *idx, len);
+		if (substr_operator != NULL)
 		{
-			append_token(&(data->token_list), op_token);
+			type = determine_type(substr_operator);
+			create_and_append_token(&(data->token_list), substr_operator, type);
+			free(substr_operator);
 		}
 		*idx += len;
 	}
 }
-// Extracts the next word from the input string and tokenizes it as a command or argument.
+
+// Extracts the next word from the input string
+//+ tokenizes it as a command or argument.
 void	tokenize_word(t_data *data, char *str, size_t *idx,
 		int is_command_parsed)
 {
@@ -113,7 +119,8 @@ void	tokenize_word(t_data *data, char *str, size_t *idx,
 		free(word);
 	}
 }
-// Tokenizes the remaining unprocessed part of the input string as a command.
+// Tokenizes the remaining unprocessed part
+// of the input string as a command.
 void	tokenize_rest(t_data *data, char *str, size_t *idx, int len)
 {
 	char	*remaining;
@@ -133,7 +140,7 @@ void	tokenize_rest(t_data *data, char *str, size_t *idx, int len)
 void	tokenize_input(t_data *data, char *input)
 {
 	size_t	idx;
-	size_t		input_length;
+	size_t	input_length;
 	int		is_command_parsed;
 
 	idx = 0;
