@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 14:38:14 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:00:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*extract_next_word(char *str)
 	while (str[i] && whitespace_chars(str[i]))
 		i++;
 	start = i; 
-	while (str[i] && !whitespace_chars(str[i]) && !shell_operators(str[i]))
+	while (str[i] && !whitespace_chars(str[i]) /* && !shell_operators(str[i]) */)
 		i++;
 	return (ft_substr(str, start, i - start));
 }
@@ -62,18 +62,19 @@ void lexing_input(t_data *data)
 	char *input_string = data->user_input;
 	int i = 0;
 	char *token;
-	while (input_string[i] == ' ' || input_string[i] == '\t' || input_string[i] == '\n') 
-	{
-            i++;
-    }
+
 	while(input_string[i] != '\0')
-	{
-			token = extract_next_word(input_string);
+	{		
+		while (input_string[i] == ' ' || input_string[i] == '\t' || input_string[i] == '\n') // whitespace_chars function can be implemented here 
+		{
+            i++;
+    	}
+			token = extract_next_word(input_string + i);
 			t_token *new_token = (t_token *)malloc(sizeof(t_token));
         	if (new_token == NULL) 
 			{
-            printf("Error: Memory allocation failed\n");
-            exit(EXIT_FAILURE);
+            	printf("Error: Memory allocation failed\n");
+            	exit(EXIT_FAILURE);
        		}
 			new_token->value = ft_strdup(token);
 			new_token->next = NULL;
@@ -91,6 +92,12 @@ void lexing_input(t_data *data)
 				}
 				current->next = new_token;
 			}
-			i++;
+			while(input_string[i] == ' '|| input_string[i] == '\t' || input_string[i] == '\n') // whitespace_chars function can be implemented here 
+			{
+				i++;
+			}
+			i += ft_strlen(token);
+			free(token);
+			
 	}
 } 
