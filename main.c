@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/27 10:53:21 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:16:03 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 	{
 		data.user_input = readline("minishell: ");
 		ft_printf("%s\n", data.user_input);
-		lexing_input(data);
+		lexing_input(&data);
 		free(data.user_input);
 	}
 	else

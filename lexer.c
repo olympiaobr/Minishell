@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 11:44:24 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:14:29 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ int	only_whitespaces(char *str)
 	return (1);
 } 
 
-void lexing_input(t_data data)
+void lexing_input(t_data *data)
 {
-	char *input_string = data.user_input;
+	char *input_string = data->user_input;
 	int i = 0;
 	char *token;
 	
@@ -67,10 +67,14 @@ void lexing_input(t_data data)
 		{
 			i++;
 		}
-		token = extract_next_word(input_string);
-		tokenize_input(&data, input_string);
+		token = extract_next_word(input_string + i);
+		//init_token(data->token_list->type);
+		tokenize_input(data, token);
 		ft_printf("token %s\n", token);
-		printf("tokenized: %s\n", data.token_list->value);
+		printf("tokenized: %s\n", data->token_list->value);
+
+		i += strlen(token); 
+		 //free token
 	}
 		
 }
