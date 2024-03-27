@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 13:25:27 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:59:48 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 		{
 			len = 1;
 		}
-		op_token = allocate_token(determine_type(str[*idx]), ft_substr(str,
+		op_token = allocate_token(determine_type(&str[*idx]), ft_substr(str,
 					*idx, len));
 		if (op_token != NULL)
 		{
@@ -133,7 +133,7 @@ void	tokenize_rest(t_data *data, char *str, size_t *idx, int len)
 void	tokenize_input(t_data *data, char *input)
 {
 	size_t	idx;
-	int		input_length;
+	size_t		input_length;
 	int		is_command_parsed;
 
 	idx = 0;

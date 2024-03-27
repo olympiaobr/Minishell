@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/26 17:21:03 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 10:53:21 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
  int main(int argc, char *argv[])
 {
-	
+	(void)argv;
 	t_data data;
 	if (argc == 1)
 	{

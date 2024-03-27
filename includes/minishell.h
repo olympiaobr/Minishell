@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 17:26:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 11:00:24 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,5 @@ void	tokenize_input(t_data *data, char *input);
 t_token	*allocate_token(token_type type, char *val);
 void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
+ char	*extract_next_word(char *str);
 #endif
