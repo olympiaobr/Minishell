@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 15:59:11 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/27 11:04:25 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:09:28 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,10 @@
 
 
 
-// /* 
-// int main(void)
-// {
-// 	const char input[] = "ls -l ";
-// 	tokenize_input(input);
-// }
-//  */
+/* 
+int main(void)
+{
+	const char input[] = "ls -l ";
+	tokenize_input(input);
+}
+ */

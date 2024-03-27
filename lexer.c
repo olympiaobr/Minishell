@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:32:06 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 12:14:29 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:38:14 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,26 +55,42 @@ int	only_whitespaces(char *str)
 	return (1);
 } 
 
+
+
 void lexing_input(t_data *data)
 {
 	char *input_string = data->user_input;
 	int i = 0;
 	char *token;
-	
-	while (input_string[i] != '\0' && !only_whitespaces(input_string))
+	while (input_string[i] == ' ' || input_string[i] == '\t' || input_string[i] == '\n') 
 	{
-		while(whitespace_chars(input_string[i]))
-		{
+            i++;
+    }
+	while(input_string[i] != '\0')
+	{
+			token = extract_next_word(input_string);
+			t_token *new_token = (t_token *)malloc(sizeof(t_token));
+        	if (new_token == NULL) 
+			{
+            printf("Error: Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+       		}
+			new_token->value = ft_strdup(token);
+			new_token->next = NULL;
+			if (data->token_list == NULL)
+			{
+				data->token_list = new_token;
+			}
+			//type
+			else
+			{
+				t_token *current = data->token_list;
+				while(current->next != NULL)
+				{
+					current = current->next;
+				}
+				current->next = new_token;
+			}
 			i++;
-		}
-		token = extract_next_word(input_string + i);
-		//init_token(data->token_list->type);
-		tokenize_input(data, token);
-		ft_printf("token %s\n", token);
-		printf("tokenized: %s\n", data->token_list->value);
-
-		i += strlen(token); 
-		 //free token
 	}
-		
-}
+} 

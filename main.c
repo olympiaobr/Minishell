@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/27 12:16:03 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 14:39:35 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,14 @@
 		data.user_input = readline("minishell: ");
 		ft_printf("%s\n", data.user_input);
 		lexing_input(&data);
+		t_token *current = data.token_list;
+		while(current != NULL)
+		{
+			ft_printf("Value: %s\n", current->value);
+			current = current->next;
+		}
 		free(data.user_input);
+		//free token list
 	}
 	else
 	{

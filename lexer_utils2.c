@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 10:59:48 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 13:47:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	size_t		len;
 	char		*substr_operator;
 	token_type	type;
-
+	
 	if (shell_operators(str[*idx]))
 	{
 		if (shell_operators(str[*idx + 1]))
