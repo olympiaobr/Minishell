@@ -37,31 +37,6 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type)
 	return (0);
 }
 
-token_type	determine_type(char *operator)
-{
-	int	result;
-
-	result = ft_strncmp(operator, "|", 1);
-	if (result == 0)
-		return (T_PIPE);
-	result = ft_strncmp(operator, "<", 1);
-	if (result == 0)
-	{
-		result = ft_strncmp(operator, "<<", 2);
-		if (result == 0)
-			return (T_HEREDOC);
-		return (T_IN);
-	}
-	result = ft_strncmp(operator, ">", 1);
-	if (result == 0)
-	{
-		result = ft_strncmp(operator, ">>", 2);
-		if (result == 0)
-			return (T_APPEND);
-		return (T_OUT);
-	}
-	return (T_COMMAND);
-}
 
 // Identifies and tokenizes operators in the input string,
 // appending them to the token list.
@@ -70,7 +45,7 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	size_t		len;
 	char		*substr_operator;
 	token_type	type;
-	
+
 	if (shell_operators(str[*idx]))
 	{
 		if (shell_operators(str[*idx + 1]))
@@ -154,7 +129,32 @@ void	tokenize_input(t_data *data, char *input)
 		tokenize_rest(data, input, &idx, input_length - idx);
 	}
 }
+/*token_type	determine_type(char *operator)
+{
+	int	result;
 
+	result = ft_strncmp(operator, "|", 1);
+	if (result == 0)
+		return (T_PIPE);
+	result = ft_strncmp(operator, "<", 1);
+	if (result == 0)
+	{
+		result = ft_strncmp(operator, "<<", 2);
+		if (result == 0)
+			return (T_HEREDOC);
+		return (T_IN);
+	}
+	result = ft_strncmp(operator, ">", 1);
+	if (result == 0)
+	{
+		result = ft_strncmp(operator, ">>", 2);
+		if (result == 0)
+			return (T_APPEND);
+		return (T_OUT);
+	}
+	return (T_COMMAND);
+}
+*/
 /* maybe for another time?
  Example: handling command input "ls -la /home",
 function could be used to create a token for "ls",
