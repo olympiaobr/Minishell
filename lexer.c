@@ -13,7 +13,7 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
- int	shell_operators(int c)
+int	shell_operators(int c)
 {
 	char	*operators;
 
@@ -35,7 +35,7 @@ char	*extract_next_word(char *str)
 	i = 0;
 	while (str[i] && whitespace_chars(str[i]))
 		i++;
-	start = i; 
+	start = i;
 	while (str[i] && !whitespace_chars(str[i]) && !shell_operators(str[i]))
 		i++;
 	return (ft_substr(str, start, i - start));
@@ -53,44 +53,19 @@ int	only_whitespaces(char *str)
 		index++;
 	}
 	return (1);
-} 
+}
 
-
-
-void lexing_input(t_data *data)
+void	lexing_input(t_data *data)
 {
-	char *input_string = data->user_input;
-	int i = 0;
-	char *token;
-	while (input_string[i] == ' ' || input_string[i] == '\t' || input_string[i] == '\n') 
+	if (data->user_input == NULL || data->user_input[0] == '\0')
 	{
-            i++;
-    }
-	while(input_string[i] != '\0')
-	{
-			token = extract_next_word(input_string);
-			t_token *new_token = (t_token *)malloc(sizeof(t_token));
-        	if (new_token == NULL) 
-			{
-            printf("Error: Memory allocation failed\n");
-            exit(EXIT_FAILURE);
-       		}
-			new_token->value = ft_strdup(token);
-			new_token->next = NULL;
-			if (data->token_list == NULL)
-			{
-				data->token_list = new_token;
-			}
-			//type
-			else
-			{
-				t_token *current = data->token_list;
-				while(current->next != NULL)
-				{
-					current = current->next;
-				}
-				current->next = new_token;
-			}
-			i++;
+		ft_printf("No input provided.\n");
+		return ;
 	}
-} 
+	process_input(data, data->user_input);
+	if (data->token_list == NULL)
+	{
+		ft_printf("No tokens generated.\n");
+		return ;
+	}
+}

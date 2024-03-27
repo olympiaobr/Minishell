@@ -13,7 +13,6 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-
  int main(int argc, char *argv[])
 {
 	(void)argv;
