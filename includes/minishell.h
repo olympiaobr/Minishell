@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 11:00:24 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/27 11:37:46 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef enum token_type
 	T_FILE, //filename for redirections
 }					token_type;
 
-typedef struct s_token
+typedef struct s_token 
 {
 	token_type		type;
 	char			*value;
