@@ -26,7 +26,8 @@
         lexing_input(&data);
 
         t_token *current = data.token_list;
-        while (current != NULL) {
+        while (current != NULL)
+		{
             ft_printf("Value: %s, Type: ", current->value);
             if (current->type == T_COMMAND) {
                 ft_printf("T_COMMAND");
@@ -52,13 +53,12 @@
             ft_printf("\n");
             current = current->next;
         }
-
-        // free_resources(&data);
-
-    } else {
+		free_tokens(&data);
+    }
+	else
+	{
         ft_printf("Non-valid number of arguments!\n");
     }
-
     return 0;
 }
 

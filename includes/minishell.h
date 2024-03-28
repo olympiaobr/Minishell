@@ -64,4 +64,8 @@ void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
  char	*extract_next_word(char *str);
 t_token	*init_token(token_type type);
+
+//free functions
+void	free_tokens(t_data *data);
+
 #endif

@@ -17,6 +17,7 @@ LIBS    =    Libft/libft.a
 
 SRCS	=	main.c lexer.c \
 			lexer_utils1.c lexer_utils2.c \
+			lexer_utils3.c \
 			tokenization.c
 OBJS	=	$(SRCS:.c=.o)
 
@@ -29,10 +30,10 @@ $(NAME): $(OBJS)
 clean:
 			make clean -C Libft
 			rm -rf $(OBJS)
-			
+
 fclean:		clean
 			rm -rf $(NAME) $(LIBS)
-			
+
 re:			fclean all
 
 .PHONY: all clean fclean re
