@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 13:47:55 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:32:36 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,9 @@ void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
  char	*extract_next_word(char *str);
 t_token	*init_token(token_type type);
+
+//expansion functions
+void expansion(t_data *data);
 
 //free functions
 void	free_tokens(t_data *data);

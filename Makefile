@@ -6,7 +6,7 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 10:49:49 by jasnguye          #+#    #+#              #
-#    Updated: 2024/03/27 11:09:19 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/03/28 17:33:36 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ LIBS    =    Libft/libft.a
 
 SRCS	=	main.c lexer.c \
 			lexer_utils1.c lexer_utils2.c \
-			lexer_utils3.c \
+			lexer_utils3.c expansion.c\
 			tokenization.c
 OBJS	=	$(SRCS:.c=.o)
 
