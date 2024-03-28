@@ -18,6 +18,7 @@
 	(void)argv;
     t_data data;
 
+	data.token_list = NULL;
     if (argc == 1)
 	{
         data.user_input = readline("minishell: ");
