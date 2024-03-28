@@ -16,26 +16,52 @@
  int main(int argc, char *argv[])
 {
 	(void)argv;
-	t_data data;
-	if (argc == 1)
-	{
-		data.user_input = readline("minishell: ");
-		ft_printf("%s\n", data.user_input);
-		lexing_input(&data);
-		t_token *current = data.token_list;
-		while(current != NULL)
-		{
-			ft_printf("Value: %s\n", current->value);
-			current = current->next;
-		}
-		free(data.user_input);
-		//free token list
-	}
-	else
-	{
-		ft_printf("Non-valid number of arguments!");
-	}
+    t_data data;
+    // Assuming initialization of data.user_input here or elsewhere
 
+    if (argc == 1)
+	{
+        data.user_input = readline("minishell: "); // Get user input
+        ft_printf("%s\n", data.user_input); // Echo input for confirmation
+        lexing_input(&data); // Process input to tokenize
+
+        // Iterate through tokens and print each token's value and type
+        t_token *current = data.token_list;
+        while (current != NULL) {
+            ft_printf("Value: %s, Type: ", current->value);
+            if (current->type == T_COMMAND) {
+                ft_printf("T_COMMAND");
+            } else if (current->type == T_PIPE) {
+                ft_printf("T_PIPE");
+            } else if (current->type == T_IN) {
+                ft_printf("T_IN");
+            } else if (current->type == T_OUT) {
+                ft_printf("T_OUT");
+            } else if (current->type == T_ENV) {
+                ft_printf("T_ENV");
+            } else if (current->type == T_HEREDOC) {
+                ft_printf("T_HEREDOC");
+            } else if (current->type == T_APPEND) {
+                ft_printf("T_APPEND");
+            } else if (current->type == T_ARGUMENT) {
+                ft_printf("T_ARGUMENT");
+            } else if (current->type == T_FILE) {
+                ft_printf("T_FILE");
+            } else {
+                ft_printf("Unknown Type");
+            }
+            ft_printf("\n");
+            current = current->next;
+        }
+
+        // Assuming you have a function to properly free data.user_input and the token list
+        // free_resources(&data);
+
+    } else {
+        ft_printf("Non-valid number of arguments!\n");
+    }
+
+    return 0;
 }
 
 

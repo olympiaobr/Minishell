@@ -39,26 +39,30 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type)
 
 // Identifies and tokenizes operators in the input string,
 // appending them to the token list.
-void	tokenize_operator(t_data *data, char *str, size_t *idx)
+void tokenize_operator(t_data *data, char *str, size_t *idx)
 {
-	size_t operator_len;
-	char	*operator_str;
+    size_t operator_len = 1;  // Default length for a single-character operator.
+    token_type type;
 
-	if (shell_operators(str[*idx]))
-	{
-		if (shell_operators(str[*idx + 1]))
-		{
-			operator_len = 2;
-		}
-		else
-		{
-			operator_len = 1;
-		}
-		operator_str = ft_substr(str, *idx, operator_len);
-		create_and_append_token(&data->token_list, operator_str, T_COMMAND);
-		free(operator_str);
-		*idx += operator_len;
-	}
+    // Check if the next character is also an operator to handle multi-character operators.
+    if (shell_operators(str[*idx + 1])) {
+        operator_len = 2;  // Adjust for a two-character operator.
+    }
+
+    // Extract the operator string based on calculated length.
+    char *operator_str = ft_substr(str, *idx, operator_len);
+
+    // Determine the operator's type.
+    type = determine_type(operator_str);
+
+    // Create and append the token with the determined type.
+    create_and_append_token(&data->token_list, operator_str, type);
+
+    // Free the extracted operator string.
+    free(operator_str);
+
+    // Increment idx by the length of the operator to move past it in the input string.
+    *idx += operator_len;
 }
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
@@ -98,24 +102,27 @@ void process_input(t_data *data, char *str)
 
     while (idx < str_len)
 	{
-        tokenize_operator(data, str, &idx);
+        // Skip leading whitespace
         while (idx < str_len && whitespace_chars(str[idx]))
 		{
             idx++;
         }
-        tokenize_word(data, str, &idx);
-        while (idx < str_len && whitespace_chars(str[idx]))
+        if (idx >= str_len)
 		{
-            idx++;
+            break;
         }
-    }
-    if (idx < str_len)
-	{
-        tokenize_rest(data, str, &idx);
-    }
+
+        if (shell_operators(str[idx]))
+		{
+            tokenize_operator(data, str, &idx);
+        } else
+		{
+            tokenize_word(data, str, &idx);
+        }
+	}
 }
 
-/*token_type	determine_type(char *operator)
+token_type	determine_type(char *operator)
 {
 	int	result;
 
@@ -140,7 +147,7 @@ void process_input(t_data *data, char *str)
 	}
 	return (T_COMMAND);
 }
-
+/*
  maybe for another time?
  Example: handling command input "ls -la /home",
 function could be used to create a token for "ls",
