@@ -17,15 +17,13 @@
 {
 	(void)argv;
     t_data data;
-    // Assuming initialization of data.user_input here or elsewhere
 
     if (argc == 1)
 	{
-        data.user_input = readline("minishell: "); // Get user input
-        ft_printf("%s\n", data.user_input); // Echo input for confirmation
-        lexing_input(&data); // Process input to tokenize
+        data.user_input = readline("minishell: ");
+        ft_printf("%s\n", data.user_input);
+        lexing_input(&data);
 
-        // Iterate through tokens and print each token's value and type
         t_token *current = data.token_list;
         while (current != NULL) {
             ft_printf("Value: %s, Type: ", current->value);
@@ -54,7 +52,6 @@
             current = current->next;
         }
 
-        // Assuming you have a function to properly free data.user_input and the token list
         // free_resources(&data);
 
     } else {
