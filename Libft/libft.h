@@ -20,6 +20,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdarg.h>
 # include <fcntl.h>
 # include "libft.h"
 
@@ -70,7 +71,7 @@ int		print_char(int c);
 int		print_string(char *s);
 int		print_digit(long nbr, int base, int boolean);
 int		print_ox(va_list arguments);
-int		print_pointer(unsigned long long int nbr); 
+int		print_pointer(unsigned long long int nbr);
 
 char	*get_next_line(int fd);
 int		gft_strlen(const char *s);

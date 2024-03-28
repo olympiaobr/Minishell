@@ -91,16 +91,28 @@ void	tokenize_rest(t_data *data, char *str, size_t *idx)
 	}
 }
 
-// Tokenizes the remaining unprocessed part
-// of the input string as a command.
-void	process_input(t_data *data, char *str)
+void process_input(t_data *data, char *str)
 {
-	size_t	idx;
+    size_t idx = 0;
+    size_t str_len = ft_strlen(str);
 
-	idx = 0;
-	tokenize_operator(data, str, &idx);
-	tokenize_word(data, str, &idx);
-	tokenize_rest(data, str, &idx);
+    while (idx < str_len)
+	{
+        tokenize_operator(data, str, &idx);
+        while (idx < str_len && whitespace_chars(str[idx]))
+		{
+            idx++;
+        }
+        tokenize_word(data, str, &idx);
+        while (idx < str_len && whitespace_chars(str[idx]))
+		{
+            idx++;
+        }
+    }
+    if (idx < str_len)
+	{
+        tokenize_rest(data, str, &idx);
+    }
 }
 
 /*token_type	determine_type(char *operator)
