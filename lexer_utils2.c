@@ -38,30 +38,19 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type)
 	return (0);
 }
 
-token_type	determine_type(char *operator)
+token_type determine_type(char *operator)
 {
-	int	result;
-
-	result = ft_strncmp(operator, "|", 1);
-	if (result == 0)
-		return (T_PIPE);
-	result = ft_strncmp(operator, "<", 1);
-	if (result == 0)
-	{
-		result = ft_strncmp(operator, "<<", 2);
-		if (result == 0)
-			return (T_HEREDOC);
-		return (T_IN);
-	}
-	result = ft_strncmp(operator, ">", 1);
-	if (result == 0)
-	{
-		result = ft_strncmp(operator, ">>", 2);
-		if (result == 0)
-			return (T_APPEND);
-		return (T_OUT);
-	}
-	return (T_COMMAND);
+    if (ft_strncmp(operator, "|", 1) == 0)
+        return T_PIPE;
+    if (ft_strncmp(operator, "<<", 2) == 0)
+        return T_HEREDOC;
+    if (ft_strncmp(operator, ">>", 2) == 0)
+        return T_APPEND;
+    if (ft_strncmp(operator, "<", 1) == 0)
+        return T_IN;
+    if (ft_strncmp(operator, ">", 1) == 0)
+        return T_OUT;
+    return T_COMMAND;
 }
 
 // Identifies and tokenizes operators in the input string,
@@ -81,43 +70,79 @@ void tokenize_operator(t_data *data, char *str, size_t *idx)
     free(operator_str);
     *idx += operator_len;
 }
+
+
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
-void tokenize_word(t_data *data, char *str, size_t *idx)
+void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
 {
     size_t start_idx = *idx;
     int in_quote = 0;
     char quote_char = '\0';
 
-    if (str[*idx] == '\'' || str[*idx] == '\"')
-	{
-        in_quote = 1;
-        quote_char = str[*idx];
-        start_idx++;
-        (*idx)++;
-    }
-    while (str[*idx] != '\0')
-	{
+    while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx]) && !shell_operators(str[*idx]))))
+    {
         quote_status(str[*idx], &in_quote, &quote_char);
-        if (in_quote == 0 && (whitespace_chars(str[*idx]) || shell_operators(str[*idx])))
-		{
-            break;
-        }
-        if (in_quote == 0 && str[*idx] == quote_char)
-		{
-            (*idx)++;
-            break;
-        }
         (*idx)++;
     }
     size_t length = *idx - start_idx;
-    if (quote_char && str[*idx - 1] == quote_char)
-	{
-        length--;
+    if (!in_quote && quote_char)
+    {
+        start_idx++;
+        length -= 2;
     }
     char *word = ft_substr(str, start_idx, length);
-    create_and_append_token(&data->token_list, word, T_COMMAND);
+    create_and_append_token(&data->token_list, word, expected_type);
     free(word);
+}
+
+void process_input(t_data *data, char *str)
+{
+    size_t idx = 0;
+    int expect_command = 1;
+
+    while (str[idx])
+    {
+        if (whitespace_chars(str[idx]))
+        {
+            idx++;
+        }
+        else
+        {
+            if (shell_operators(str[idx]))
+            {
+                tokenize_operator(data, str, &idx);
+                if (data->token_list->type == T_PIPE || data->token_list->type == T_OUT || data->token_list->type == T_IN ||
+                    data->token_list->type == T_APPEND || data->token_list->type == T_HEREDOC)
+                {
+                    expect_command = 1;
+                }
+            }
+            else
+            {
+                token_type type;
+                if (expect_command)
+                {
+                    type = T_COMMAND;
+                    expect_command = 0;
+                }
+                else
+                {
+                    type = T_ARGUMENT;
+                }
+                tokenize_word(data, str, &idx, type);
+            }
+        }
+        t_token *last_token = data->token_list;
+        while (last_token && last_token->next)
+        {
+            last_token = last_token->next;
+        }
+        if (last_token && last_token->type == T_PIPE)
+        {
+            expect_command = 1;
+        }
+    }
 }
 
 /*
@@ -136,31 +161,6 @@ void	tokenize_rest(t_data *data, char *str, size_t *idx)
 	}
 }
 */
-
-void process_input(t_data *data, char *str)
-{
-    size_t idx = 0;
-    size_t str_len = ft_strlen(str);
-
-    while (idx < str_len)
-	{
-        while (idx < str_len && whitespace_chars(str[idx]))
-		{
-            idx++;
-        }
-        if (idx >= str_len)
-		{
-            break;
-        }
-        if (shell_operators(str[idx]))
-		{
-            tokenize_operator(data, str, &idx);
-        } else
-		{
-            tokenize_word(data, str, &idx);
-        }
-	}
-}
 
 /*
  maybe for another time?
