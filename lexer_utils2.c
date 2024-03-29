@@ -12,17 +12,17 @@
 
 #include "includes/minishell.h"
 
-void quote_status(char c, int *in_quote, char *quote_char)
+void	quote_status(char c, int *in_quote, char *quote_char)
 {
-    if (!(*in_quote) && (c == '\'' || c == '\"'))
+	if (!(*in_quote) && (c == '\'' || c == '\"'))
 	{
-        *in_quote = 1;
-        *quote_char = c;
-    }
+		*in_quote = 1;
+		*quote_char = c;
+	}
 	else if (*in_quote && c == *quote_char)
 	{
-        *in_quote = 0;
-    }
+		*in_quote = 0;
+	}
 }
 
 int	create_and_append_token(t_token **token_list, char *input, token_type type)
@@ -38,111 +38,125 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type)
 	return (0);
 }
 
-token_type determine_type(char *operator)
+token_type	determine_type(char *operator)
 {
-    if (ft_strncmp(operator, "|", 1) == 0)
-        return T_PIPE;
-    if (ft_strncmp(operator, "<<", 2) == 0)
-        return T_HEREDOC;
-    if (ft_strncmp(operator, ">>", 2) == 0)
-        return T_APPEND;
-    if (ft_strncmp(operator, "<", 1) == 0)
-        return T_IN;
-    if (ft_strncmp(operator, ">", 1) == 0)
-        return T_OUT;
-    return T_COMMAND;
+	if (ft_strncmp(operator, "|", 1) == 0)
+		return (T_PIPE);
+	if (ft_strncmp(operator, "<<", 2) == 0)
+		return (T_HEREDOC);
+	if (ft_strncmp(operator, ">>", 2) == 0)
+		return (T_APPEND);
+	if (ft_strncmp(operator, "<", 1) == 0)
+		return (T_IN);
+	if (ft_strncmp(operator, ">", 1) == 0)
+		return (T_OUT);
+	return (T_COMMAND);
 }
 
 // Identifies and tokenizes operators in the input string,
 // appending them to the token list.
-void tokenize_operator(t_data *data, char *str, size_t *idx)
+void	tokenize_operator(t_data *data, char *str, size_t *idx)
 {
-    size_t operator_len = 1;
-    token_type type;
+	size_t		operator_len;
+	token_type	type;
+	char		*operator_str;
 
-    if (shell_operators(str[*idx + 1]))
+	operator_len = 1;
+	if (shell_operators(str[*idx + 1]))
 	{
-        operator_len = 2;
-    }
-    char *operator_str = ft_substr(str, *idx, operator_len);
-    type = determine_type(operator_str);
-    create_and_append_token(&data->token_list, operator_str, type);
-    free(operator_str);
-    *idx += operator_len;
+		operator_len = 2;
+	}
+	operator_str = ft_substr(str, *idx, operator_len);
+	type = determine_type(operator_str);
+	create_and_append_token(&data->token_list, operator_str, type);
+	free(operator_str);
+	*idx += operator_len;
 }
-
 
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
-void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
+void	tokenize_word(t_data *data, char *str, size_t *idx,
+		token_type expected_type)
 {
-    size_t start_idx = *idx;
-    int in_quote = 0;
-    char quote_char = '\0';
+	size_t	start_idx;
+	int		in_quote;
+	char	quote_char;
+	size_t	length;
+	char	*word;
 
-    while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx]) && !shell_operators(str[*idx]))))
-    {
-        quote_status(str[*idx], &in_quote, &quote_char);
-        (*idx)++;
-    }
-    size_t length = *idx - start_idx;
-    if (!in_quote && quote_char)
-    {
-        start_idx++;
-        length -= 2;
-    }
-    char *word = ft_substr(str, start_idx, length);
-    create_and_append_token(&data->token_list, word, expected_type);
-    free(word);
+	start_idx = *idx;
+	in_quote = 0;
+	quote_char = '\0';
+	while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx])
+				&& !shell_operators(str[*idx]))))
+	{
+		quote_status(str[*idx], &in_quote, &quote_char);
+		(*idx)++;
+	}
+	length = *idx - start_idx;
+	if (!in_quote && quote_char)
+	{
+		start_idx++;
+		length -= 2;
+	}
+	word = ft_substr(str, start_idx, length);
+	create_and_append_token(&data->token_list, word, expected_type);
+	free(word);
 }
 
-void process_input(t_data *data, char *str)
+void	process_input(t_data *data, char *str)
 {
-    size_t idx = 0;
-    int expect_command = 1;
+	size_t	idx;
+	int		expect_command;
+	token_type type;
+	t_token	*last_token;
 
-    while (str[idx])
-    {
-        if (whitespace_chars(str[idx]))
-        {
-            idx++;
-        }
-        else
-        {
-            if (shell_operators(str[idx]))
-            {
-                tokenize_operator(data, str, &idx);
-                if (data->token_list->type == T_PIPE || data->token_list->type == T_OUT || data->token_list->type == T_IN ||
-                    data->token_list->type == T_APPEND || data->token_list->type == T_HEREDOC)
-                {
-                    expect_command = 1;
-                }
-            }
-            else
-            {
-                token_type type;
-                if (expect_command)
-                {
-                    type = T_COMMAND;
-                    expect_command = 0;
-                }
-                else
-                {
-                    type = T_ARGUMENT;
-                }
-                tokenize_word(data, str, &idx, type);
-            }
-        }
-        t_token *last_token = data->token_list;
-        while (last_token && last_token->next)
-        {
-            last_token = last_token->next;
-        }
-        if (last_token && last_token->type == T_PIPE)
-        {
-            expect_command = 1;
-        }
-    }
+	idx = 0;
+	expect_command = 1;
+	while (str[idx])
+	{
+		if (whitespace_chars(str[idx]))
+		{
+			idx++;
+		}
+		else
+		{
+			if (shell_operators(str[idx]))
+			{
+				tokenize_operator(data, str, &idx);
+				if (data->token_list->type == T_PIPE
+					|| data->token_list->type == T_OUT
+					|| data->token_list->type == T_IN
+					|| data->token_list->type == T_APPEND
+					|| data->token_list->type == T_HEREDOC)
+				{
+					expect_command = 1;
+				}
+			}
+			else
+			{
+				if (expect_command)
+				{
+					type = T_COMMAND;
+					expect_command = 0;
+				}
+				else
+				{
+					type = T_ARGUMENT;
+				}
+				tokenize_word(data, str, &idx, type);
+			}
+		}
+		last_token = data->token_list;
+		while (last_token && last_token->next)
+		{
+			last_token = last_token->next;
+		}
+		if (last_token && last_token->type == T_PIPE)
+		{
+			expect_command = 1;
+		}
+	}
 }
 
 /*
