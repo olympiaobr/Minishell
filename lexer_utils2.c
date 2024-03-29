@@ -12,16 +12,17 @@
 
 #include "includes/minishell.h"
 
-void	quote_status(char c, int *in_single_q, int *in_double_q)
+void quote_status(char c, int *in_quote, char *quote_char)
 {
-	if (c == '\'' && !(*in_double_q))
+    if (!(*in_quote) && (c == '\'' || c == '\"'))
 	{
-		*in_single_q = !(*in_single_q);
-	}
-	else if (c == '\"' && !(*in_single_q))
+        *in_quote = 1;
+        *quote_char = c;
+    }
+	else if (*in_quote && c == *quote_char)
 	{
-		*in_double_q = !(*in_double_q);
-	}
+        *in_quote = 0;
+    }
 }
 
 int	create_and_append_token(t_token **token_list, char *input, token_type type)
@@ -82,18 +83,41 @@ void tokenize_operator(t_data *data, char *str, size_t *idx)
 }
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
-void	tokenize_word(t_data *data, char *str, size_t *idx)
+void tokenize_word(t_data *data, char *str, size_t *idx)
 {
-	char *word = extract_next_word(str + *idx);
-	if (word && word[0] != '\0')
+    size_t start_idx = *idx;
+    int in_quote = 0;
+    char quote_char = '\0';
+
+    if (str[*idx] == '\'' || str[*idx] == '\"')
 	{
-		create_and_append_token(&data->token_list, word, T_COMMAND);
-		*idx += ft_strlen(word);
-	}
-	if (word)
+        in_quote = 1;
+        quote_char = str[*idx];
+        start_idx++;
+        (*idx)++;
+    }
+    while (str[*idx] != '\0')
 	{
-		free(word);
-	}
+        quote_status(str[*idx], &in_quote, &quote_char);
+        if (in_quote == 0 && (whitespace_chars(str[*idx]) || shell_operators(str[*idx])))
+		{
+            break;
+        }
+        if (in_quote == 0 && str[*idx] == quote_char)
+		{
+            (*idx)++;
+            break;
+        }
+        (*idx)++;
+    }
+    size_t length = *idx - start_idx;
+    if (quote_char && str[*idx - 1] == quote_char)
+	{
+        length--;
+    }
+    char *word = ft_substr(str, start_idx, length);
+    create_and_append_token(&data->token_list, word, T_COMMAND);
+    free(word);
 }
 
 /*

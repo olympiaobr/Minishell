@@ -52,7 +52,7 @@ typedef struct data_all
 //lexing functions
 void lexing_input(t_data *data);
 int	whitespace_chars(char c);
-void	quote_status(char c, int *in_single_q, int *in_double_q);
+void quote_status(char c, int *in_quote, char *quote_char);
 int	create_and_append_token(t_token **token_list, char *input, token_type type);
 token_type	determine_type(char *operator);
 void tokenize_operator(t_data *data, char *str, size_t *idx);
