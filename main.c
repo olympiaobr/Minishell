@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/28 17:32:01 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/29 12:41:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
         t_token *current = data.token_list;
         while (current != NULL)
 		{
-            ft_printf("Value: %s, Type: ", current->value);
+            ft_printf("Value: %s Type: ", current->value);
             if (current->type == T_COMMAND) {
                 ft_printf("T_COMMAND");
             } else if (current->type == T_PIPE) {
