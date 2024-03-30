@@ -13,6 +13,11 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+char	*trim_value(const char *val)
+{
+	return (ft_strtrim(val, " \t\n\v\f\r"));
+}
+
 int	shell_operators(int c)
 {
 	char	*operators;
@@ -55,17 +60,30 @@ int	only_whitespaces(char *str)
 	return (1);
 }
 
-void	lexing_input(t_data *data)
+void lexing_input(t_data *data)
 {
-	if (data->user_input == NULL || data->user_input[0] == '\0')
+    char *trimmed_input;
+
+    trimmed_input = trim_value(data->user_input);
+    if (!trimmed_input)
 	{
-		ft_printf("No input provided.\n");
-		return ;
-	}
-	process_input(data, data->user_input);
-	if (data->token_list == NULL)
+        ft_printf("Error: Memory allocation failed for trimming.\n");
+        return;
+    }
+    free(data->user_input);
+    data->user_input = trimmed_input;
+    if (check_special_chars(data->user_input))
 	{
-		ft_printf("No tokens generated.\n");
-		return ;
-	}
+        ft_printf("Error: Special characters such as '\\' or ';' not allowed.\n");
+        return;
+    }
+    if (input_check(data->user_input))
+	{
+        return;
+    }
+    process_input(data, data->user_input);
+    if (data->token_list == NULL)
+	{
+        ft_printf("No tokens generated.\n");
+    }
 }

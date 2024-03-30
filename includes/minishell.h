@@ -64,9 +64,21 @@ void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
  char	*extract_next_word(char *str);
 t_token	*init_token(token_type type);
+char	*trim_value(const char *val);
+
+int input_check(const char *input);
+int check_special_chars(const char *input);
+int error_operators(const char *input);
+int wrong_operators(const char *command);
+int redirection_error(const char *cmd);
+int quote_error(const char *input);
+int validate_input(t_data *data);
+int	validate_operator_sequence(const char **line);
+void count_q(char c, int *sq, int *dq);
 
 //expansion functions
 void expansion(t_data *data);
+
 
 //free functions
 void	free_tokens(t_data *data);

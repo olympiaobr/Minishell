@@ -18,6 +18,8 @@ LIBS    =    Libft/libft.a
 SRCS	=	main.c lexer.c \
 			lexer_utils1.c lexer_utils2.c \
 			lexer_utils3.c expansion.c\
+			error_synthax1.c\
+			error_synthax2.c\
 			tokenization.c
 OBJS	=	$(SRCS:.c=.o)
 

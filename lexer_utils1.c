@@ -18,11 +18,6 @@ int	whitespace_chars(char c)
 		|| c == '\r');
 }
 
-char	*trim_value(const char *val)
-{
-	return (ft_strtrim(val, " \t\n\v\f\r"));
-}
-
 t_token	*init_token(token_type type)
 {
 	t_token	*t;
