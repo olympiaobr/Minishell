@@ -6,7 +6,7 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/16 16:03:18 by jasnguye          #+#    #+#              #
-#    Updated: 2024/03/15 14:31:44 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/03/30 13:40:02 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,8 @@ ft_putendl_fd.c ft_putnbr_fd.c \
 ft_printf.c helper_functions.c	\
 get_next_line_utils.c get_next_line.c \
 ft_lstnew.c ft_lstadd_back.c \
-ft_lstsize.c ft_lstlast.c 
+ft_lstsize.c ft_lstlast.c \
+ft_putchar.c 
 
 OBJS = $(SRCS:.c=.o)
 CC = cc

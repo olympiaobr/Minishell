@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:03:09 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/26 14:54:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/03/30 13:39:36 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	ft_putchar_fd(char c, int fd);
 void	ft_putstr_fd(char *s, int fd);
 void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
+void	ft_putchar(char c);
 
 int		ft_printf(const char *s, ...);
 int		print_s(char specifier, va_list ap);
