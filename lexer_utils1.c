@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:19 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/26 16:56:13 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/01 15:14:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	whitespace_chars(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
+	return (/* c == ' '  ||*/ c == '\t' || c == '\n' || c == '\v' || c == '\f' // had to remove the space because a command with spaces before is still being recognized by bash
 		|| c == '\r');
 }
 

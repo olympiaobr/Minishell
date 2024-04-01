@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/03/30 16:44:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/01 20:29:36 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char *get_value(char *variable_name)
 int	expansion_delimiters(char c)
 {
 	return (c == ':' || c == '-' || c == '?' || c == '+' || c == '%'
-		|| c == '=' || c == '/' ||  c == '*' || c == '#' || c == '@' || c == '.');
+		|| c == '=' || c == '/' ||  c == '*' || c == '#' || c == '@' || c == '.' || c == '$' || c == ',');
 }
 
 
@@ -50,7 +50,6 @@ char *ft_strjoin_char(const char *str, char c)
     return (result);
 }
 
-
 void expansion(t_data *data)
 {
     t_token *current = data->token_list;
@@ -58,44 +57,49 @@ void expansion(t_data *data)
     {
         int i = 0;
         char *expanded_value = ft_strdup("");
+
+        
         while (current->value[i] != '\0')
         {
             if (current->value[i] == '$')
             {
                 int start = i + 1;
-                while (current->value[i] != '\0' && !expansion_delimiters(current->value[i]))
+                int j = 0;
+                while (current->value[j + 1] != '\0' && !expansion_delimiters(current->value[j + 1]))
                 {
                     i++;
+                    j++;
                 }
-                int end = i - 1;   
+                int end = start + j;  
+                char *variable_name = ft_substr(current->value, start, end - start);// Extract the variable name    	
+                char *value = get_value(variable_name); 
 				ft_printf("start: %d end: %d\n", start, end);
-                char *variable_name = ft_substr(current->value, start, end - start + 1);// Extract the variable name
-				char *value = get_value(variable_name);
                	free(variable_name);
                 if (value != NULL)
                 {
                     expanded_value = ft_strjoin(expanded_value, value);
-					//WHAT IF THERE ARE NO DELIMITERS?
-                    while (current->value[i] != '\0' && expansion_delimiters(current->value[i]))
+                    while (current->value[start] != '\0' && expansion_delimiters(current->value[start]))
                     {
-                        expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
-                        i++;
+                        expanded_value = ft_strjoin_char(expanded_value, current->value[start]);
+                        start++;
                     }
+                    i = j + start;
                 }
                 else
                 {
                     expanded_value = ft_strjoin(expanded_value, "\n"); // append only newline if variable not found
                 }
+                i = start + j;
             }
             else //if it's not a variable
             {
                 expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
                 i++;
             }
+           
         }
         free(current->value); // Free the previous value
         current->value = expanded_value;// Update the value of the token with expanded_value
         current = current->next;
     }
-}
-
+} 
