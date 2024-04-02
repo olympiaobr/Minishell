@@ -31,29 +31,32 @@ t_token	*init_token(token_type type)
 	return (t);
 }
 
-t_token	*allocate_token(token_type type, char *val)
+t_token	*allocate_token(token_type type, char *val, int is_quoted)
 {
-	char	*trimmed_val;
-	t_token	*token;
+    char	*trimmed_val;
+    t_token	*token;
 
-	trimmed_val = trim_value(val);
-	if (!trimmed_val)
-		return (NULL);
-	token = init_token(type);
-	if (!token)
+    // Check if the token is quoted and decide to trim or not
+    if (is_quoted)
 	{
-		free(trimmed_val);
-		return (NULL);
-	}
-	token->value = ft_strdup(trimmed_val);
-	if (!token->value)
+        trimmed_val = ft_strdup(val);
+    }
+	else
 	{
-		free(trimmed_val);
-		free(token);
-		return (NULL);
-	}
-	free(trimmed_val);
-	return (token);
+        trimmed_val = trim_value(val);
+    }
+    if (!trimmed_val)
+	{
+        return (NULL);
+    }
+    token = init_token(type);
+    if (!token)
+	{
+        free(trimmed_val);
+        return (NULL);
+    }
+    token->value = trimmed_val;
+    return (token);
 }
 
 void	append_token(t_token **token_list, t_token *new_token)

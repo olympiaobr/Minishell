@@ -25,11 +25,11 @@ void	quote_status(char c, int *in_quote, char *quote_char)
 	}
 }
 
-int	create_and_append_token(t_token **token_list, char *input, token_type type)
+int	create_and_append_token(t_token **token_list, char *input, token_type type, int is_quoted)
 {
 	t_token	*new_token;
 
-	new_token = allocate_token(type, input);
+	new_token = allocate_token(type, input, is_quoted); // Updated to pass is_quoted
 	if (new_token == NULL)
 	{
 		return (-1);
@@ -68,40 +68,34 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	}
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
-	create_and_append_token(&data->token_list, operator_str, type);
+	create_and_append_token(&data->token_list, operator_str, type, 0);
 	free(operator_str);
 	*idx += operator_len;
 }
 
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
-void	tokenize_word(t_data *data, char *str, size_t *idx,
-		token_type expected_type)
+void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
 {
-	size_t	start_idx;
-	int		in_quote;
-	char	quote_char;
-	size_t	length;
-	char	*word;
+    size_t start_idx = *idx;
+    int in_quote = 0;
+    char quote_char = '\0';
+    while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx]) && !shell_operators(str[*idx]))))
+	{
+        quote_status(str[*idx], &in_quote, &quote_char);
+        (*idx)++;
+    }
+    size_t length = *idx - start_idx;
 
-	start_idx = *idx;
-	in_quote = 0;
-	quote_char = '\0';
-	while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx])
-				&& !shell_operators(str[*idx]))))
+    int is_quoted = quote_char != '\0';
+    if (!in_quote && quote_char)
 	{
-		quote_status(str[*idx], &in_quote, &quote_char);
-		(*idx)++;
-	}
-	length = *idx - start_idx;
-	if (!in_quote && quote_char)
-	{
-		start_idx++;
-		length -= 2;
-	}
-	word = ft_substr(str, start_idx, length);
-	create_and_append_token(&data->token_list, word, expected_type);
-	free(word);
+        start_idx++;
+        length -= 2;
+    }
+    char *word = ft_substr(str, start_idx, length);
+    create_and_append_token(&data->token_list, word, expected_type, is_quoted);
+    free(word);
 }
 
 void	process_input(t_data *data, char *str)
