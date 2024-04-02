@@ -57,15 +57,21 @@ void count_q(char c, int *sq, int *dq)
 }
 int validate_input(t_data *data)
 {
-	if (data->user_input == NULL || data->user_input[0] == '\0'
-		|| ft_strncmp(data->user_input, "\n", 1) == 0
-			|| whitespace_chars(data->user_input[0]))
+    int i;
+
+    if (data->user_input == NULL || data->user_input[0] == '\0' || ft_strncmp(data->user_input, "\n", 1) == 0)
+	{
+        return 0;
+    }
+    i = 0;
+    while (data->user_input[i] != '\0')
+	{
+        if (!whitespace_chars(data->user_input[i]))
 		{
-			free(data->user_input);
-			data->user_input = NULL;
-			ft_printf("No input provided.\n");
-			return 0;
-		}
-		return 1;
+            return 1;
+        }
+        i++;
+    }
+    return 0;
 }
 

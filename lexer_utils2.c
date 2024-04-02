@@ -29,7 +29,7 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type, 
 {
 	t_token	*new_token;
 
-	new_token = allocate_token(type, input, is_quoted); // Updated to pass is_quoted
+	new_token = allocate_token(type, input, is_quoted);
 	if (new_token == NULL)
 	{
 		return (-1);
