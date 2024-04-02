@@ -14,7 +14,7 @@
 
 int	whitespace_chars(char c)
 {
-	return (/* c == ' '  ||*/ c == '\t' || c == '\n' || c == '\v' || c == '\f' // had to remove the space because a command with spaces before is still being recognized by bash
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' // had to remove the space because a command with spaces before is still being recognized by bash
 		|| c == '\r');
 }
 

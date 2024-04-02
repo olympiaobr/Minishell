@@ -29,11 +29,11 @@ int main(int argc, char *argv[])
 			{
                 break;
             }
-            if (!validate_input(&data))
+            /*if (!validate_input(&data))
 			{
                 free(data.user_input);
                 continue;
-            }
+            }*/
 			lexing_input(&data);
 			expansion(&data);
 
