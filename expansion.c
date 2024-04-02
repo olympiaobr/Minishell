@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/01 20:29:36 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/02 14:31:25 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void expansion(t_data *data)
             {
                 int start = i + 1;
                 int j = 0;
-                while (current->value[j + 1] != '\0' && !expansion_delimiters(current->value[j + 1]))
+                while ((current->value[j + 1] != '\0' && !expansion_delimiters(current->value[j + 1])) || (current->value[i + 1] != '\0'&& !expansion_delimiters(current->value[i + 1])))
                 {
                     i++;
                     j++;
@@ -85,18 +85,19 @@ void expansion(t_data *data)
                     }
                     i = j + start;
                 }
-                else
+				  else
                 {
-                    expanded_value = ft_strjoin(expanded_value, "\n"); // append only newline if variable not found
+					i++;
                 }
-                i = start + j;
+    
             }
             else //if it's not a variable
             {
                 expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
-                i++;
+				i++;
+			
             }
-           
+          
         }
         free(current->value); // Free the previous value
         current->value = expanded_value;// Update the value of the token with expanded_value
