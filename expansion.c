@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/02 15:47:15 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/02 17:35:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,29 +70,40 @@ char *ft_strjoin_char(const char *str, char c)
     return (result);
 }
 
-/* 
-int check_double_quotes(t_data *data)
+void check_single_quotes(char *token, t_data *data)
+{
+	int i = 0;
+	int single_quotes = 0;
+	while(token[i] != '\0')
+	{
+		if(token[i] == '\'')
+		{
+			single_quotes++;
+		}
+		i++;
+	}
+	if(single_quotes == 2)
+	{
+		data->token_list->single_quotes = 1;
+	}
+	else
+	{
+		data->token_list->single_quotes = 0;
+	}
+}
+void check_quotes(t_data *data)
 {
 	t_token *current = data->token_list;
 	while(current != NULL)
 	{
-		int i = 0;
-		int double_quotes = 0;
-		while(current->value[i] != '\0')
+		check_single_quotes(current->value, data);
+		if(data->token_list->single_quotes != 1)
 		{
-			if(current->value[i] == '"')
-			{
-				double_quotes ==
-			}
-			i++;
-		
+			expansion(data);
 		}
-		
 		current = current->next;
-
 	}
-	
-} */
+} 
 void expansion(t_data *data)
 {
     t_token *current = data->token_list;
@@ -128,7 +139,7 @@ void expansion(t_data *data)
             }
             i++;
         }
-        free(current->value);
+       // free(current->value);
         current->value = expanded_value;
         current = current->next;
     }

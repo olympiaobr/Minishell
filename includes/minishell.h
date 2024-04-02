@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/28 17:32:36 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/02 16:55:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_token
 	token_type		type;
 	char			*value;
 	struct s_token	*next;
+	bool			single_quotes;
 }					t_token;
 
 typedef struct data_all
@@ -78,7 +79,7 @@ void count_q(char c, int *sq, int *dq);
 
 //expansion functions
 void expansion(t_data *data);
-
+void check_quotes(t_data *data);
 
 //free functions
 void	free_tokens(t_data *data);
