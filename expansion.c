@@ -24,6 +24,26 @@ int	expansion_delimiters(char c)
 		|| c == '=' || c == '/' ||  c == '*' || c == '#' || c == '@' || c == '.' || c == '$' || c == ',');
 }
 
+int valid_var_char(int c)
+{
+    if (c >= '0' && c <= '9')
+    {
+        return 1;
+    }
+    if (c >= 'A' && c <= 'Z')
+    {
+        return 1;
+    }
+    if (c >= 'a' && c <= 'z')
+    {
+        return 1;
+    }
+    if (c == '_')
+    {
+        return 1;
+    }
+    return 0;
+}
 
 char *ft_strjoin_char(const char *str, char c)
 {
@@ -58,49 +78,36 @@ void expansion(t_data *data)
         int i = 0;
         char *expanded_value = ft_strdup("");
 
-        
         while (current->value[i] != '\0')
         {
             if (current->value[i] == '$')
             {
                 int start = i + 1;
-                int j = 0;
-                while ((current->value[j + 1] != '\0' && !expansion_delimiters(current->value[j + 1])) || (current->value[i + 1] != '\0'&& !expansion_delimiters(current->value[i + 1])))
+                while (current->value[start] != '\0' && (valid_var_char(current->value[start]) || current->value[start] == '_'))
                 {
-                    i++;
-                    j++;
+                    start++;
                 }
-                int end = start + j;  
-                char *variable_name = ft_substr(current->value, start, end - start);// Extract the variable name    	
-                char *value = get_value(variable_name); 
-				ft_printf("start: %d end: %d\n", start, end);
-               	free(variable_name);
+                char *variable_name = ft_substr(current->value, i + 1, start - (i + 1));
+                char *value = get_value(variable_name);
+                free(variable_name);
                 if (value != NULL)
                 {
+                    char *temp = expanded_value;
                     expanded_value = ft_strjoin(expanded_value, value);
-                    while (current->value[start] != '\0' && expansion_delimiters(current->value[start]))
-                    {
-                        expanded_value = ft_strjoin_char(expanded_value, current->value[start]);
-                        start++;
-                    }
-                    i = j + start;
+                    free(temp);
                 }
-				  else
-                {
-					i++;
-                }
-    
+                i = start - 1;
             }
-            else //if it's not a variable
+            else
             {
+                char *temp = expanded_value;
                 expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
-				i++;
-			
+                free(temp);
             }
-          
+            i++;
         }
-        free(current->value); // Free the previous value
-        current->value = expanded_value;// Update the value of the token with expanded_value
+        free(current->value);
+        current->value = expanded_value;
         current = current->next;
     }
-} 
+}
