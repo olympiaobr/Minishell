@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/02 14:31:25 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:45:44 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,29 @@ char *ft_strjoin_char(const char *str, char c)
     return (result);
 }
 
+/* 
+int check_double_quotes(t_data *data)
+{
+	t_token *current = data->token_list;
+	while(current != NULL)
+	{
+		int i = 0;
+		int double_quotes = 0;
+		while(current->value[i] != '\0')
+		{
+			if(current->value[i] == '"')
+			{
+				double_quotes ==
+			}
+			i++;
+		
+		}
+		
+		current = current->next;
+
+	}
+	
+} */
 void expansion(t_data *data)
 {
     t_token *current = data->token_list;
@@ -57,8 +80,6 @@ void expansion(t_data *data)
     {
         int i = 0;
         char *expanded_value = ft_strdup("");
-
-        
         while (current->value[i] != '\0')
         {
             if (current->value[i] == '$')
@@ -89,15 +110,12 @@ void expansion(t_data *data)
                 {
 					i++;
                 }
-    
             }
             else //if it's not a variable
             {
                 expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
 				i++;
-			
             }
-          
         }
         free(current->value); // Free the previous value
         current->value = expanded_value;// Update the value of the token with expanded_value
