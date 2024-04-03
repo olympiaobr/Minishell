@@ -86,14 +86,21 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
         (*idx)++;
     }
     size_t length = *idx - start_idx;
-
-    int is_quoted = quote_char != '\0';
+    int is_quoted = 0; // 0: unquoted, 1: single-quoted, 2: double-quoted
+    if (quote_char == '\'')
+	{
+        is_quoted = 1;
+    } else if (quote_char == '\"')
+	{
+        is_quoted = 2;
+    }
     if (!in_quote && quote_char)
 	{
         start_idx++;
         length -= 2;
     }
     char *word = ft_substr(str, start_idx, length);
+	printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
     create_and_append_token(&data->token_list, word, expected_type, is_quoted);
     free(word);
 }
@@ -144,6 +151,7 @@ void	process_input(t_data *data, char *str)
 		last_token = data->token_list;
 		while (last_token && last_token->next)
 		{
+			printf("Processing: %s, is_quoted: %d\n", last_token->value, last_token->is_quoted);
 			last_token = last_token->next;
 		}
 		if (last_token && last_token->type == T_PIPE)

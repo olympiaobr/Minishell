@@ -70,6 +70,7 @@ char *ft_strjoin_char(const char *str, char c)
     return (result);
 }
 
+/*
 void check_single_quotes(char *token, t_data *data)
 {
 	int i = 0;
@@ -103,44 +104,50 @@ void check_quotes(t_data *data)
 		}
 		current = current->next;
 	}
-} 
+}
+*/
+
 void expansion(t_data *data)
 {
     t_token *current = data->token_list;
     while (current != NULL)
     {
-        int i = 0;
-        char *expanded_value = ft_strdup("");
-        while (current->value[i] != '\0')
+        printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
+        if (current->is_quoted != 1)
         {
-            if (current->value[i] == '$')
+            char *expanded_value = ft_strdup("");
+            int i = 0;
+            while (current->value[i] != '\0')
             {
-                int start = i + 1;
-                while (current->value[start] != '\0' && (valid_var_char(current->value[start]) || current->value[start] == '_'))
+                if (current->value[i] == '$')
                 {
-                    start++;
+                    int start = i + 1;
+                    while (current->value[start] != '\0' && valid_var_char(current->value[start]))
+                    {
+                        start++;
+                    }
+                    char *variable_name = ft_substr(current->value, i + 1, start - (i + 1));
+                    char *value = get_value(variable_name);
+                    free(variable_name);
+                    if (value)
+                    {
+                        char *temp = expanded_value;
+                        expanded_value = ft_strjoin(expanded_value, value);
+                        free(temp);
+                    }
+                    i = start;
                 }
-                char *variable_name = ft_substr(current->value, i + 1, start - (i + 1));
-                char *value = get_value(variable_name);
-                free(variable_name);
-                if (value != NULL)
+                else
                 {
-                    char *temp = expanded_value;
-                    expanded_value = ft_strjoin(expanded_value, value);
-                    free(temp);
+                    char *temp = ft_strjoin_char(expanded_value, current->value[i]);
+                    free(expanded_value);
+                    expanded_value = temp;
                 }
-                i = start - 1;
+                i++;
             }
-            else
-            {
-                char *temp = expanded_value;
-                expanded_value = ft_strjoin_char(expanded_value, current->value[i]);
-                free(temp);
-            }
-            i++;
+            free(current->value);
+            current->value = expanded_value;
         }
-       // free(current->value);
-        current->value = expanded_value;
         current = current->next;
     }
 }

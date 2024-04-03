@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
                 continue;
             }
 			lexing_input(&data);
-			check_quotes(&data);
-		
+			expansion(&data);
+
 			t_token *current = data.token_list;
 			while (current != NULL)
 			{

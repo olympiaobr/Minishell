@@ -36,7 +36,7 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
     char	*trimmed_val;
     t_token	*token;
 
-    // Check if the token is quoted and decide to trim or not
+    // if token is quoted and decide to trim or not
     if (is_quoted)
 	{
         trimmed_val = ft_strdup(val);
@@ -55,7 +55,10 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
         free(trimmed_val);
         return (NULL);
     }
+    token->type = type;
     token->value = trimmed_val;
+    token->is_quoted = is_quoted;
+    token->next = NULL;
     return (token);
 }
 

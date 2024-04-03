@@ -28,12 +28,12 @@ typedef enum token_type
 	T_COMMAND,  //general command
 	T_PIPE,
 	T_IN,  // <
-	T_OUT, // >
+	T_OUT,  // >
 	T_ENV,
-	T_HEREDOC, // <<
-	T_APPEND, // >>
-	T_ARGUMENT, //command arguments
-	T_FILE, //filename for redirections
+	T_HEREDOC,  // <<
+	T_APPEND,  // >>
+	T_ARGUMENT,  //command arguments
+	T_FILE,  //filename for redirections
 }					token_type;
 
 typedef struct s_token
@@ -41,7 +41,8 @@ typedef struct s_token
 	token_type		type;
 	char			*value;
 	struct s_token	*next;
-	bool			single_quotes;
+	/*bool			single_quotes;*/
+	 int is_quoted;
 }					t_token;
 
 typedef struct data_all
