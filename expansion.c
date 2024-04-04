@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/02 17:35:59 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/04 11:10:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void expansion(t_data *data)
                         expanded_value = ft_strjoin(expanded_value, value);
                         free(temp);
                     }
-                    i = start;
+                    i = start - 1;
                 }
                 else
                 {
