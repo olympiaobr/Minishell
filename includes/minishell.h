@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/02 16:55:47 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:57:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,15 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
+
+
+typedef struct s_command
+{
+	char	*command; //command name like ls, cd,..
+	char	**argv; //array of command arguments
+	int		argc;     //number of command arguments 
+	//bool built-in?
+}	t_command;
 
 typedef enum token_type
 {
@@ -81,6 +90,11 @@ void count_q(char c, int *sq, int *dq);
 //expansion functions
 void expansion(t_data *data);
 void check_quotes(t_data *data);
+
+
+//parsing functions
+void parsing(t_data *data);
+
 
 //free functions
 void	free_tokens(t_data *data);
