@@ -47,9 +47,14 @@ typedef struct s_token
 
 typedef struct data_all
 {
-	t_token	*token_list;
-	char	*user_input;
-}	t_data;
+    t_token *token_list;
+    char    *user_input;
+    t_token *current_token;
+    char    *input_file;    // For < redirection
+    char    *output_file;   // For > or >> redirection
+    int     append;         // Flag for append mode (>>)
+    int     heredoc;        // Flag for heredoc (<<)
+}   t_data;
 
 //lexing functions
 void lexing_input(t_data *data);
