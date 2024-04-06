@@ -24,6 +24,7 @@
 # include <unistd.h>
 
 
+<<<<<<< HEAD
 typedef struct s_command
 {
 	char	*command; //command name like ls, cd,..
@@ -32,17 +33,17 @@ typedef struct s_command
 	//bool built-in?
 }	t_command; 
 
+=======
+>>>>>>> ef6bc4d2cd13c2b89ee37afab7a5012b4286a156
 typedef enum token_type
 {
 	T_COMMAND,  //general command
 	T_PIPE,
 	T_IN,  // <
 	T_OUT,  // >
-	T_ENV,
 	T_HEREDOC,  // <<
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
-	T_FILE,  //filename for redirections
 }					token_type;
 
 typedef struct s_token
@@ -54,11 +55,31 @@ typedef struct s_token
 	 int is_quoted;
 }					t_token;
 
+typedef struct s_command
+{
+	char	*command; //command name like ls, cd,..
+	t_token	*argv;
+	t_token *option;
+	struct s_command *next; //array of command arguments
+	int		argc;     //number of command arguments
+	//bool built-in?
+	char **argv_array;
+}	t_command;
+
 typedef struct data_all
 {
 	t_token	*token_list;
 	t_command *command_list;
 	char	*user_input;
+	t_token *current_token;
+	char	*std_input;
+	char	*std_output;
+    char    *input_file;    // For < redirection
+    char    *output_file;   // For > or >> redirection
+    int     append;         // Flag for append mode (>>)
+    int     heredoc;        // Flag for heredoc (<<)
+	t_command *commands;
+	int *create_new_command;
 }	t_data;
 
 //lexing functions
