@@ -160,3 +160,7 @@ int process_commands(t_data *data, t_token *token, t_command **current_cmd)
 	}
 	return (0);
 }
+
+int process_redirection
+
+int parser(t_data *data);
