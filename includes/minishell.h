@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/05 15:57:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/06 15:15:48 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_command
 	char	**argv; //array of command arguments
 	int		argc;     //number of command arguments 
 	//bool built-in?
-}	t_command;
+}	t_command; 
 
 typedef enum token_type
 {
@@ -57,6 +57,7 @@ typedef struct s_token
 typedef struct data_all
 {
 	t_token	*token_list;
+	t_command *command_list;
 	char	*user_input;
 }	t_data;
 
@@ -94,7 +95,7 @@ void check_quotes(t_data *data);
 
 //parsing functions
 void parsing(t_data *data);
-
+void tokenize_path(const char *input);
 
 //free functions
 void	free_tokens(t_data *data);
