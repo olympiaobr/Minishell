@@ -97,37 +97,47 @@ t_command	*create_command(t_data *data, t_token *token)
 	return (new_command);
 }
 //Appends an arg token to the last command's argument list (argv)
-void    link_arg_to_command(t_command *last_command, t_token *token)
+int link_arg_to_command(t_command *last_command, t_token *token)
 {
     t_token *new_arg;
     t_token *last_arg;
 
     if (!last_command || !token || token->type != T_ARGUMENT)
-        return ;
+	{
+        return -1;
+    }
 
     new_arg = (t_token *)malloc(sizeof(t_token));
     if (!new_arg)
-    {
+	{
         perror("Failed to allocate memory for new argument");
-        return ;
+        return -1;
     }
+
     new_arg->type = token->type;
     new_arg->value = ft_strdup(token->value);
+    if (!new_arg->value)
+	{
+        free(new_arg);
+        return -1;
+    }
     new_arg->next = NULL;
     new_arg->is_quoted = token->is_quoted;
-
     if (!last_command->argv)
-    {
+	{
         last_command->argv = new_arg;
     }
-    else
-    {
+	else
+	{
         last_arg = last_command->argv;
         while (last_arg->next != NULL)
+		{
             last_arg = last_arg->next;
+        }
         last_arg->next = new_arg;
     }
     last_command->argc += 1;
+    return 0;
 }
 
 int process_commands(t_data *data, t_token *token, t_command **current_cmd)
@@ -167,9 +177,6 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
     char *file_path = NULL;
     int fd = -1;
 
-<<<<<<< HEAD
-//int parser(t_data *data);
-=======
     if (token->type == T_IN || token->type == T_HEREDOC)
     {
         if (data->input_file)
@@ -283,4 +290,3 @@ int parser(t_data *data)
     }
     return 0;
 }
->>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f
