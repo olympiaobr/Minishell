@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/08 15:47:41 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/08 18:43:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,51 @@ char *ft_strcat(char *dest, char *src)
 	dest[i] = '\0';
 	return(dest);
 }
+size_t ft_strspn(const char *str, const char *delim)
+{
+	size_t i = 0;
 
-char *custom_strtok(char *str, const char *delim) {
+	while(str[i] != '\0')
+	{
+		if(str[i] != delim[0])
+		{
+			return(i);
+		}
+		i++;
+	}
+	return(ft_strlen(str));
+}
+
+size_t ft_strcspn(const char *str, const char *reject)
+{
+	size_t i = 0;
+	while(str[i] != '\0')
+	{
+		if(str[i] == reject[0])
+		{
+			return(i);
+		}
+		i++;
+	}
+	return(ft_strlen(str));
+}
+
+
+char *custom_strtok(char *str, const char *delim) 
+{
     static char *last = NULL; // pointer to the position in the string where the last token was found
 
-    // if str is NULL, continue tokenizing from the last position
-    if (str == NULL) 
+   
+ 	if (str == NULL)  // if str is NULL, continue tokenizing from the last position
 	{
         str = last;
-    }
-	if (str == NULL || *str == '\0') 
+    } 
+	if (str == NULL || *str == '\0') // Check if str is NULL or empty
 	{
         last = NULL;
         return NULL;
     }
-
-    str += strspn(str, delim);// skip leading delimiters
+    str += ft_strspn(str, delim);// skip leading delimiters
     // if the remaining string is empty, return NULL
     if (*str == '\0') 
 	{
@@ -74,7 +103,7 @@ char *custom_strtok(char *str, const char *delim) {
         return NULL;
     }
     // find end of the token
-    char *token_end = str + strcspn(str, delim);
+    char *token_end = str + ft_strcspn(str, delim);
 
     // if a delimiter is found, replace it with a null terminator
     if (*token_end != '\0') 
@@ -91,18 +120,23 @@ char *custom_strtok(char *str, const char *delim) {
 }
 
 
-void check_valid_command(t_data *data)
+int check_valid_command(t_data *data)
 {
 	t_token *current = data->token_list;
-	char *path = getenv("PATH");
-	char *path_copy = ft_strdup(path);
-    if (!path)  // PATH variable not set
-	{
-        ft_printf("Path variable not set.\n");
-    }
-	
+	int validity_check = 1; // we assume that it's a valid command
 	while(current != NULL)
-	{
+	{	
+		char *path = getenv("PATH");
+		if (!path)  // PATH variable not set
+		{
+        	validity_check = -1;
+			//ft_printf("Path variable not set.\n");
+    	}
+		char *path_copy = ft_strdup(path);
+		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
+		char full_path[1024];
+		full_path[0] = '\0';
+		
 		if(current->type == T_COMMAND)//only true for first token and token after pipe
 		{
 			if(ft_strcmp(current->value, "cd") == 0 || ft_strcmp(current->value, "echo") == 0 
@@ -110,47 +144,42 @@ void check_valid_command(t_data *data)
 			||ft_strcmp(current->value, "unset") == 0 ||ft_strcmp(current->value, "env") == 0
 			||ft_strcmp(current->value, "exit") == 0)
 			{
-				ft_printf("Is a valid build-in command.\n");
+				validity_check = 1;
+				//ft_printf("Is a valid build-in command.\n");
 			}
-			else // If it's not a built-in command
+			else
 			{
-    			printf("path: %s\n", path_copy);
-   				printf("command token: %s\n", current->value);
-    			char full_path[1024];
+    			//printf("path: %s\n", path_copy);
+   				//printf("command token: %s\n", current->value);
 
-    			full_path[0] = '\0';	// Initialize full_path to an empty string
-
-    			char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
-    		
     			while (dir != NULL)
     			{
        			 	// Concatenate the directory and command
-					
         			ft_strcpy(full_path, dir);
        	 			ft_strcat(full_path, "/");
        	 			ft_strcat(full_path, current->value);
-        			
         			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
         			{
-            			ft_printf("Is a valid executable file in the path\n");
+						validity_check = 1;
+            			//ft_printf("Is a valid executable file in the path\n");
             			break;
         			}
         			// Move to the next directory
         			dir = custom_strtok(NULL, ":");
 				}
-				//does not work properly yet
-				if (full_path[0] == '\0')
+				if (access(full_path, X_OK) != 0)
     			{
-        		ft_printf("Not a valid command.\n");
+					validity_check = -1;
+        			//ft_printf("Not a valid command.\n");
    				}
-    			
 			}
 		}
 		current = current->next;
 	}
+	return(validity_check);
 } 
 
 void parsing(t_data *data)
 {
-	check_valid_command(data);
+ 	printf("validity check: %d\n", check_valid_command(data));
 }
