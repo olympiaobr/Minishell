@@ -1,35 +1,15 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug minishell", // Change this to the name you prefer
-            "type": "cppdbg", // Keep this as is for C/C++ debugging
-            "request": "launch", // Keep this for launching your program
-            "program": "${workspaceFolder}/minishell", // Change 'a.out' to your executable name if different
-            // "args": ["ls kdkd"], // Add any c\ommand line arguments for your program here
-            "stopAtEntry": false, // Set to true if you want the debugger to stop at the entry point of your program
-            "cwd": "${workspaceFolder}", // Keeps the current working directory as your workspace folder
-            "environment": [], // Add any environment variables if needed
-            "externalConsole": false, // Set to true if you want to use an external console for input/output
-            "MIMode": "gdb", // Keep this as is for using GDB
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
-            "preLaunchTask": "build", // This should match the label of your build task in tasks.json
-            "miDebuggerPath": "/usr/bin/gdb" // Change this to the path of GDB on your system if different
+            "name": "Debug minishell (LLDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/minishell",
+            "args": ["-c", "echo Hello, World!"],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build minishell"
         }
     ]
-<<<<<<< HEAD
-}
-=======
 }
 
->>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f

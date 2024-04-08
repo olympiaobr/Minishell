@@ -167,9 +167,6 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
     char *file_path = NULL;
     int fd = -1;
 
-<<<<<<< HEAD
-//int parser(t_data *data);
-=======
     if (token->type == T_IN || token->type == T_HEREDOC)
     {
         if (data->input_file)
@@ -283,4 +280,3 @@ int parser(t_data *data)
     }
     return 0;
 }
->>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f
