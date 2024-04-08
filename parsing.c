@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/08 15:47:41 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:44:56 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,51 @@ char *ft_strcat(char *dest, char *src)
 	dest[i] = '\0';
 	return(dest);
 }
+size_t ft_strspn(const char *str, const char *delim)
+{
+	size_t i = 0;
 
-char *custom_strtok(char *str, const char *delim) {
+	while(str[i] != '\0')
+	{
+		if(str[i] != delim[0])
+		{
+			return(i);
+		}
+		i++;
+	}
+	return(ft_strlen(str));
+}
+
+size_t ft_strcspn(const char *str, const char *reject)
+{
+	size_t i = 0;
+	while(str[i] != '\0')
+	{
+		if(str[i] == reject[0])
+		{
+			return(i);
+		}
+		i++;
+	}
+	return(ft_strlen(str));
+}
+
+
+char *custom_strtok(char *str, const char *delim) 
+{
     static char *last = NULL; // pointer to the position in the string where the last token was found
 
-    // if str is NULL, continue tokenizing from the last position
-    if (str == NULL) 
+   
+ 	if (str == NULL)  // if str is NULL, continue tokenizing from the last position
 	{
         str = last;
-    }
-	if (str == NULL || *str == '\0') 
+    } 
+	if (str == NULL || *str == '\0') // Check if str is NULL or empty
 	{
         last = NULL;
         return NULL;
     }
-
-    str += strspn(str, delim);// skip leading delimiters
+    str += ft_strspn(str, delim);// skip leading delimiters
     // if the remaining string is empty, return NULL
     if (*str == '\0') 
 	{
@@ -74,7 +103,7 @@ char *custom_strtok(char *str, const char *delim) {
         return NULL;
     }
     // find end of the token
-    char *token_end = str + strcspn(str, delim);
+    char *token_end = str + ft_strcspn(str, delim);
 
     // if a delimiter is found, replace it with a null terminator
     if (*token_end != '\0') 
@@ -141,7 +170,7 @@ void check_valid_command(t_data *data)
 				//does not work properly yet
 				if (full_path[0] == '\0')
     			{
-        		ft_printf("Not a valid command.\n");
+        			ft_printf("Not a valid command.\n");
    				}
     			
 			}
