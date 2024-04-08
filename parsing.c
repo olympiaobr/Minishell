@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/08 18:43:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:15:04 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,14 +123,13 @@ char *custom_strtok(char *str, const char *delim)
 int check_valid_command(t_data *data)
 {
 	t_token *current = data->token_list;
-	int validity_check = 1; // we assume that it's a valid command
+
 	while(current != NULL)
 	{	
 		char *path = getenv("PATH");
 		if (!path)  // PATH variable not set
 		{
-        	validity_check = -1;
-			//ft_printf("Path variable not set.\n");
+        	return (-1);
     	}
 		char *path_copy = ft_strdup(path);
 		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
@@ -144,8 +143,7 @@ int check_valid_command(t_data *data)
 			||ft_strcmp(current->value, "unset") == 0 ||ft_strcmp(current->value, "env") == 0
 			||ft_strcmp(current->value, "exit") == 0)
 			{
-				validity_check = 1;
-				//ft_printf("Is a valid build-in command.\n");
+				continue;
 			}
 			else
 			{
@@ -160,7 +158,7 @@ int check_valid_command(t_data *data)
        	 			ft_strcat(full_path, current->value);
         			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
         			{
-						validity_check = 1;
+					
             			//ft_printf("Is a valid executable file in the path\n");
             			break;
         			}
@@ -169,17 +167,27 @@ int check_valid_command(t_data *data)
 				}
 				if (access(full_path, X_OK) != 0)
     			{
-					validity_check = -1;
+					return (-1);
         			//ft_printf("Not a valid command.\n");
    				}
 			}
 		}
 		current = current->next;
 	}
-	return(validity_check);
-} 
+	return(1);
+}  
+
+
+
 
 void parsing(t_data *data)
 {
- 	printf("validity check: %d\n", check_valid_command(data));
-}
+ 	if(check_valid_command(data) != 1)
+	{
+		ft_printf("Not a valid command.\n");
+	}
+	else
+	{
+		ft_printf("Valid command.\n");
+	}
+} 
