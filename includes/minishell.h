@@ -24,17 +24,6 @@
 # include <unistd.h>
 
 
-<<<<<<< HEAD
-typedef struct s_command
-{
-	char	*command; //command name like ls, cd,..
-	char	**argv; //array of command arguments
-	int		argc;     //number of command arguments 
-	//bool built-in?
-}	t_command; 
-
-=======
->>>>>>> ef6bc4d2cd13c2b89ee37afab7a5012b4286a156
 typedef enum token_type
 {
 	T_COMMAND,  //general command

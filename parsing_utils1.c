@@ -161,6 +161,83 @@ int process_commands(t_data *data, t_token *token, t_command **current_cmd)
 	return (0);
 }
 
-int process_redirection
+// sets up redir for input/output based on the token's type and opens the associated file descriptor.
+int setup_redirection(t_data *data, t_token *token, int oflag)
+{
+    char *file_path = NULL;
+    int fd = -1;
+
+    if (token->type == T_IN || token->type == T_HEREDOC)
+    {
+        if (data->input_file)
+        {
+            free(data->input_file);
+        }
+        data->input_file = strdup(token->value);
+        file_path = data->input_file;
+    }
+    else
+    {
+        if (data->output_file)
+        {
+            free(data->output_file);
+        }
+        data->output_file = strdup(token->value);
+        file_path = data->output_file;
+    }
+    if (!file_path)
+    {
+        ft_error("Error: strdup failed for file path\n");
+        return 1;
+    }
+    fd = open(file_path, oflag, 0644);
+    if (fd < 0)
+    {
+        ft_error("Error: Failed to open file\n");
+        return 1;
+    }
+    if (token->type == T_IN || token->type == T_HEREDOC)
+    {
+        data->std_input_fd = fd;
+    }
+    else
+    {
+        data->std_output_fd = fd;
+    }
+    return (0);
+}
+// Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
+int apply_redirection(t_data *data, t_token *token)
+{
+    int oflag;
+
+    if (token->type == T_IN)
+	{
+        oflag = O_RDONLY;
+        return (setup_redirection(data, token, oflag));
+    }
+    if (token->type == T_OUT)
+	{
+        oflag = O_CREAT | O_WRONLY | O_TRUNC;
+        return (setup_redirection(data, token, oflag));
+    }
+
+    if (token->type == T_APPEND)
+	{
+        oflag = O_CREAT | O_WRONLY | O_APPEND;
+        return (setup_redirection(data, token, oflag));
+    }
+
+    if (token->type == T_HEREDOC)
+	{
+        return (0);
+    }
+    return (1);
+}
+
+void ft_error(char *err)
+{
+    ft_putstr_fd(err, 2);
+}
 
 int parser(t_data *data);
