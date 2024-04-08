@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f
 {
     "version": "0.2.0",
     "configurations": [
@@ -24,4 +27,9 @@
             "miDebuggerPath": "/usr/bin/gdb" // Change this to the path of GDB on your system if different
         }
     ]
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> d83db703755fdf81a0a1db07fd5f1c365227738f
