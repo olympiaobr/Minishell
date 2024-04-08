@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/06 15:15:48 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:16:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,6 @@
 # include <unistd.h>
 
 
-<<<<<<< HEAD
-typedef struct s_command
-{
-	char	*command; //command name like ls, cd,..
-	char	**argv; //array of command arguments
-	int		argc;     //number of command arguments 
-	//bool built-in?
-}	t_command; 
-
-=======
->>>>>>> ef6bc4d2cd13c2b89ee37afab7a5012b4286a156
 typedef enum token_type
 {
 	T_COMMAND,  //general command
@@ -44,6 +33,8 @@ typedef enum token_type
 	T_HEREDOC,  // <<
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
+	T_ENV, 
+	T_FILE
 }					token_type;
 
 typedef struct s_token
