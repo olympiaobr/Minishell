@@ -33,7 +33,7 @@ typedef enum token_type
 	T_HEREDOC,  // <<
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
-	T_ENV, 
+	T_ENV,
 	T_FILE
 }					token_type;
 
@@ -67,6 +67,8 @@ typedef struct data_all
 	char	*std_output;
     char    *input_file;    // For < redirection
     char    *output_file;   // For > or >> redirection
+	int      std_input_fd;   // File descriptor for input redirection
+    int      std_output_fd;  // File descriptor for output redirection
     int     append;         // Flag for append mode (>>)
     int     heredoc;        // Flag for heredoc (<<)
 	t_command *commands;
