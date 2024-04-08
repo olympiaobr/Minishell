@@ -240,4 +240,43 @@ void ft_error(char *err)
     ft_putstr_fd(err, 2);
 }
 
-int parser(t_data *data);
+int parser(t_data *data)
+{
+    if (!data || !data->token_list)
+        return -1;
+
+    t_command *current_cmd = NULL;
+    t_token *current_token = data->token_list;
+    int new_cmd = 1;
+
+    while (current_token != NULL)
+    {
+        if (current_token->type == T_PIPE)
+        {
+            new_cmd = 1;
+        }
+        else if (current_token->type == T_COMMAND || current_token->type == T_ARGUMENT)
+        {
+            if (process_commands(data, current_token, &current_cmd) != 0)
+            {
+                ft_error("Error: Failed to process command or argument.\n");
+                return 1;
+            }
+            if (current_token->type == T_COMMAND)
+            {
+                new_cmd = 0;
+            }
+        }
+        else if (current_token->type == T_IN || current_token->type == T_OUT ||
+                 current_token->type == T_APPEND || current_token->type == T_HEREDOC)
+        {
+            if (apply_redirection(data, current_token) != 0)
+            {
+                ft_error("Error: Failed to apply redirection.\n");
+                return 1;
+            }
+        }
+        current_token = current_token->next;
+    }
+    return 0;
+}
