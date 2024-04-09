@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/minishell",
-            "args": ["-c", "echo Hello, World!"],
+            // "args": ["-c", "echo Hello, World!"],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build minishell"
         }
