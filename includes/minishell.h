@@ -71,6 +71,8 @@ typedef struct data_all
     int      std_output_fd;  // File descriptor for output redirection
     int     append;         // Flag for append mode (>>)
     int     heredoc;        // Flag for heredoc (<<)
+	char **path_dirs;  // For storing parsed PATH directories
+    char *path;        // To store the duplicated PATH environment variable
 	t_command *commands;
 	int *create_new_command;
 }	t_data;
