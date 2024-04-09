@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 13:47:51 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/09 19:06:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,38 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	*idx += operator_len;
 }
 
+/* // in progress
+char *edge_case(char *str, size_t *start_idx)
+{
+    size_t len = strlen(str);
+    char *result = malloc(len + 1); // Allocate memory for the result string
+    if (result == NULL) {
+        // Handle memory allocation failure
+        return NULL;
+    }
+
+    size_t i = 0;
+
+    while (str[*start_idx] != '\0')
+    {
+        result[i] = str[*start_idx];
+        if (str[*start_idx] == '\'' && str[*start_idx + 1] != '\'')
+        {
+            (*start_idx)++;
+        }
+        else if (str[*start_idx] == '\"' && str[*start_idx + 1] != '\"')
+        {
+            (*start_idx)++;
+        }
+        (*start_idx)++;
+        i++;
+    }
+
+    result[i] = '\0'; // Null-terminate the result string
+    return result;
+} */
+
+
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
 void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
@@ -94,16 +126,28 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
 	{
         is_quoted = 2;
     }
-    if (!in_quote && quote_char)
+	// Adjust start_idx and length if the word is quoted and there are quotes at the beginning and end of token
+	if (!in_quote && quote_char && length >= 2 && str[start_idx] == quote_char && str[*idx - 1] == quote_char) 
 	{
-        start_idx++;
-        length -= 2;
-    }
+    	start_idx++;
+    	length -= 2;
+	}
+	/* else
+	{
+		start_idx = 0;
+		length = ft_strlen(str);
+		str = edge_case(str, &start_idx); // in progress
+	}
+	 */
     char *word = ft_substr(str, start_idx, length);
+  
 	printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
+	//add function to cover edge case and then we call the create_and_append_token() -> we call it when the quotes are not at the beginning and end of token?
+	
     create_and_append_token(&data->token_list, word, expected_type, is_quoted);
     free(word);
 }
+
 
 void	process_input(t_data *data, char *str)
 {
