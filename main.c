@@ -50,16 +50,12 @@ int main(int argc, char *argv[])
            			ft_printf("T_IN");
             	} else if (current->type == T_OUT) {
            	    	ft_printf("T_OUT");
-            	} else if (current->type == T_ENV) {
-                	ft_printf("T_ENV");
             	} else if (current->type == T_HEREDOC) {
                 	ft_printf("T_HEREDOC");
             	} else if (current->type == T_APPEND) {
                 	ft_printf("T_APPEND");
             	} else if (current->type == T_ARGUMENT) {
                 	ft_printf("T_ARGUMENT");
-            	} else if (current->type == T_FILE) {
-               		ft_printf("T_FILE");
             	} else {
                 	ft_printf("Unknown Type");
             	}
@@ -79,4 +75,3 @@ int main(int argc, char *argv[])
 
 
 
- 
