@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/09 11:58:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/09 12:16:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,9 @@ int check_valid_command(t_data *data)
         	not_valid = -1;
     	}
 		char *path_copy = ft_strdup(path);
+		
 		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
+		free(path_copy);
 		char full_path[1024];
 		full_path[0] = '\0';
 		
