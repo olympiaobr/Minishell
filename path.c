@@ -47,10 +47,10 @@ void append_slash(char **directory)
     if (!(*directory))
 	{
         perror("Error appending slash to PATH directory");
-        free(temp); // Ensure previously allocated directory is freed upon error.
+        free(temp);
         exit(EXIT_FAILURE);
     }
-    free(temp); // Clean up the original directory string.
+    free(temp);
 }
 
 void free_path_dirs(t_data *data)
