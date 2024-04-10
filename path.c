@@ -63,8 +63,8 @@ void free_path_dirs(t_data *data)
     }
     free(data->path_dirs);
 }
-/*
-void resolve_command_recursive(char **path_dirs, char *cmd, int *cmd_found)
+
+void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
 {
     if (!path_dirs || !*path_dirs)
 	{
@@ -80,13 +80,13 @@ void resolve_command_recursive(char **path_dirs, char *cmd, int *cmd_found)
         return;
     }
     free(cmd_path);
-    resolve_command_recursive(path_dirs + 1, cmd, cmd_found);
+    resolve_command(path_dirs + 1, cmd, cmd_found);
 }
 
 void resolve_command(t_data *data, char *cmd)
 {
     data->cmd_found = 0;
-    resolve_command_recursive(data->path_dirs, cmd, &data->cmd_found);
+    resolve_command(data->path_dirs, cmd, &data->cmd_found);
 }
 
 int check_command_in_path(char **env_paths, const char *command)
@@ -115,8 +115,7 @@ int check_valid_command(t_data *data, const char *command)
         strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
         strcmp(command, "exit") == 0)
 		{
-        	return 1; // True, it's a built-in command
+        	return 1;
 		}
 		return check_command_in_path(data->env_paths, command);
 }
-*/
