@@ -13,21 +13,67 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-void init_environment_paths(t_data *data)
-{
-    char    *path_env;
-    int     i;
+int init_env(t_data *data, char **env){
+    int i;
 
-    path_env = getenv("PATH");
-    if (!path_env)
-	{
-        perror("Error: Unable to retrieve PATH environment variable.");
+    i = 0;
+    while (env[i])
+        i++;
+    data->env = (char **)malloc(sizeof(char *) * (i + 1));
+    if (!data->env) {
+        perror("Error allocating memory for env");
+        return (EXIT_FAILURE);
+    }
+    i = 0;
+    while (env[i])
+    {
+        data->env[i] = strdup(env[i]);
+        if (!data->env[i])
+        {
+            perror("Error duplicating env variable");
+            return (EXIT_FAILURE);
+        }
+        i++;
+    }
+    data->env[i] = NULL;
+    return (EXIT_SUCCESS);
+}
+
+void process_environment_vars(t_data *data)
+{
+    int path_found = 0;
+    int i = 0;
+
+    while (data->env[i])
+    {
+        if (strncmp(data->env[i], "PATH=", 5) == 0)
+        {
+            data->path = strdup(data->env[i] + 5);
+            path_found = 1;
+            break;
+        }
+        i++;
+    }
+    if (!path_found)
+    {
+        perror("Error: PATH variable not found.");
         exit(EXIT_FAILURE);
     }
-    data->path_dirs = ft_split(path_env, ':');
+}
+
+void init_environment_paths(t_data *data)
+{
+    int     i;
+
+    if (!data->path)
+    {
+        perror("Error: PATH variable not initialized.");
+        exit(EXIT_FAILURE);
+    }
+    data->path_dirs = ft_split(data->path, ':');
     if (!data->path_dirs)
-	{
-        perror("Error: Memory allocation failed for PATH directories.");
+    {
+        perror("Error allocating memory for path directories");
         exit(EXIT_FAILURE);
     }
     i = 0;
@@ -52,6 +98,24 @@ void append_slash(char **directory)
     }
     free(temp);
 }
+t_data *init_data(char **envp)
+{
+    t_data *data = (t_data *)malloc(sizeof(t_data));
+    if (data == NULL) {
+        perror("Error: Not enough memory to create main data structure");
+        exit(EXIT_FAILURE);
+    }
+    ft_memset(data, 0, sizeof(t_data));
+
+    init_env(data, envp);
+    process_environment_vars(data, envp);
+    init_environment_paths(data);
+
+    //data->std_input_fd = STDIN_FILENO;
+    //data->std_output_fd = STDOUT_FILENO;
+    //data->exit_status = 0;
+    return (data);
+}
 
 void free_path_dirs(t_data *data)
 {
@@ -64,6 +128,29 @@ void free_path_dirs(t_data *data)
     free(data->path_dirs);
 }
 
+void free_all(t_data *data)
+{
+    int i;
+
+    free(data->path);
+    data->path = NULL;
+    if (data->env)
+    {
+        i = 0;
+        while (data->env[i])
+        {
+            free(data->env[i]);
+            data->env[i] = NULL;
+            i++;
+        }
+        free(data->env);
+        data->env = NULL;
+    }
+   //   free_command_list
+  //  free_tokens
+    free_path_dirs(data);
+}
+
 void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
 {
     if (!path_dirs || !*path_dirs)
@@ -71,7 +158,6 @@ void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
         *cmd_found = 0;
         return;
     }
-
     char *cmd_path = ft_strjoin3(*path_dirs, "/", cmd);
     if (access(cmd_path, X_OK) == 0)
 	{

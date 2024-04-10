@@ -13,7 +13,7 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char **envp)
 {
 	(void)argv;
     t_data data;
