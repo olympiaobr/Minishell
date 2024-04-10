@@ -20,6 +20,12 @@ int main(int argc, char *argv[], char **envp)
 
 	if (argc == 1)
     {
+		data = init_data(envp);
+		if (!data)
+		{
+            perror("Failed to initialize shell data structure");
+            return EXIT_FAILURE;
+        }
         while (1)
 		{
             data.user_input = readline("minishell: ");

@@ -13,21 +13,23 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int init_env(t_data *data, char **env){
+int init_env(t_data *data, char **env)
+{
     int i;
 
     i = 0;
     while (env[i])
         i++;
     data->env = (char **)malloc(sizeof(char *) * (i + 1));
-    if (!data->env) {
+    if (!data->env)
+    {
         perror("Error allocating memory for env");
         return (EXIT_FAILURE);
     }
     i = 0;
     while (env[i])
     {
-        data->env[i] = strdup(env[i]);
+        data->env[i] = ft_strdup(env[i]);
         if (!data->env[i])
         {
             perror("Error duplicating env variable");
@@ -37,28 +39,6 @@ int init_env(t_data *data, char **env){
     }
     data->env[i] = NULL;
     return (EXIT_SUCCESS);
-}
-
-void process_environment_vars(t_data *data)
-{
-    int path_found = 0;
-    int i = 0;
-
-    while (data->env[i])
-    {
-        if (strncmp(data->env[i], "PATH=", 5) == 0)
-        {
-            data->path = strdup(data->env[i] + 5);
-            path_found = 1;
-            break;
-        }
-        i++;
-    }
-    if (!path_found)
-    {
-        perror("Error: PATH variable not found.");
-        exit(EXIT_FAILURE);
-    }
 }
 
 void init_environment_paths(t_data *data)
@@ -98,22 +78,72 @@ void append_slash(char **directory)
     }
     free(temp);
 }
+
+int init_path(t_data *data)
+{
+    char *path_value = ft_getenv("PATH", data);
+    if (path_value == NULL)
+    {
+        perror("PATH environment variable not found");
+        return (EXIT_FAILURE);
+    }
+    data->path = strdup(path_value);
+    if (data->path == NULL)
+    {
+        perror("Error duplicating PATH variable");
+        return (EXIT_FAILURE);
+    }
+    return (EXIT_SUCCESS);
+}
+
+/*
+or void prepare_environment(t_data *data)
+{
+    // Fetch the PATH value using cust_getenv
+    char *path_value = cust_getenv("PATH", data);
+    if (!path_value) {
+        perror("Error: PATH variable not found.");
+        exit(EXIT_FAILURE);
+    }
+    init_environment_paths(data); // Operates directly on data, processing PATH internally.
+}
+*/
+
+char *cust_getenv(const char *name, t_data *data)
+{
+    int i = 0;
+    char *env_entry;
+    char *found;
+
+    while ((env_entry = data->env[i]) != NULL)
+    {
+        found = strstr(env_entry, name); // Search for the name in the environment string
+        if (found && found[ft_strlen(name)] == '=' && (found == env_entry || *(found - 1) == '\0'))
+        {
+            return (found + ft_strlen(name) + 1);
+        }
+        i++;
+    }
+    return (NULL);
+}
 t_data *init_data(char **envp)
 {
     t_data *data = (t_data *)malloc(sizeof(t_data));
-    if (data == NULL) {
+    if (data == NULL)
+    {
         perror("Error: Not enough memory to create main data structure");
         exit(EXIT_FAILURE);
     }
     ft_memset(data, 0, sizeof(t_data));
 
     init_env(data, envp);
-    process_environment_vars(data, envp);
+    init_path(data);
     init_environment_paths(data);
 
     //data->std_input_fd = STDIN_FILENO;
     //data->std_output_fd = STDOUT_FILENO;
     //data->exit_status = 0;
+    //etc
     return (data);
 }
 
@@ -150,7 +180,8 @@ void free_all(t_data *data)
   //  free_tokens
     free_path_dirs(data);
 }
-
+/*
+to be figured out
 void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
 {
     if (!path_dirs || !*path_dirs)
@@ -205,3 +236,4 @@ int check_valid_command(t_data *data, const char *command)
 		}
 		return check_command_in_path(data->env_paths, command);
 }
+*/
