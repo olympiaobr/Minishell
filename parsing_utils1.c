@@ -290,3 +290,22 @@ int parser(t_data *data)
     }
     return 0;
 }
+
+void free_commands(t_command *commands)
+{
+    t_command *current = commands;
+    while (current)
+    {
+        t_command *next = current->next;
+        free_command(current);
+        current = next;
+    }
+}
+
+void free_command(t_command *command)
+{
+    if (!command)
+        return;
+    free(command->command);
+    free(command);
+}
