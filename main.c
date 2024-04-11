@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/11 14:45:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/11 19:11:09 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@ int main(int argc, char *argv[]/* , char **envp */)
 
 	if (argc == 1)
     {
-		/* data = init_data(envp);
+	/* 	data = init_data(envp);
 		if (!data)
 		{
             perror("Failed to initialize shell data structure");
             return EXIT_FAILURE;
-        } */
+        }  */
         while (1)
 		{
             data.user_input = readline("minishell: ");
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]/* , char **envp */)
                 continue;
             }
 			lexing_input(&data);
+			check_for_heredoc(&data);// heredoc needs to work with expansion too, that's why I'm putting it before expansion()
 			expansion(&data);
-			check_for_heredoc(&data);
 			parsing(&data);
 
 			t_token *current = data.token_list;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]/* , char **envp */)
             	current = current->next;
         	}
 			free(data.user_input);
-			free_all(&data);
+			//free_all(&data);
     	}
 	}
 	else
