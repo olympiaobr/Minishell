@@ -6,26 +6,26 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/10 15:45:43 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:45:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int main(int argc, char *argv[], char **envp)
+int main(int argc, char *argv[]/* , char **envp */)
 {
 	(void)argv;
     t_data data;
 
 	if (argc == 1)
     {
-		data = init_data(envp);
+		/* data = init_data(envp);
 		if (!data)
 		{
             perror("Failed to initialize shell data structure");
             return EXIT_FAILURE;
-        }
+        } */
         while (1)
 		{
             data.user_input = readline("minishell: ");
@@ -42,6 +42,7 @@ int main(int argc, char *argv[], char **envp)
             }
 			lexing_input(&data);
 			expansion(&data);
+			check_for_heredoc(&data);
 			parsing(&data);
 
 			t_token *current = data.token_list;

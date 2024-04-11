@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/08 11:16:54 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:56:27 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,14 @@ void check_quotes(t_data *data);
 //parsing functions
 void parsing(t_data *data);
 void tokenize_path(const char *input);
+
+
+//heredoc functions
+void check_for_heredoc(t_data *data);
+
+
+//added helper functions
+int ft_strcmp(char *s1, char *s2);
 
 //free functions
 void	free_tokens(t_data *data);
