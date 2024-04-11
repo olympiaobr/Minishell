@@ -40,17 +40,16 @@ int init_env(t_data *data, char **env)
     data->env[i] = NULL;
     return (EXIT_SUCCESS);
 }
-
-void init_environment_paths(t_data *data)
+void prepare_environment(t_data *data)
 {
-    int     i;
-
-    if (!data->path)
+    int i;
+    char *path_value = cust_getenv("PATH", data);
+    if (!path_value)
     {
-        perror("Error: PATH variable not initialized.");
+        perror("Error: PATH variable not found.");
         exit(EXIT_FAILURE);
     }
-    data->path_dirs = ft_split(data->path, ':');
+    data->path_dirs = ft_split(path_value, ':');
     if (!data->path_dirs)
     {
         perror("Error allocating memory for path directories");
@@ -58,7 +57,7 @@ void init_environment_paths(t_data *data)
     }
     i = 0;
     while (data->path_dirs[i])
-	{
+    {
         append_slash(&(data->path_dirs[i]));
         i++;
     }
@@ -78,36 +77,35 @@ void append_slash(char **directory)
     }
     free(temp);
 }
-
-int init_path(t_data *data)
+char *cust_strstr(const char *h, const char *n)
 {
-    char *path_value = ft_getenv("PATH", data);
-    if (path_value == NULL)
-    {
-        perror("PATH environment variable not found");
-        return (EXIT_FAILURE);
-    }
-    data->path = strdup(path_value);
-    if (data->path == NULL)
-    {
-        perror("Error duplicating PATH variable");
-        return (EXIT_FAILURE);
-    }
-    return (EXIT_SUCCESS);
-}
+    const char *h;
+    const char *n;
 
-/*
-or void prepare_environment(t_data *data)
-{
-    // Fetch the PATH value using cust_getenv
-    char *path_value = cust_getenv("PATH", data);
-    if (!path_value) {
-        perror("Error: PATH variable not found.");
-        exit(EXIT_FAILURE);
+    if (*n == '\0')
+    {
+        return ((char *)h);
     }
-    init_environment_paths(data); // Operates directly on data, processing PATH internally.
+    while (*h != '\0')
+    {
+        if (*h == *n)
+        {
+            h = h;
+            n = n;
+            while (*h != '\0' && *n != '\0' && *h == *n)
+            {
+                h++;
+                n++;
+            }
+            if (*n == '\0')
+            {
+                return ((char *)h);
+            }
+        }
+        h++;
+    }
+    return (NULL);
 }
-*/
 
 char *cust_getenv(const char *name, t_data *data)
 {
@@ -117,7 +115,7 @@ char *cust_getenv(const char *name, t_data *data)
 
     while ((env_entry = data->env[i]) != NULL)
     {
-        found = strstr(env_entry, name); // Search for the name in the environment string
+        found = cust_strstr(env_entry, name);
         if (found && found[ft_strlen(name)] == '=' && (found == env_entry || *(found - 1) == '\0'))
         {
             return (found + ft_strlen(name) + 1);
@@ -129,21 +127,20 @@ char *cust_getenv(const char *name, t_data *data)
 t_data *init_data(char **envp)
 {
     t_data *data = (t_data *)malloc(sizeof(t_data));
-    if (data == NULL)
-    {
+    if (data == NULL) {
         perror("Error: Not enough memory to create main data structure");
         exit(EXIT_FAILURE);
     }
     ft_memset(data, 0, sizeof(t_data));
-
-    init_env(data, envp);
-    init_path(data);
-    init_environment_paths(data);
-
-    //data->std_input_fd = STDIN_FILENO;
-    //data->std_output_fd = STDOUT_FILENO;
-    //data->exit_status = 0;
-    //etc
+    if (init_env(data, envp) == EXIT_FAILURE)
+    {
+        free(data);
+        return NULL;
+    }
+    prepare_environment(data);
+    data->std_input_fd = STDIN_FILENO;
+    data->std_output_fd = STDOUT_FILENO;
+    // data->exit_status = 0; // Uncomment and initialize as necessary
     return (data);
 }
 

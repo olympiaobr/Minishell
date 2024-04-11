@@ -72,7 +72,7 @@ typedef struct data_all
     int     append;         // Flag for append mode (>>)
     int     heredoc;        // Flag for heredoc (<<)
 	char **path_dirs;  // stores parsed PATH directories
-    char *path;        // stores duplicated PATH env var
+    // char *path;        // stores duplicated PATH env var
 	char **env;
 	t_command *commands;
 	int *create_new_command;
