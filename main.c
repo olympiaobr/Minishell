@@ -69,15 +69,15 @@ int main(int argc, char *argv[]/* , char **envp */)
             	ft_printf("\n");
             	current = current->next;
         	}
-			free_tokens(&data);
 			free(data.user_input);
+			free_all(&data);
     	}
 	}
 	else
 	{
         ft_printf("Non-valid number of arguments!\n");
     }
-    return 0;
+	return (EXIT_SUCCESS);
 }
 
 

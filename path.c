@@ -162,38 +162,37 @@ t_data *init_data(char **envp)
     return (data);
 }
 
-void free_path_dirs(t_data *data)
-{
-    int index = 0;
-    while (data->path_dirs && data->path_dirs[index])
-	{
-        free(data->path_dirs[index]);
-        index++;
-    }
-    free(data->path_dirs);
-}
-
 void free_all(t_data *data)
 {
-    int i;
+    int i = 0;
 
-    free(data->path);
-    data->path = NULL;
-    if (data->env)
+    // free environment var
+    while (data->env && data->env[i])
+    {
+        free(data->env[i]);
+        data->env[i] = NULL;
+        i++;
+    }
+    free(data->env);
+    data->env = NULL;
+
+    // free path directories
+    if (data->path_dirs)
     {
         i = 0;
-        while (data->env[i])
+        while (data->path_dirs[i])
         {
-            free(data->env[i]);
-            data->env[i] = NULL;
+            free(data->path_dirs[i]);
+            data->path_dirs[i] = NULL;
             i++;
         }
-        free(data->env);
-        data->env = NULL;
+        free(data->path_dirs);
+        data->path_dirs = NULL;
     }
-   //   free_command_list
-  //  free_tokens
-    free_path_dirs(data);
+    free_tokens(data);
+    free_commands(data->commands);
+    free(data->input_file);
+    free(data->output_file);
 }
 /*
 to be figured out

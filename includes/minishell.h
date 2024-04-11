@@ -110,10 +110,28 @@ void count_q(char c, int *sq, int *dq);
 void expansion(t_data *data);
 void check_quotes(t_data *data);
 
+//path
+char *cust_getenv(const char *name, t_data *data);
+int init_env(t_data *data, char **env);
+void prepare_environment(t_data *data);
+
+//init
+void initialize_shell_components(t_data *data);
+t_data *init_data(char **envp);
+
 
 //parsing functions
 void parsing(t_data *data);
 void tokenize_path(const char *input);
+int set_command(t_command *cmd_struct, t_token *current_token);
+int add_token_to_list(t_token **token_list, t_token *token);
+int add_option_to_command(t_command *cmd, t_token *token);
+t_command	*create_command(t_data *data, t_token *token);
+int link_arg_to_command(t_command *last_command, t_token *token);
+int process_commands(t_data *data, t_token *token, t_command **current_cmd);
+int setup_redirection(t_data *data, t_token *token, int oflag);
+int apply_redirection(t_data *data, t_token *token);
+int parser(t_data *data);
 
 
 //heredoc functions
@@ -125,5 +143,9 @@ int ft_strcmp(char *s1, char *s2);
 
 //free functions
 void	free_tokens(t_data *data);
+void free_commands(t_command *commands);
+void free_all(t_data *data);
+
+void ft_error(char *err);
 
 #endif
