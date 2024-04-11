@@ -81,15 +81,15 @@ size_t ft_strcspn(const char *str, const char *reject)
 }
 
 
-char *custom_strtok(char *str, const char *delim) 
+char *custom_strtok(char *str, const char *delim)
 {
     static char *last = NULL; // pointer to the position in the string where the last token was found
 
-   
+
  	if (str == NULL)  // if str is NULL, continue tokenizing from the last position
 	{
         str = last;
-    } 
+    }
 	if (str == NULL || *str == '\0') // Check if str is NULL or empty
 	{
         last = NULL;
@@ -97,7 +97,7 @@ char *custom_strtok(char *str, const char *delim)
     }
     str += ft_strspn(str, delim);// skip leading delimiters
     // if the remaining string is empty, return NULL
-    if (*str == '\0') 
+    if (*str == '\0')
 	{
         last = NULL;
         return NULL;
@@ -106,12 +106,12 @@ char *custom_strtok(char *str, const char *delim)
     char *token_end = str + ft_strcspn(str, delim);
 
     // if a delimiter is found, replace it with a null terminator
-    if (*token_end != '\0') 
+    if (*token_end != '\0')
 	{
         *token_end = '\0';
         last = token_end + 1; // update the last pointer to point to the next character after the delimiter
-    } 
-	else 
+    }
+	else
 	{
         last = NULL; // no more tokens left
     }
@@ -119,30 +119,29 @@ char *custom_strtok(char *str, const char *delim)
     return str;
 }
 
-
 int check_valid_command(t_data *data)
 {
 	t_token *current = data->token_list;
 	int valid = 1;
 	int not_valid = 1;
 	while(current != NULL)
-	{	
+	{
 		char *path = getenv("PATH");
 		if (!path)  // PATH variable not set
 		{
         	not_valid = -1;
     	}
 		char *path_copy = ft_strdup(path);
-		
+
 		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
 		free(path_copy);
 		char full_path[1024];
 		full_path[0] = '\0';
-		
+
 		if(current->type == T_COMMAND)//only true for first token and token after pipe
 		{
-			if(ft_strcmp(current->value, "cd") == 0 || ft_strcmp(current->value, "echo") == 0 
-			|| ft_strcmp(current->value, "pwd") == 0 ||ft_strcmp(current->value, "export") == 0 
+			if(ft_strcmp(current->value, "cd") == 0 || ft_strcmp(current->value, "echo") == 0
+			|| ft_strcmp(current->value, "pwd") == 0 ||ft_strcmp(current->value, "export") == 0
 			||ft_strcmp(current->value, "unset") == 0 ||ft_strcmp(current->value, "env") == 0
 			||ft_strcmp(current->value, "exit") == 0)
 			{
@@ -158,14 +157,14 @@ int check_valid_command(t_data *data)
        	 			ft_strcat(full_path, current->value);
         			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
         			{
-					
+
             			//ft_printf("Is a valid executable file in the path\n");
 						valid = 1;
             			break;
         			}
         			// Move to the next directory
         			dir = custom_strtok(NULL, ":");
-				}	
+				}
 				printf("path: %s\n", full_path);
 				if (access(full_path, X_OK) != 0)
     			{
@@ -177,7 +176,7 @@ int check_valid_command(t_data *data)
 		current = current->next;
 	}
 	return (valid * not_valid);
-}  
+}
 
 
 
@@ -192,4 +191,4 @@ void parsing(t_data *data)
 	{
 		ft_printf("Valid command.\n");
 	}
-} 
+}
