@@ -6,7 +6,7 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 10:49:49 by jasnguye          #+#    #+#              #
-#    Updated: 2024/04/05 14:36:23 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/04/11 14:45:23 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,8 @@ SRCS	=	main.c lexer.c \
 			lexer_utils3.c expansion.c\
 			error_synthax1.c\
 			error_synthax2.c\
-			tokenization.c parsing.c 
+			tokenization.c parsing.c \
+			heredoc.c 
 OBJS	=	$(SRCS:.c=.o)
 
 all:		$(NAME)

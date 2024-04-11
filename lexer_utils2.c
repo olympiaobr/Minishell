@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/10 15:52:41 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:18:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	}
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
+	//
+	
+	//
 	create_and_append_token(&data->token_list, operator_str, type, 0);
 	free(operator_str);
 	*idx += operator_len;
