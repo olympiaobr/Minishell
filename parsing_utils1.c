@@ -291,21 +291,46 @@ int parser(t_data *data)
     return 0;
 }
 
-void free_commands(t_command *commands)
+void free_commands(t_command *cmd)
 {
-    t_command *current = commands;
-    while (current)
+    while (cmd)
     {
-        t_command *next = current->next;
-        free_command(current);
-        current = next;
+        t_command *next_cmd = cmd->next;
+        free_command(cmd);
+        cmd = next_cmd;
     }
 }
 
-void free_command(t_command *command)
+void free_command(t_command *cmd)
 {
-    if (!command)
-        return;
-    free(command->command);
-    free(command);
+    if (!cmd) return;
+
+    free(cmd->command);
+    t_token *arg = cmd->argv;
+    while (arg)
+    {
+        t_token *next_arg = arg->next;
+        free(arg->value);
+        free(arg);
+        arg = next_arg;
+    }
+    t_token *opt = cmd->option;
+    while (opt)
+    {
+        t_token *next_opt = opt->next;
+        free(opt->value);
+        free(opt);
+        opt = next_opt;
+    }
+    int index = 0;
+    if (cmd->argv_array)
+    {
+        while (index < cmd->argc)
+         {
+            free(cmd->argv_array[index]);
+            index++;
+        }
+        free(cmd->argv_array);
+    }
+    free(cmd);
 }

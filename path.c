@@ -192,8 +192,11 @@ void free_all(t_data *data)
     free_tokens(data);
     free_commands(data->commands);
     free(data->input_file);
+    data->input_file = NULL;
     free(data->output_file);
+    data->output_file = NULL;
 }
+
 /*
 to be figured out
 void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
