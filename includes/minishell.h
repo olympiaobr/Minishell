@@ -76,6 +76,7 @@ typedef struct data_all
 	char **env;
 	t_command *commands;
 	int *create_new_command;
+	int exit_status;
 }	t_data;
 
 //lexing functions

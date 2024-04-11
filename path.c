@@ -124,10 +124,30 @@ char *cust_getenv(const char *name, t_data *data)
     }
     return (NULL);
 }
+
+void initialize_shell_components(t_data *data)
+{
+    data->std_input_fd = STDIN_FILENO;
+    data->std_output_fd = STDOUT_FILENO;
+    data->user_input = NULL;
+    data->token_list = NULL;
+    data->command_list = NULL;
+    data->current_token = NULL;
+    data->std_input = NULL;
+    data->std_output = NULL;
+    data->input_file = NULL;
+    data->output_file = NULL;
+    data->append = 0;
+    data->heredoc = 0;
+    data->commands = NULL;
+    data->create_new_command = 0;
+    data->exit_status = 0;
+}
 t_data *init_data(char **envp)
 {
     t_data *data = (t_data *)malloc(sizeof(t_data));
-    if (data == NULL) {
+    if (data == NULL)
+    {
         perror("Error: Not enough memory to create main data structure");
         exit(EXIT_FAILURE);
     }
@@ -138,9 +158,7 @@ t_data *init_data(char **envp)
         return NULL;
     }
     prepare_environment(data);
-    data->std_input_fd = STDIN_FILENO;
-    data->std_output_fd = STDOUT_FILENO;
-    // data->exit_status = 0; // Uncomment and initialize as necessary
+    initialize_shell_components(data);
     return (data);
 }
 
