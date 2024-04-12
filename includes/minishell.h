@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/11 14:56:27 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/12 16:44:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,8 @@ t_command *init_command(char *command);
 t_command *create_command(t_data *data, t_token *token);
 int link_arg_to_command(t_command *last_command, t_token *token);
 int process_commands(t_data *data, t_token *token, t_command **current_cmd);
-int setup_redirection(t_data *data, t_token *token, int oflag);
+//int setup_redirection(t_data *data, t_token *token, int oflag);
+int setup_redirection(t_data *data, t_token *token, char *filename, int oflag);
 int apply_redirection(t_data *data, t_token *token);
 int parser(t_data *data);
 

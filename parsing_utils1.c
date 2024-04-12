@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/12 12:39:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/12 17:45:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ int process_commands(t_data *data, t_token *token, t_command **current_cmd)
 }
 
 // sets up redir for input/output based on the token's type and opens the associated file descriptor.
-int setup_redirection(t_data *data, t_token *token, int oflag)
+int setup_redirection(t_data *data, t_token *token, char *filename, int oflag)// added an additional argument
 {
     char *file_path = NULL;
     int fd = -1;
@@ -196,7 +196,7 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
         {
             free(data->input_file);
         }
-        data->input_file = strdup(token->value);
+        data->input_file = strdup(filename);
         file_path = data->input_file;
     }
     else
@@ -205,7 +205,7 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
         {
             free(data->output_file);
         }
-        data->output_file = strdup(token->value);
+        data->output_file = strdup(filename);
         file_path = data->output_file;
     }
     if (!file_path)
@@ -229,32 +229,35 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
     }
     return (0);
 }
+
 // Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
 int apply_redirection(t_data *data, t_token *token)
 {
     int oflag;
-	
+	char *file_name = NULL; //added another variable to store the filename
     if (token->type == T_IN)
 	{
         oflag = O_RDONLY;
-        return (setup_redirection(data, token, oflag));
     }
     if (token->type == T_OUT)
 	{
         oflag = O_CREAT | O_WRONLY | O_TRUNC;
-        return (setup_redirection(data, token, oflag));
     }
-
     if (token->type == T_APPEND)
 	{
         oflag = O_CREAT | O_WRONLY | O_APPEND;
-        return (setup_redirection(data, token, oflag));
     }
-
     if (token->type == T_HEREDOC)
 	{
         return (0);
     }
+	 file_name = strdup(token->next->value); //let it point to the next token
+	
+	int result = setup_redirection(data, token, file_name, oflag);//pass filename to this function
+
+    free(file_name); // Free the allocated memory
+
+    return result;
     return (1);
 }
 
@@ -297,7 +300,7 @@ int parser(t_data *data)
             }
             else if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
             {
-			
+				
                 if (apply_redirection(data, current_token) != 0)
                 {
                     ft_error("Error: Failed to apply redirection.\n");

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/12 14:08:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/12 14:24:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 //then we read until the delimiters appears again and we tokenize this input
 //error check if there is no second appearance of the delimiter
 
-//still need to make the heredoc input an T_Argument instead of a T_Command otherwise the check_command function won't work properly
 void heredoc(t_data *data, char *delimiter)
 {
 	char *input;
@@ -28,7 +27,6 @@ void heredoc(t_data *data, char *delimiter)
 		if(input && ft_strcmp(input, delimiter) == 0)
 		{
 			break;
-			free(input);
 		}
 		process_input(data, input);//puts input into tokens
 		
