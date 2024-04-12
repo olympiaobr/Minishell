@@ -14,21 +14,24 @@
 
 int	whitespace_chars(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' 
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f'
 		|| c == '\r');
 }
 
-t_token	*init_token(token_type type)
+t_token *init_token(token_type type, char *value, int is_quoted)
 {
-	t_token	*t;
+    t_token *t = malloc(sizeof(t_token));
+    if (!t) return NULL;
 
-	t = malloc(sizeof(t_token));
-	if (!t)
-		return (NULL);
-	t->type = type;
-	t->value = NULL;
-	t->next = NULL;
-	return (t);
+    t->type = type;
+    if (value) {
+        t->value = strdup(value);
+    } else {
+        t->value = NULL;
+    }
+    t->is_quoted = is_quoted;
+    t->next = NULL;
+    return t;
 }
 
 t_token	*allocate_token(token_type type, char *val, int is_quoted)
@@ -49,7 +52,7 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
 	{
         return (NULL);
     }
-    token = init_token(type);
+    token = init_token(type, trimmed_val, is_quoted);
     if (!token)
 	{
         free(trimmed_val);

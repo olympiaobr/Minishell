@@ -13,6 +13,24 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+t_command *init_command(char *command)
+{
+    t_command *cmd = malloc(sizeof(t_command));
+    if (!cmd)
+    {
+        perror("Failed to allocate memory for command structure");
+        return NULL;
+    }
+    ft_memset(cmd, 0, sizeof(t_command));
+    cmd->command = command ? strdup(command) : NULL;
+    cmd->argv = NULL;
+    cmd->option = NULL;
+    cmd->next = NULL;
+    cmd->argc = 0;
+    cmd->argv_array = NULL;
+    return cmd;
+}
+
 //  Sets/updates the command field in a t_command structure using the value from a t_token
 int set_command(t_command *cmd_struct, t_token *current_token)
 {
@@ -63,38 +81,33 @@ int add_option_to_command(t_command *cmd, t_token *token)
     return (add_token_to_list(&(cmd->option), token));
 }
 //Creates new command node from a T_COMMAND type token and appends it to the commands list in t_data.
-t_command	*create_command(t_data *data, t_token *token)
+t_command *create_command(t_data *data, t_token *token)
 {
-	t_command	*new_command;
-	t_command	*last_command;
-
-	if (!token || token->type != T_COMMAND)
-		return (NULL);
-
-	new_command = (t_command *)malloc(sizeof(t_command));
-	if (!new_command)
-	{
-		perror("Failed to allocate memory for new command node");
-		return (NULL);
-	}
-	ft_memset(new_command, 0, sizeof(t_command));
-	new_command->command = ft_strdup(token->value);
-	new_command->argv = NULL;
-	new_command->argc = 0;
-	new_command->next = NULL;
-
-	if (!data->commands)
-	{
-		data->commands = new_command;
-	}
-	else
-	{
-		last_command = data->commands;
-		while (last_command->next)
-			last_command = last_command->next;
-		last_command->next = new_command;
-	}
-	return (new_command);
+    t_command *new_command = (t_command *)malloc(sizeof(t_command));
+    if (!new_command)
+    {
+        perror("Failed to allocate memory for new command node");
+        return NULL;
+    }
+    ft_memset(new_command, 0, sizeof(t_command));
+    new_command->command = ft_strdup(token->value);
+    new_command->argv = NULL;
+    new_command->argc = 0;
+    new_command->next = NULL;
+    if (!data->commands)
+    {
+        data->commands = new_command;
+    }
+    else
+    {
+        t_command *last_command = data->commands;
+        while (last_command->next)
+        {
+            last_command = last_command->next;
+        }
+        last_command->next = new_command;
+    }
+    return new_command;
 }
 //Appends an arg token to the last command's argument list (argv)
 int link_arg_to_command(t_command *last_command, t_token *token)

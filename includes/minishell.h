@@ -93,7 +93,7 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted);
 void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
  char	*extract_next_word(char *str);
-t_token	*init_token(token_type type);
+t_token *init_token(token_type type, char *value, int is_quoted);
 char	*trim_value(const char *val);
 
 int input_check(const char *input);
@@ -126,7 +126,8 @@ void tokenize_path(const char *input);
 int set_command(t_command *cmd_struct, t_token *current_token);
 int add_token_to_list(t_token **token_list, t_token *token);
 int add_option_to_command(t_command *cmd, t_token *token);
-t_command	*create_command(t_data *data, t_token *token);
+t_command *init_command(char *command);
+t_command *create_command(t_data *data, t_token *token);
 int link_arg_to_command(t_command *last_command, t_token *token);
 int process_commands(t_data *data, t_token *token, t_command **current_cmd);
 int setup_redirection(t_data *data, t_token *token, int oflag);

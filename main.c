@@ -103,12 +103,15 @@ int main(int argc, char *argv[], char **envp )
 			free(data->user_input);
 			data->user_input = NULL;
 			free_all(data);
+			ft_memset(data, 0, sizeof(*data));
+			initialize_shell_components(data);
     	}
 	}
 	else
 	{
         ft_printf("Non-valid number of arguments!\n");
     }
+	free(data);
 	return (EXIT_SUCCESS);
 }
 
