@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/11 14:45:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/12 14:11:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,11 @@ int main(int argc, char *argv[], char **envp )
 {
     (void)argv;
     t_data *data;
-
+ 
+ 	data = init_data(envp);
     if (argc == 1)
     {
-        data = init_data(envp);
+       
         if (!data)
         {
             perror("Failed to initialize shell data structure");
@@ -71,9 +72,9 @@ int main(int argc, char *argv[], char **envp )
                 continue;
             }
             lexing_input(data);
+			check_for_heredoc(data);
             expansion(data);
-            //check_for_heredoc(data);
-            parser(data);
+            parser(data);  
 
             t_token *current = data->token_list;
             while (current != NULL)

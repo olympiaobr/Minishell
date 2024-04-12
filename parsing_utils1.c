@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/08 11:17:02 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/12 12:39:50 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ int setup_redirection(t_data *data, t_token *token, int oflag)
 int apply_redirection(t_data *data, t_token *token)
 {
     int oflag;
-
+	
     if (token->type == T_IN)
 	{
         oflag = O_RDONLY;
@@ -297,11 +297,13 @@ int parser(t_data *data)
             }
             else if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
             {
+			
                 if (apply_redirection(data, current_token) != 0)
                 {
                     ft_error("Error: Failed to apply redirection.\n");
                     return 1;
-                }
+                }	
+				
             }
         }
         current_token = current_token->next;
