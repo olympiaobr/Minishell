@@ -13,40 +13,70 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int main(int argc, char *argv[]/* , char **envp */)
+void display_commands(t_data *data)
 {
-	(void)argv;
-    t_data data;
+    t_command *cmd = data->commands;
+    int i = 0;
 
-	if (argc == 1)
+    while (cmd != NULL)
     {
-		/* data = init_data(envp);
-		if (!data)
-		{
+        ft_printf("\nCommand %d: %s\n", ++i, cmd->command);
+        t_token *arg = cmd->argv;
+        while (arg != NULL)
+        {
+            ft_printf("\tArgument: %s\n", arg->value);
+            arg = arg->next;
+        }
+        t_token *opt = cmd->option;
+        while (opt != NULL)
+        {
+            ft_printf("\tOption: %s\n", opt->value);
+            opt = opt->next;
+        }
+        cmd = cmd->next;
+    }
+    if (data->input_file)
+        ft_printf("\nInput Redirection: %s\n", data->input_file);
+    if (data->output_file)
+        ft_printf("Output Redirection: %s\n", data->output_file);
+}
+
+
+int main(int argc, char *argv[], char **envp )
+{
+    (void)argv;
+    t_data *data;
+
+    if (argc == 1)
+    {
+        data = init_data(envp);
+        if (!data)
+        {
             perror("Failed to initialize shell data structure");
             return EXIT_FAILURE;
-        } */
+        }
         while (1)
-		{
-            data.user_input = readline("minishell: ");
-            data.token_list = NULL;
+        {
+            data->user_input = readline("minishell: ");
+            data->token_list = NULL;
 
-            if (!data.user_input)
-			{
+            if (!data->user_input)
+            {
                 break;
             }
-            if (!validate_input(&data))
-			{
-                free(data.user_input);
+            if (!validate_input(data))
+            {
+                free(data->user_input);
+				data->user_input = NULL;
                 continue;
             }
-			lexing_input(&data);
-			expansion(&data);
-			check_for_heredoc(&data);
-			parsing(&data);
+            lexing_input(data);
+            expansion(data);
+            //check_for_heredoc(data);
+            parser(data);
 
-			t_token *current = data.token_list;
-			while (current != NULL)
+            t_token *current = data->token_list;
+            while (current != NULL)
 			{
             	ft_printf("Value: %s Type: ", current->value);
             	if (current->type == T_COMMAND) {
@@ -69,8 +99,10 @@ int main(int argc, char *argv[]/* , char **envp */)
             	ft_printf("\n");
             	current = current->next;
         	}
-			free(data.user_input);
-			free_all(&data);
+			display_commands(data);
+			free(data->user_input);
+			data->user_input = NULL;
+			free_all(data);
     	}
 	}
 	else

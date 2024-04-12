@@ -257,7 +257,7 @@ int parser(t_data *data)
 
     t_command *current_cmd = NULL;
     t_token *current_token = data->token_list;
-    int new_cmd = 1;
+    int new_cmd = 1; // Flag to indicate when to start processing a new command
 
     while (current_token != NULL)
     {
@@ -265,40 +265,35 @@ int parser(t_data *data)
         {
             new_cmd = 1;
         }
-        else if (current_token->type == T_COMMAND || current_token->type == T_ARGUMENT)
+        else
         {
-            if (process_commands(data, current_token, &current_cmd) != 0)
+            // Process commands or arguments
+            if (new_cmd || current_token->type == T_COMMAND || current_token->type == T_ARGUMENT)
             {
-                ft_error("Error: Failed to process command or argument.\n");
-                return 1;
+                // Delegate to process_commands for command creation and argument linking
+                int process_result = process_commands(data, current_token, &current_cmd);
+                if (process_result != 0)
+                {
+                    ft_error("Error: Failed to process command or argument.\n");
+                    return 1;
+                }
+                if (current_token->type == T_COMMAND)
+                {
+                    new_cmd = 0;
+                }
             }
-            if (current_token->type == T_COMMAND)
+            else if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
             {
-                new_cmd = 0;
-            }
-        }
-        else if (current_token->type == T_IN || current_token->type == T_OUT ||
-                 current_token->type == T_APPEND || current_token->type == T_HEREDOC)
-        {
-            if (apply_redirection(data, current_token) != 0)
-            {
-                ft_error("Error: Failed to apply redirection.\n");
-                return 1;
+                if (apply_redirection(data, current_token) != 0)
+                {
+                    ft_error("Error: Failed to apply redirection.\n");
+                    return 1;
+                }
             }
         }
         current_token = current_token->next;
     }
     return 0;
-}
-
-void free_commands(t_command *cmd)
-{
-    while (cmd)
-    {
-        t_command *next_cmd = cmd->next;
-        free_command(cmd);
-        cmd = next_cmd;
-    }
 }
 
 void free_command(t_command *cmd)
@@ -333,4 +328,14 @@ void free_command(t_command *cmd)
         free(cmd->argv_array);
     }
     free(cmd);
+}
+
+void free_commands(t_command *cmd)
+{
+    while (cmd)
+    {
+        t_command *next_cmd = cmd->next;
+        free_command(cmd);
+        cmd = next_cmd;
+    }
 }

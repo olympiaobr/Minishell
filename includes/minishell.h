@@ -121,7 +121,7 @@ t_data *init_data(char **envp);
 
 
 //parsing functions
-void parsing(t_data *data);
+int parser(t_data *data);
 void tokenize_path(const char *input);
 int set_command(t_command *cmd_struct, t_token *current_token);
 int add_token_to_list(t_token **token_list, t_token *token);

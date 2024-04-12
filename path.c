@@ -40,6 +40,21 @@ int init_env(t_data *data, char **env)
     data->env[i] = NULL;
     return (EXIT_SUCCESS);
 }
+
+void append_slash(char **directory)
+{
+    char *temp;
+
+    temp = *directory;
+    *directory = ft_strjoin(temp, "/");
+    if (!(*directory))
+	{
+        perror("Error appending slash to PATH directory");
+        free(temp);
+        exit(EXIT_FAILURE);
+    }
+    free(temp);
+}
 void prepare_environment(t_data *data)
 {
     int i;
@@ -62,47 +77,33 @@ void prepare_environment(t_data *data)
         i++;
     }
 }
-
-void append_slash(char **directory)
+char *cust_strstr(const char *haystack, const char *needle)
 {
-    char *temp;
+    const char *h_ptr;
+    const char *n_ptr;
 
-    temp = *directory;
-    *directory = ft_strjoin(temp, "/");
-    if (!(*directory))
-	{
-        perror("Error appending slash to PATH directory");
-        free(temp);
-        exit(EXIT_FAILURE);
+    if (*needle == '\0')
+    {
+        return ((char *)haystack);
     }
-    free(temp);
-}
-char *cust_strstr(const char *h, const char *n)
-{
-    const char *h;
-    const char *n;
 
-    if (*n == '\0')
+    while (*haystack != '\0')
     {
-        return ((char *)h);
-    }
-    while (*h != '\0')
-    {
-        if (*h == *n)
+        if (*haystack == *needle)
         {
-            h = h;
-            n = n;
-            while (*h != '\0' && *n != '\0' && *h == *n)
+            h_ptr = haystack;
+            n_ptr = needle;
+            while (*h_ptr != '\0' && *n_ptr != '\0' && *h_ptr == *n_ptr)
             {
-                h++;
-                n++;
+                h_ptr++;
+                n_ptr++;
             }
-            if (*n == '\0')
+            if (*n_ptr == '\0')
             {
-                return ((char *)h);
+                return ((char *)haystack);
             }
         }
-        h++;
+        haystack++;
     }
     return (NULL);
 }

@@ -180,7 +180,7 @@ int check_valid_command(t_data *data)
 
 
 
-
+/*
 void parsing(t_data *data)
 {
  	if(check_valid_command(data) != 1)
@@ -192,3 +192,4 @@ void parsing(t_data *data)
 		ft_printf("Valid command.\n");
 	}
 }
+*/
