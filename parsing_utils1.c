@@ -15,20 +15,25 @@
 
 t_command *init_command(char *command)
 {
-    t_command *cmd = malloc(sizeof(t_command));
+    t_command *cmd;
+
+    cmd = malloc(sizeof(t_command));
     if (!cmd)
     {
         perror("Failed to allocate memory for command structure");
-        return NULL;
+        return (NULL);
     }
     ft_memset(cmd, 0, sizeof(t_command));
-    cmd->command = command ? strdup(command) : NULL;
+    if (command)
+        cmd->command = strdup(command);
+    else
+        cmd->command = NULL;
     cmd->argv = NULL;
     cmd->option = NULL;
     cmd->next = NULL;
     cmd->argc = 0;
     cmd->argv_array = NULL;
-    return cmd;
+    return (cmd);
 }
 
 //  Sets/updates the command field in a t_command structure using the value from a t_token
@@ -252,7 +257,7 @@ int apply_redirection(t_data *data, t_token *token)
         return (0);
     }
 	 file_name = strdup(token->next->value); //let it point to the next token
-	
+
 	int result = setup_redirection(data, token, file_name, oflag);//pass filename to this function
 
     free(file_name); // Free the allocated memory
@@ -300,13 +305,13 @@ int parser(t_data *data)
             }
             else if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
             {
-				
+
                 if (apply_redirection(data, current_token) != 0)
                 {
                     ft_error("Error: Failed to apply redirection.\n");
                     return 1;
-                }	
-				
+                }
+
             }
         }
         current_token = current_token->next;
