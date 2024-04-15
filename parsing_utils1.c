@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/12 17:45:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:14:00 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,6 +328,7 @@ void free_command(t_command *cmd)
         arg = next_arg;
     }
     t_token *opt = cmd->option;
+	
     while (opt)
     {
         t_token *next_opt = opt->next;

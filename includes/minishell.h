@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/12 16:44:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:46:42 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
-
+# include <sys/wait.h>
 
 typedef enum token_type
 {
@@ -51,9 +51,11 @@ typedef struct s_command
 	char	*command; //command name like ls, cd,..
 	t_token	*argv;
 	t_token *option;
+
 	struct s_command *next; //array of command arguments
 	int		argc;     //number of command arguments
 	//bool built-in?
+	char *path;
 	char **argv_array;
 }	t_command;
 
@@ -134,7 +136,7 @@ int process_commands(t_data *data, t_token *token, t_command **current_cmd);
 int setup_redirection(t_data *data, t_token *token, char *filename, int oflag);
 int apply_redirection(t_data *data, t_token *token);
 int parser(t_data *data);
-
+int check_valid_command(t_data *data);
 
 //heredoc functions
 void check_for_heredoc(t_data *data);
@@ -142,6 +144,14 @@ void check_for_heredoc(t_data *data);
 
 //added helper functions
 int ft_strcmp(char *s1, char *s2);
+char *ft_strcpy(char *dest, const char *src);
+char *ft_strcat(char *dest, char *src);
+size_t ft_strspn(const char *str, const char *delim);
+size_t ft_strcspn(const char *str, const char *reject);
+char *custom_strtok(char *str, const char *delim);
+
+//execution functions
+void execution(t_data *data, t_command *cmd);
 
 //free functions
 void	free_tokens(t_data *data);

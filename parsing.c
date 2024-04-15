@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/09 12:16:54 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:22:00 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,14 @@ int check_valid_command(t_data *data)
        	 			ft_strcat(full_path, current->value);
         			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
         			{
-
+						data->command_list = (t_command *)malloc(sizeof(t_command));
+						if (data->command_list == NULL) 
+						{
+    						ft_printf("allocation failed\n");
+						}
+						data->command_list->path = NULL;
             			//ft_printf("Is a valid executable file in the path\n");
+						data->command_list->path = ft_strdup(full_path);
 						valid = 1;
             			break;
         			}
