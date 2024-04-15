@@ -6,14 +6,14 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/15 14:47:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:54:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
 
-void execution(t_data *data, t_command *cmd)
+void execution(t_data *data/* , t_command *cmd */)
 {
 	char *const *env = NULL;
 	if(check_valid_command(data) != 1)
@@ -23,15 +23,17 @@ void execution(t_data *data, t_command *cmd)
 	else
 	{
 		ft_printf("Valid command.\n");
-		char *path = data->command_list->path;
-		char *command = data->command_list->command; 
+		char *path = NULL;
+		char *command = NULL;
 		char *option = NULL;
-		option = cmd->option->value;//check if it's a valid string first
-		if(!option)
-		{
-			option = NULL;
-		}
+		path = data->command_list->path;
+		command = data->command_list->command; 
 		
+	
+		if(data->commands->option != NULL)
+		{	printf("option is: %s\n", data->commands->option->value);
+			option = data->commands->option->value;//check if it's a valid string first
+		}
 		char *const argv[] = {command, option, NULL};
 		if(fork() == 0)
 		{

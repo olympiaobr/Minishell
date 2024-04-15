@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/15 14:46:42 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 15:10:23 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ size_t ft_strcspn(const char *str, const char *reject);
 char *custom_strtok(char *str, const char *delim);
 
 //execution functions
-void execution(t_data *data, t_command *cmd);
+void execution(t_data *data/* , t_command *cmd */);
 
 //free functions
 void	free_tokens(t_data *data);

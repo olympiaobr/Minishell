@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/15 14:46:52 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/15 15:10:33 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[], char **envp )
 {
     (void)argv;
     t_data *data;
-	t_command *cmd = NULL;
+	//t_command *cmd = NULL;
  	data = init_data(envp);
     if (argc == 1)
     {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[], char **envp )
 			check_for_heredoc(data);
             expansion(data);
             parser(data);  
-			execution(data, cmd);
+			execution(data/* , cmd */);
 
             t_token *current = data->token_list;
             while (current != NULL)
