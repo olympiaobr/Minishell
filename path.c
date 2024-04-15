@@ -199,49 +199,7 @@ void free_all(t_data *data)
 }
 
 /*
-to be figured out
-void resolve_command(char **path_dirs, char *cmd, int *cmd_found)
-{
-    if (!path_dirs || !*path_dirs)
-	{
-        *cmd_found = 0;
-        return;
-    }
-    char *cmd_path = ft_strjoin3(*path_dirs, "/", cmd);
-    if (access(cmd_path, X_OK) == 0)
-	{
-        *cmd_found = 1;
-        free(cmd_path);
-        return;
-    }
-    free(cmd_path);
-    resolve_command(path_dirs + 1, cmd, cmd_found);
-}
 
-void resolve_command(t_data *data, char *cmd)
-{
-    data->cmd_found = 0;
-    resolve_command(data->path_dirs, cmd, &data->cmd_found);
-}
-
-int check_command_in_path(char **env_paths, const char *command)
-{
-    if (!*env_paths)
-	{
-        return 0;
-    }
-    char *full_path = ft_strjoin(*env_paths, "/");
-    char *executable = ft_strjoin(full_path, command);
-    free(full_path);
-
-    if (access(executable, X_OK) == 0)
-	{
-        free(executable);
-        return 1;
-    }
-    free(executable);
-    return check_command_in_path(env_paths + 1, command);
-}
 
 int check_valid_command(t_data *data, const char *command)
 {
