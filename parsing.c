@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 14:12:54 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/16 14:26:01 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ int check_valid_command(t_data *data)
 			
 				valid = 1;
 				data->commands->path = data->token_list->value;	
-				printf("path in check(): %s\n", full_path);
+				printf("path in check(): %s\n", data->commands->path);
         		
 			}
 			else
@@ -174,7 +174,8 @@ int check_valid_command(t_data *data)
 						
 						
             			//ft_printf("Is a valid executable file in the path\n");
-						data->commands->path = ft_strdup(full_path);	printf("path in check(): %s\n", full_path);
+						data->commands->path = ft_strdup(full_path);	
+						printf("path in check(): %s\n", full_path);
 						valid = 1;
             			break;
         			}
