@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 11:52:12 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/16 14:03:41 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,18 @@ void execution(t_data *data/* , t_command *cmd */)
 		char *path = NULL;
 		char *command = NULL;
 		char *option = NULL;
-		path = data->command_list->path;
+		path = cmd->path;
 		command = cmd->command; 
 
-		printf("command: %s\n", cmd->command);//doesn't contain the command (fix!!)
-		
+		printf("command: %s\n", cmd->command);
+		printf("path: %s\n", path);
 		if(data->commands != NULL && data->commands->option != NULL)//check if option exists
 		{	
 			printf("option is: %s\n", data->commands->option->value);
 			option = data->commands->option->value;
 		}
 		char *const argv[] = {command, option, NULL};
-		//printf("command: %s\n", data->command_list->command);//doesn't contain the command (fix!!)
+	
 		if(fork() == 0)//child process
 		{
 			
@@ -49,6 +49,7 @@ void execution(t_data *data/* , t_command *cmd */)
 		{
 			wait(NULL);
 		}
+		free(data->command_list);
 	}
 	
 }

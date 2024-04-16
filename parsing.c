@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/15 17:45:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/16 14:12:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,14 @@ int check_valid_command(t_data *data)
 			{
 				valid = 1;
 			}
+			else if(current->value[0] == '/')
+			{
+			
+				valid = 1;
+				data->commands->path = data->token_list->value;	
+				printf("path in check(): %s\n", full_path);
+        		
+			}
 			else
 			{
     			while (dir != NULL)
@@ -166,14 +174,14 @@ int check_valid_command(t_data *data)
 						
 						
             			//ft_printf("Is a valid executable file in the path\n");
-						data->command_list->path = ft_strdup(full_path);
+						data->commands->path = ft_strdup(full_path);	printf("path in check(): %s\n", full_path);
 						valid = 1;
             			break;
         			}
         			// Move to the next directory
         			dir = custom_strtok(NULL, ":");
 				}
-				printf("path: %s\n", full_path);
+			
 				if (access(full_path, X_OK) != 0)
     			{
 					not_valid = -1;
@@ -183,6 +191,7 @@ int check_valid_command(t_data *data)
 		}
 		current = current->next;
 	}
+
 	return (valid * not_valid);
 }
 
