@@ -152,6 +152,8 @@ char *custom_strtok(char *str, const char *delim);
 
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
+int is_builtin(const char *command);
+
 
 //free functions
 void	free_tokens(t_data *data);

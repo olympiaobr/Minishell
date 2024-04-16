@@ -24,12 +24,12 @@ int execute_builtin(t_command *cmd, t_data *data)
         return (echo_cmd(cmd));
     else if (ft_strcmp(cmd->command, "pwd") == 0)
         return (pwd_cmd());
+    else if (ft_strcmp(cmd->command, "env") == 0)
+        return (env_cmd(data));
     else if (ft_strcmp(cmd->command, "export") == 0)
         return (export_cmd(cmd, data));
     else if (ft_strcmp(cmd->command, "unset") == 0)
         return (unset_cmd(cmd, data));
-    else if (ft_strcmp(cmd->command, "env") == 0)
-        return (env_cmd(data));
     else if (ft_strcmp(cmd->command, "exit") == 0)
         return (exit_cmd(cmd, data));
     return (-1);
@@ -63,7 +63,7 @@ int env_cmd(t_data *data)
     if (data->commands && data->commands->argc > 1)
 	{
         ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
-        return EXIT_FAILURE;
+        return (EXIT_FAILURE);
     }
     while (envp[i])
 	{
@@ -77,5 +77,49 @@ int env_cmd(t_data *data)
         }
         i++;
     }
-    return EXIT_SUCCESS;
+    return (EXIT_SUCCESS);
+}
+
+int n_option(const char *arg)
+{
+    int j;
+
+    if (arg[0] != '-')
+        return (0);
+    j = 1;
+    while (arg[j] != '\0')
+	{
+        if (arg[j] != 'n')
+            return (0);
+        j++;
+    }
+    return (1);
+}
+
+int echo_cmd(t_command *cmd)
+{
+    t_token *option = cmd->option;
+    t_token *current_arg = cmd->argv;
+    int newline = 1;
+    int first = 1;
+
+    while (option && n_option(option->value))
+	{
+        newline = 0;
+        option = option->next;
+    }
+    while (current_arg)
+	{
+        if (current_arg->type == T_ARGUMENT)
+		{
+            if (!first)
+                ft_printf(" ");
+            ft_printf("%s", current_arg->value);
+            first = 0;
+        }
+        current_arg = current_arg->next;
+    }
+    if (newline)
+        ft_printf("\n");
+    return (0);
 }
