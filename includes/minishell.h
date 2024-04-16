@@ -153,7 +153,13 @@ char *custom_strtok(char *str, const char *delim);
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
 int is_builtin(const char *command);
+int execute_builtin(t_command *cmd, t_data *data);
+int cd_cmd(t_data *data, t_command *cmd);
+int pwd_cmd(void);
+int env_cmd(t_data *data);
+int echo_cmd(t_command *cmd);
 
+void execute_external_command(t_data *data, t_command *cmd);
 
 //free functions
 void	free_tokens(t_data *data);
