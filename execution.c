@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 17:08:07 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/16 18:01:19 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ void execution(t_data *data/* , t_command *cmd */)
 			{
 				option = data->commands->option->value;	
 				printf("option is: %s\n", data->commands->option->value);
-				arguments = option; //if it does then we turn it into an argument // but what happens if we have options and arguments mixed(fix!!)
+				arguments = option; //if it does then we turn it into an argument // but what happens if we have options and arguments mixed or if I have multiple arguments like grep "main" main.c (fix!!)
 			}
-			else if(data->commands->argv != NULL)//check if arguments exist
+			if(data->commands->argv != NULL)//check if arguments exist
 			{
 				arguments = data->commands->argv->value;
 				printf("argument is: %s\n", data->commands->argv->value);
