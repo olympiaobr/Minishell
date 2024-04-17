@@ -59,6 +59,13 @@ typedef struct s_command
 	char **argv_array;
 }	t_command;
 
+typedef struct s_env_var
+{
+    char *key;
+    char *value;
+    struct s_env_var *next;
+}	t_env_var;
+
 typedef struct data_all
 {
 	t_token	*token_list;
@@ -75,6 +82,7 @@ typedef struct data_all
     int     heredoc;        // Flag for heredoc (<<)
 	char **path_dirs;  // stores parsed PATH directories
     // char *path;        // stores duplicated PATH env var
+	t_env_var *env_head;
 	char **env;
 	t_command *commands;
 	int *create_new_command;
@@ -160,7 +168,7 @@ int env_cmd(t_data *data);
 int echo_cmd(t_command *cmd);
 
 void execute_external_command(t_data *data, t_command *cmd);
-
+char *find_env_var(t_env_var *head, const char *key);
 //free functions
 void	free_tokens(t_data *data);
 void free_commands(t_command *commands);
