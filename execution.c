@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 18:01:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/17 15:04:28 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,11 @@ void execute_external_command(t_data *data, t_command *cmd)
     char *path = cmd->path;
     char *command = cmd->command;
     char *option = NULL;
-    char *arguments = NULL;
-
-    if (cmd->option != NULL)
+    char *argument1 = NULL;
+	char *argument2 = NULL;
+	int argc = 1; //cause we start with the command
+	
+   /*  if (cmd->option != NULL)
 	{
         option = cmd->option->value;
         printf("option is: %s\n", option);
@@ -34,7 +36,50 @@ void execute_external_command(t_data *data, t_command *cmd)
         printf("argument is: %s\n", arguments);
     }
 
-    char *const argv[] = {command, arguments, NULL};
+    char *const argv[] = {command, arguments, NULL}; */
+
+	if (cmd->option != NULL)
+	{
+        option = cmd->option->value;
+        printf("option is: %s\n", option);
+		argc++;
+    }
+	if (cmd->argv != NULL)
+	{
+        argument1 = cmd->argv->value;
+        printf("argument1 is: %s\n", argument1);
+		argc++;
+		if(cmd->argv->next != NULL && cmd->argv->next->value != NULL)
+		{
+			argument2 = cmd->argv->next->value;
+       	 	printf("argument2 is: %s\n", argument2);
+			argc++;
+		}
+    }
+	
+	
+	char **argv = (char **)malloc(sizeof(char) * (argc + 1));
+	if(!argv)
+	{
+		ft_printf("Memory allocation failed\n");
+		 exit(EXIT_FAILURE);
+	}
+	int i = 0;
+	argv[i++] = command;
+	if(option != NULL)
+	{
+		argv[i++] = option;
+	}
+	if(argument1 != NULL)
+	{
+		argv[i++] = argument1;
+	}
+	if(argument2 != NULL)
+	{
+		argv[i++] = argument2;
+	}
+	argv[i] = NULL;
+	
     char *const *env = NULL;
 
     if (fork() == 0)
