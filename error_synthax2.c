@@ -13,27 +13,40 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int check_special_chars(const char *input) {
-    char curr_quote = 0;  // To keep track of whether we are inside quotes
-    int escaped = 0;      // To track if the current character is preceded by a backslash
+int check_special_chars(const char *input)
+{
+    char curr_quote = 0;
+    int escaped = 0;
 
-    while (*input) {
-        if (escaped) {
-            escaped = 0;  // Reset escape status after skipping one character
-        } else if (*input == '\\') {
-            escaped = 1;  // Set escaped to true if a backslash is encountered
-        } else if ((*input == '\'' || *input == '\"') && !escaped) {
-            if (curr_quote == '\0') {  // Not inside quotes
-                curr_quote = *input;  // Start quote
-            } else if (curr_quote == *input) {
-                curr_quote = '\0';  // End quote
+    while (*input)
+    {
+        if (escaped)
+        {
+            escaped = 0;
+
+        }
+        else if (*input == '\\')
+        {
+            escaped = 1;
+        }
+        else if ((*input == '\'' || *input == '\"') && !escaped)
+        {
+            if (curr_quote == '\0')
+            {
+                curr_quote = *input;
             }
-        } else if ((curr_quote == '\0') && (*input == ';' || (*input == '\\' && *(input + 1) != '\\'))) {
-            return 1;  // Found special character outside of quotes or single backslash
+            else if (curr_quote == *input)
+            {
+                curr_quote = '\0';
+            }
+        }
+        else if ((curr_quote == '\0') && (*input == ';' || (*input == '\\' && *(input + 1) != '\\')))
+        {
+            return 1;
         }
         ++input;
     }
-    return 0;  // No illegal characters found outside of quotes
+    return 0;
 }
 
 int quote_error(const char *input)
