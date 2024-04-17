@@ -13,57 +13,68 @@
 #include "includes/minishell.h"
 #include "Libft/libft.h"
 
-void execution(t_data *data/* , t_command *cmd */)
+void execute_external_command(t_data *data, t_command *cmd)
 {
-	char *const *env = NULL;
-	if(check_valid_command(data) != 1)
+    (void)data;
+
+    char *path = cmd->path;
+    char *command = cmd->command;
+    char *option = NULL;
+    char *arguments = NULL;
+
+    if (cmd->option != NULL)
 	{
-		ft_printf("Not a valid command.\n");
-	}
+        option = cmd->option->value;
+        printf("option is: %s\n", option);
+        arguments = option;
+    }
+    if (cmd->argv != NULL)
+	{
+        arguments = cmd->argv->value;
+        printf("argument is: %s\n", arguments);
+    }
+
+    char *const argv[] = {command, arguments, NULL};
+    char *const *env = NULL;
+
+    if (fork() == 0)
+	{ // child process
+        execve(path, argv, env);
+        perror("execve");
+        exit(EXIT_FAILURE);
+    }
+	else
+	{ // parent process
+        wait(NULL);
+    }
+}
+
+void execution(t_data *data)
+{
+    if (check_valid_command(data) != 1)
+	{
+        ft_printf("Not a valid command.\n");
+    }
 	else
 	{
-		ft_printf("Valid command.\n");
-		t_command *cmd = data->commands;
-		char *path = NULL;
-		char *command = NULL;
-		char *option = NULL;
-		char *arguments = NULL;
-		path = cmd->path;
-		command = cmd->command; 
-
-		printf("command: %s\n", cmd->command);
-		printf("path: %s\n", path);
-		if(data->commands != NULL )
-		{	
-			if(data->commands->option != NULL)//check if option exists
+        ft_printf("Valid command.\n");
+        t_command *cmd = data->commands;
+        while (cmd != NULL) {
+            if (is_builtin(cmd->command))
 			{
-				option = data->commands->option->value;	
-				printf("option is: %s\n", data->commands->option->value);
-				arguments = option; //if it does then we turn it into an argument // but what happens if we have options and arguments mixed or if I have multiple arguments like grep "main" main.c (fix!!)
-			}
-			if(data->commands->argv != NULL)//check if arguments exist
+                ft_printf("Executing built-in command: %s\n", cmd->command);
+                if (execute_builtin(cmd, data) == -1)
+				{
+                    ft_printf("Error executing built-in command.\n");
+                }
+            }
+			else
 			{
-				arguments = data->commands->argv->value;
-				printf("argument is: %s\n", data->commands->argv->value);
-			}
-		}
-	
-		char *const argv[] = {command, arguments, NULL};
-	
-		
-		if(fork() == 0)//child process
-		{
-		
- 			execve(path, argv, env); // Execute the command
-       	 	perror("execve"); //in case of an error
-		}
-		else //this is the parent process
-		{
-			wait(NULL);
-		}
-		free(data->command_list);
-	}
-	
+                execute_external_command(data, cmd);
+            }
+            cmd = cmd->next;
+        }
+    }
 }
 
 

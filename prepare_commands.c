@@ -129,13 +129,6 @@ char *find_executable_path(char *command, t_data *data)
     }
     return NULL;
 }
-int is_builtin(const char *command)
-{
-    return (strcmp(command, "cd") == 0 || strcmp(command, "echo") == 0 ||
-            strcmp(command, "pwd") == 0 || strcmp(command, "export") == 0 ||
-            strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
-            strcmp(command, "exit") == 0);
-}
 
 void process_commands_(t_data *data)
 {

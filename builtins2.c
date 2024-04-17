@@ -13,7 +13,7 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int check_arguments(t_command *cmd)
+int check_args(t_command *cmd)
 {
     if (cmd->argc > 2)
     {
@@ -173,3 +173,10 @@ int cd_cmd(t_data *data, t_command *cmd)
     return EXIT_SUCCESS;
 }
 
+int is_builtin(const char *command)
+{
+    return (strcmp(command, "cd") == 0 || strcmp(command, "echo") == 0 ||
+            strcmp(command, "pwd") == 0 || strcmp(command, "export") == 0 ||
+            strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
+            strcmp(command, "exit") == 0);
+}

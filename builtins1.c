@@ -19,19 +19,19 @@ int execute_builtin(t_command *cmd, t_data *data)
         return (-1);
 
     if (ft_strcmp(cmd->command, "cd") == 0)
-        return (cd_cmd(cmd, data));
+        return (cd_cmd(data, cmd));
     else if (ft_strcmp(cmd->command, "echo") == 0)
         return (echo_cmd(cmd));
     else if (ft_strcmp(cmd->command, "pwd") == 0)
         return (pwd_cmd());
     else if (ft_strcmp(cmd->command, "env") == 0)
         return (env_cmd(data));
-    else if (ft_strcmp(cmd->command, "export") == 0)
-        return (export_cmd(cmd, data));
-    else if (ft_strcmp(cmd->command, "unset") == 0)
-        return (unset_cmd(cmd, data));
-    else if (ft_strcmp(cmd->command, "exit") == 0)
-        return (exit_cmd(cmd, data));
+    //else if (ft_strcmp(cmd->command, "export") == 0)
+        //return (export_cmd(cmd, data));
+    //else if (ft_strcmp(cmd->command, "unset") == 0)
+        //return (unset_cmd(cmd, data));
+    //else if (ft_strcmp(cmd->command, "exit") == 0)
+        //return (exit_cmd(cmd, data));
     return (-1);
 }
 int pwd_cmd(void)
