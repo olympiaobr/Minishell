@@ -69,7 +69,7 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
 	//
-	
+
 	//
 	create_and_append_token(&data->token_list, operator_str, type, 0);
 	free(operator_str);
@@ -82,26 +82,26 @@ char *edge_case(char *str)
     size_t len = strlen(str);
     int i = 0;
     int j = 0;
-    char *result = malloc(len + 1); 
-    if (!result) 
+    char *result = malloc(len + 1);
+    if (!result)
     {
-        return NULL; 
+        return NULL;
     }
-    int in_quote = 0; 
+    int in_quote = 0;
     char quote_char = '\0';
     while (str[j] != '\0')
     {
         if (!in_quote && (str[j] == '\'' || str[j] == '\"'))
         {
-            in_quote = 1; 
-            quote_char = str[j]; 
+            in_quote = 1;
+            quote_char = str[j];
             j++;
         }
         else if (in_quote && str[j] == quote_char) // If inside a quoted section and encounter the matching closing quote
         {
             in_quote = 0;
             quote_char = '\0';
-            j++; 
+            j++;
         }
         else
         {
@@ -122,12 +122,27 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
     size_t start_idx = *idx;
     int in_quote = 0;
     char quote_char = '\0';
-    while (str[*idx] && (in_quote || (!whitespace_chars(str[*idx]) && !shell_operators(str[*idx]))))
+    char *word;
+    size_t length;
+
+    while (str[*idx])
 	{
+        if (str[*idx] == '\\' && in_quote && quote_char == '\"' &&
+            (str[*idx + 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
+			{
+            // Move past the escape character and the escaped character in the context of double quotes
+            	(*idx) += 2;
+            	continue;
+			}
         quote_status(str[*idx], &in_quote, &quote_char);
+        if (!in_quote && (whitespace_chars(str[*idx]) || shell_operators(str[*idx])))
+		{
+            break;
+        }
         (*idx)++;
     }
-    size_t length = *idx - start_idx;
+
+    length = *idx - start_idx;
     int is_quoted = 0; // 0: unquoted, 1: single-quoted, 2: double-quoted
     if (quote_char == '\'')
 	{
@@ -136,21 +151,30 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
 	{
         is_quoted = 2;
     }
-	// Adjust start_idx and length if the word is quoted and there are quotes at the beginning and end of token
-	if (!in_quote && quote_char && length >= 2 && str[start_idx] == quote_char && str[*idx - 1] == quote_char) 
+    // Check if the word is completely enclosed by the same quote
+    if (!in_quote && quote_char && length >= 2 && str[start_idx] == quote_char && str[*idx - 1] == quote_char)
 	{
-    	start_idx++;
-    	length -= 2;
-	}
-	else if(quote_char && str[start_idx] != quote_char && str[*idx - 1] != quote_char)
+        start_idx++;  // Skip the starting quote
+        length -= 2;  // Reduce length to remove both quotes
+        word = ft_substr(str, start_idx, length);
+    }
+	else if (quote_char && str[start_idx] != quote_char && str[*idx - 1] != quote_char)
 	{
-		str = edge_case(str);
-		
-	}
-    char *word = ft_substr(str, start_idx, length);
-	printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
-    create_and_append_token(&data->token_list, word, expected_type, is_quoted);
-    free(word);
+        char *temp = ft_substr(str, start_idx, length);
+        word = edge_case(temp);
+        free(temp);
+    }
+	else
+	{
+        // Extract the substring as is when no enclosing quotes are adjusted
+        word = ft_substr(str, start_idx, length);
+    }
+    if (word)
+	{
+        printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
+        create_and_append_token(&data->token_list, word, expected_type, is_quoted);
+        free(word);
+    }
 }
 
 
