@@ -50,7 +50,7 @@ int main(int argc, char *argv[], char **envp )
  	data = init_data(envp);
     if (argc == 1)
     {
-       
+
         if (!data)
         {
             perror("Failed to initialize shell data structure");
@@ -71,10 +71,11 @@ int main(int argc, char *argv[], char **envp )
 				data->user_input = NULL;
                 continue;
             }
+            add_history(data->user_input);
             lexing_input(data);
 			check_for_heredoc(data);
             expansion(data);
-            parser(data);  
+            parser(data);
 			execution(data/* , cmd */);
 
             t_token *current = data->token_list;
