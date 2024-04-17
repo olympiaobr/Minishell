@@ -44,134 +44,129 @@ char *get_env_var(char **envp, const char *name)
 }
 
 // update or add an environment variable if valid
-int set_env_var(char **envp, const char *name, const char *value)
-{
-    char *new_val;
-    int i;
-    size_t name_len;
-
-    if (!name || !value || name[0] == '\0' || name[0] == '=' || ft_strchr(name, '=') != NULL)
-    {
+int set_env_var(t_env_var **env_head, const char *name, const char *value) {
+    if (!name || !value || name[0] == '\0' || strchr(name, '=') != NULL) {
         fprintf(stderr, "Invalid environment variable name\n");
         return -1;  // Invalid name
     }
-    new_val = malloc(ft_strlen(name) + ft_strlen(value) + 2);
-    if (new_val == NULL)
-    {
-        perror("Memory allocation failed for environment variable");
+
+    t_env_var *current = *env_head;
+    t_env_var *last = NULL;
+
+    // Check if environment variable already exists and update it
+    while (current != NULL) {
+        if (strcmp(current->key, name) == 0) {
+            free(current->value);  // Free the old value
+            current->value = strdup(value);  // Set new value
+            if (!current->value) {
+                perror("Memory allocation failed for environment value");
+                return -1;
+            }
+            return 0;  // Successfully updated
+        }
+        last = current;
+        current = current->next;
+    }
+
+    // If not found, add new environment variable
+    t_env_var *new_var = malloc(sizeof(t_env_var));
+    if (!new_var) {
+        perror("Memory allocation failed for new environment variable");
         return -1;
     }
-    sprintf(new_val, "%s=%s", name, value);
 
-    // Replace or add new variable
-    name_len = strlen(name);
-    i = 0;
-    while (envp[i] != NULL)
-    {
-        if (ft_strncmp(envp[i], name, name_len) == 0 && envp[i][name_len] == '=')
-        {
-            free(envp[i]);
-            envp[i] = new_val;
-            return 0;
-        }
-        i++;
+    new_var->key = strdup(name);
+    if (!new_var->key) {
+        free(new_var);
+        perror("Memory allocation failed for environment key");
+        return -1;
+    }
+    new_var->value = strdup(value);
+    if (!new_var->value) {
+        free(new_var->key);
+        free(new_var);
+        perror("Memory allocation failed for environment value");
+        return -1;
+    }
+    new_var->next = NULL;
+
+    if (last) {
+        last->next = new_var;  // Append to the end of the list
+    } else {
+        *env_head = new_var;  // New head of the list if list was empty
     }
 
-     // Handle adding a new variable when no match is found
-    i = 0;
-    while (envp[i] != NULL)
-    {
-        i++;
-    }
-    envp[i] = new_val;
-    envp[i + 1] = NULL;
     return 0;
 }
 
-int cd_cmd(t_data *data, t_command *cmd)
-{
-    char *oldpwd;
-    char *target;
-    char *newpwd;
-    char *home;
-    char *oldPath;
-    int status;
+char *find_env_var(t_env_var *head, const char *key) {
+    while (head != NULL) {
+        if (strcmp(head->key, key) == 0) {
+            return head->value;
+        }
+        head = head->next;
+    }
+    return NULL; // Not found
+}
 
-    oldpwd = getcwd(NULL, 0);
-    if (check_args(cmd) != EXIT_SUCCESS)
-    {
+int cd_cmd(t_data *data, t_command *cmd) {
+    char *oldpwd = getcwd(NULL, 0);
+    if (check_args(cmd) != EXIT_SUCCESS) {
         free(oldpwd);
         data->exit_status = EXIT_FAILURE;
         return EXIT_FAILURE;
     }
 
-    if (cmd->argc > 1)
-    {
-        target = cmd->argv->next->value;
-    }
-    else
-    {
-        target = NULL;
-    }
-    if (target == NULL || strcmp(target, "~") == 0)
-    {
-        home = get_env_var(data->env, "HOME");
-        if (home != NULL)
-        {
-            target = home;
-        }
-        else
-        {
-            target = "/";
-        }
-    }
-    else if (ft_strcmp(target, "-") == 0)
-    {
-        oldPath = get_env_var(data->env, "OLDPWD");
-        if (oldPath == NULL)
-        {
+    char *target = (cmd->argc > 1) ? cmd->argv->next->value : NULL;
+    char *home = find_env_var(data->env_head, "HOME");
+    char *oldPath = find_env_var(data->env_head, "OLDPWD");
+
+    target = target ? target : (home ? home : "/");
+    if (strcmp(target, "-") == 0) {
+        target = oldPath ? oldPath : "/";
+        if (!oldPath) {
             fprintf(stderr, "cd: OLDPWD not set\n");
             free(oldpwd);
             data->exit_status = EXIT_FAILURE;
             return EXIT_FAILURE;
         }
         printf("%s\n", oldPath);
-        target = oldPath;
     }
 
-    status = chdir(target);
-    if (status != 0)
-    {
+    int status = chdir(target);
+    if (status != 0) {
         perror("cd");
         free(oldpwd);
         data->exit_status = EXIT_FAILURE;
         return EXIT_FAILURE;
     }
-    newpwd = getcwd(NULL, 0);
-    if (newpwd == NULL)
-        newpwd = ft_strdup("");
 
-    if (set_env_var(data->env, "OLDPWD", oldpwd) != 0)
-    {
-        fprintf(stderr, "cd: error updating OLDPWD environment variable\n");
-        free(oldpwd);
-        free(newpwd);
-        data->exit_status = EXIT_FAILURE;
-        return EXIT_FAILURE;
-    }
-    if (set_env_var(data->env, "PWD", newpwd) != 0)
-    {
-        fprintf(stderr, "cd: error updating PWD environment variable\n");
-        free(oldpwd);
-        free(newpwd);
-        data->exit_status = EXIT_FAILURE;
-        return EXIT_FAILURE;
-    }
+    char *newpwd = getcwd(NULL, 0);
+    if (!newpwd) newpwd = strdup("");
+    if (set_env_var(&(data->env_head), "OLDPWD", oldpwd) != 0) {
+    fprintf(stderr, "cd: error updating OLDPWD environment variable\n");
+    free(oldpwd);
+    free(newpwd);
+    data->exit_status = EXIT_FAILURE;
+    return EXIT_FAILURE;
+}
+
+if (set_env_var(&(data->env_head), "PWD", newpwd) != 0) {
+    fprintf(stderr, "cd: error updating PWD environment variable\n");
+    free(oldpwd);
+    free(newpwd);
+    data->exit_status = EXIT_FAILURE;
+    return EXIT_FAILURE;
+}
+
+
     free(oldpwd);
     free(newpwd);
     data->exit_status = EXIT_SUCCESS;
     return EXIT_SUCCESS;
 }
+
+
 
 int is_builtin(const char *command)
 {
@@ -179,4 +174,67 @@ int is_builtin(const char *command)
             strcmp(command, "pwd") == 0 || strcmp(command, "export") == 0 ||
             strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
             strcmp(command, "exit") == 0);
+}
+
+
+void add_or_update_env_var(t_env_var **head, const char *key, const char *value) {
+    t_env_var *current = *head;
+    t_env_var *prev = NULL;
+
+    // Search for existing variable and update
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            free(current->value);
+            current->value = strdup(value);
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    // Create new variable
+    t_env_var *new_var = malloc(sizeof(t_env_var));
+    if (!new_var) return; // Handle malloc failure
+    new_var->key = strdup(key);
+    new_var->value = strdup(value);
+    new_var->next = NULL;
+
+    if (prev) {
+        prev->next = new_var;
+    } else {
+        *head = new_var;
+    }
+}
+
+int remove_env_var(t_env_var **head, const char *key) {
+    t_env_var *current = *head;
+    t_env_var *prev = NULL;
+
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                *head = current->next;
+            }
+            free(current->key);
+            free(current->value);
+            free(current);
+            return 0; // Success
+        }
+        prev = current;
+        current = current->next;
+    }
+    return -1; // Not found
+}
+
+void free_env(t_env_var *env) {
+    t_env_var *current = env;
+    while (current) {
+        t_env_var *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
 }

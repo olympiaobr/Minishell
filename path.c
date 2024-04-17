@@ -13,33 +13,40 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int init_env(t_data *data, char **env)
-{
-    int i;
-
-    i = 0;
-    while (env[i])
-        i++;
-    data->env = (char **)malloc(sizeof(char *) * (i + 1));
-    if (!data->env)
-    {
-        perror("Error allocating memory for env");
-        return (EXIT_FAILURE);
-    }
-    i = 0;
-    while (env[i])
-    {
-        data->env[i] = ft_strdup(env[i]);
-        if (!data->env[i])
-        {
-            perror("Error duplicating env variable");
-            return (EXIT_FAILURE);
+int init_env(t_data *data, char **env) {
+    t_env_var *last = NULL;
+    for (int i = 0; env[i]; i++) {
+        char *key = strdup(env[i]);
+        if (!key) {
+            perror("Failed to duplicate environment key");
+            return EXIT_FAILURE;
         }
-        i++;
+        char *separator = strchr(key, '=');
+        if (separator) {
+            *separator = '\0';  // Null-terminate the key
+            separator++;        // Move to the beginning of the value
+        }
+
+        t_env_var *new_var = malloc(sizeof(t_env_var));
+        if (!new_var) {
+            free(key);
+            perror("Failed to allocate memory for new environment variable");
+            return EXIT_FAILURE;
+        }
+        new_var->key = key;
+        new_var->value = strdup(separator ? separator : "");
+        new_var->next = NULL;
+
+        if (last) {
+            last->next = new_var;
+        } else {
+            data->env_head = new_var;  // Assuming `env_head` is the start of your linked list in `t_data`
+        }
+        last = new_var;
     }
-    data->env[i] = NULL;
-    return (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }
+
 
 void append_slash(char **directory)
 {
@@ -55,26 +62,19 @@ void append_slash(char **directory)
     }
     free(temp);
 }
-void prepare_environment(t_data *data)
-{
-    int i;
-    char *path_value = cust_getenv("PATH", data);
-    if (!path_value)
-    {
+void prepare_environment(t_data *data) {
+    char *path_value = find_env_var(data->env_head, "PATH");
+    if (!path_value) {
         perror("Error: PATH variable not found.");
         exit(EXIT_FAILURE);
     }
     data->path_dirs = ft_split(path_value, ':');
-    if (!data->path_dirs)
-    {
+    if (!data->path_dirs) {
         perror("Error allocating memory for path directories");
         exit(EXIT_FAILURE);
     }
-    i = 0;
-    while (data->path_dirs[i])
-    {
+    for (int i = 0; data->path_dirs[i]; i++) {
         append_slash(&(data->path_dirs[i]));
-        i++;
     }
 }
 char *cust_strstr(const char *haystack, const char *needle)
@@ -153,6 +153,7 @@ t_data *init_data(char **envp)
         exit(EXIT_FAILURE);
     }
     ft_memset(data, 0, sizeof(t_data));
+    data->env_head = NULL;
     if (init_env(data, envp) == EXIT_FAILURE)
     {
         free(data);

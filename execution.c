@@ -13,86 +13,125 @@
 #include "includes/minishell.h"
 #include "Libft/libft.h"
 
-void execute_external_command(t_data *data, t_command *cmd)
-{
-    (void)data;
 
-    char *path = cmd->path;
-    char *command = cmd->command;
-    char *option = NULL;
-    char *argument1 = NULL;
-	char *argument2 = NULL;
-	int argc = 1; //cause we start with the command
-	
-   /*  if (cmd->option != NULL)
-	{
-        option = cmd->option->value;
-        printf("option is: %s\n", option);
-        arguments = option;
+// Helper function to count the number of arguments
+int count_args(t_command *cmd) {
+    int count = 1;  // Start with 1 for the command itself
+    if (cmd->option != NULL) count++;
+    for (t_token *arg = cmd->argv; arg != NULL; arg = arg->next) {
+        count++;
     }
-    if (cmd->argv != NULL)
-	{
-        arguments = cmd->argv->value;
-        printf("argument is: %s\n", arguments);
+    return count;
+}
+
+// Function to build argv from a t_command
+char **build_argv_from_cmd(t_command *cmd) {
+    int argc = 1;
+    for (t_token *arg = cmd->argv; arg != NULL; arg = arg->next) {
+        argc++;
     }
 
-    char *const argv[] = {command, arguments, NULL}; */
-
-	if (cmd->option != NULL)
-	{
-        option = cmd->option->value;
-        printf("option is: %s\n", option);
-		argc++;
-    }
-	if (cmd->argv != NULL)
-	{
-        argument1 = cmd->argv->value;
-        printf("argument1 is: %s\n", argument1);
-		argc++;
-		if(cmd->argv->next != NULL && cmd->argv->next->value != NULL)
-		{
-			argument2 = cmd->argv->next->value;
-       	 	printf("argument2 is: %s\n", argument2);
-			argc++;
-		}
-    }
-	
-	
-	char **argv = (char **)malloc(sizeof(char) * (argc + 1));
-	if(!argv)
-	{
-		ft_printf("Memory allocation failed\n");
-		 exit(EXIT_FAILURE);
-	}
-	int i = 0;
-	argv[i++] = command;
-	if(option != NULL)
-	{
-		argv[i++] = option;
-	}
-	if(argument1 != NULL)
-	{
-		argv[i++] = argument1;
-	}
-	if(argument2 != NULL)
-	{
-		argv[i++] = argument2;
-	}
-	argv[i] = NULL;
-	
-    char *const *env = NULL;
-
-    if (fork() == 0)
-	{ // child process
-        execve(path, argv, env);
-        perror("execve");
+    char **argv = malloc(sizeof(char*) * (argc + 1));  // +1 for NULL termination
+    if (!argv) {
+        perror("Memory allocation failed for argv");
         exit(EXIT_FAILURE);
     }
-	else
-	{ // parent process
-        wait(NULL);
+
+    int i = 0;
+    argv[i++] = cmd->command;
+    for (t_token *arg = cmd->argv; arg != NULL; arg = arg->next) {
+        argv[i++] = arg->value;
     }
+    argv[i] = NULL;  // NULL terminate the array
+
+    return argv;
 }
+
+
+void free_argv(char **argv) {
+    free(argv);  // Assuming argv was allocated in one block
+}
+
+char **env_var_list_to_array(t_env_var *env_head) {
+    // First, count the number of environment variables
+    int count = 0;
+    for (t_env_var *cur = env_head; cur != NULL; cur = cur->next) {
+        count++;
+    }
+
+    // Allocate memory for the array (+1 for the NULL terminator)
+    char **env_array = malloc((count + 1) * sizeof(char *));
+    if (!env_array) {
+        perror("Memory allocation failed for environment array");
+        return NULL;
+    }
+
+    // Fill the array
+    t_env_var *current = env_head;
+    for (int i = 0; current != NULL; i++) {
+        int len = strlen(current->key) + strlen(current->value) + 2;  // +2 for '=' and '\0'
+        env_array[i] = malloc(len);
+        if (!env_array[i]) {
+            // Clean up previously allocated memory
+            while (i > 0) {
+                free(env_array[--i]);
+            }
+            free(env_array);
+            perror("Memory allocation failed for environment string");
+            return NULL;
+        }
+        sprintf(env_array[i], "%s=%s", current->key, current->value);
+        current = current->next;
+    }
+    env_array[count] = NULL;  // NULL terminate the array
+
+    return env_array;
+}
+
+void free_env_array(char **env_array) {
+    if (env_array == NULL) return;
+    for (int i = 0; env_array[i] != NULL; i++) {
+        free(env_array[i]);
+    }
+    free(env_array);
+}
+
+void execute_external_command(t_data *data, t_command *cmd) {
+    // Build argv and env arrays
+    char **argv = build_argv_from_cmd(cmd);
+    char **env = env_var_list_to_array(data->env_head);
+
+    // Debug: Print command and environment
+    printf("Executing command: %s\nArguments:\n", cmd->path);
+    for (int i = 0; argv && argv[i]; i++) {
+        printf("  argv[%d]: %s\n", i, argv[i]);
+    }
+    printf("Environment:\n");
+    for (int i = 0; env && env[i]; i++) {
+        printf("  env[%d]: %s\n", i, env[i]);
+    }
+
+    // Execute the command
+    pid_t pid = fork();
+    if (pid == 0) {  // Child process
+        execve(cmd->path, argv, env);
+        perror("execve failed");
+        exit(EXIT_FAILURE);
+    } else if (pid < 0) {
+        perror("fork failed");
+    } else {  // Parent process
+        int status;
+        wait(&status);
+        printf("Command exited with status %d\n", WEXITSTATUS(status));
+    }
+
+    // Cleanup
+    free_argv(argv);
+    free_env_array(env);
+}
+
+
+
 
 void execution(t_data *data)
 {
