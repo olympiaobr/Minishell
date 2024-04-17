@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/17 15:04:28 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:56:11 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void execute_external_command(t_data *data, t_command *cmd)
     }
 	
 	
-	char **argv = (char **)malloc(sizeof(char) * (argc + 1));
+	char **argv = (char **)malloc(sizeof(char*) * (argc + 1));
 	if(!argv)
 	{
 		ft_printf("Memory allocation failed\n");
