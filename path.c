@@ -15,27 +15,36 @@
 
 int init_env(t_data *data, char **env)
 {
-    int i;
+    int i = 0;
+    int j;
+    char **temp;
 
-    i = 0;
     while (env[i])
         i++;
+
     data->env = (char **)malloc(sizeof(char *) * (i + 1));
     if (!data->env)
     {
         perror("Error allocating memory for env");
         return (EXIT_FAILURE);
     }
-    i = 0;
-    while (env[i])
+    j = 0;
+    while (j < i)
     {
-        data->env[i] = ft_strdup(env[i]);
-        if (!data->env[i])
+        data->env[j] = ft_strdup(env[j]);
+        if (!data->env[j])
         {
+            temp = data->env;
+            while (j > 0)
+            {
+                j--;
+                free(temp[j]);
+            }
+            free(temp);
             perror("Error duplicating env variable");
             return (EXIT_FAILURE);
         }
-        i++;
+        j++;
     }
     data->env[i] = NULL;
     return (EXIT_SUCCESS);
@@ -161,41 +170,6 @@ t_data *init_data(char **envp)
     prepare_environment(data);
     initialize_shell_components(data);
     return (data);
-}
-
-void free_all(t_data *data)
-{
-    int i = 0;
-
-    // free environment var
-    while (data->env && data->env[i])
-    {
-        free(data->env[i]);
-        data->env[i] = NULL;
-        i++;
-    }
-    free(data->env);
-    data->env = NULL;
-
-    // free path directories
-    if (data->path_dirs)
-    {
-        i = 0;
-        while (data->path_dirs[i])
-        {
-            free(data->path_dirs[i]);
-            data->path_dirs[i] = NULL;
-            i++;
-        }
-        free(data->path_dirs);
-        data->path_dirs = NULL;
-    }
-    free_tokens(data);
-    free_commands(data->commands);
-    free(data->input_file);
-    data->input_file = NULL;
-    free(data->output_file);
-    data->output_file = NULL;
 }
 
 /*

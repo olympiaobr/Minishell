@@ -25,6 +25,7 @@ SRCS	=	main.c lexer.c \
 			parsing_utils1.c\
 			path.c execution.c\
 			builtins1.c builtins2.c\
+			utils1.c\
 
 OBJS	=	$(SRCS:.c=.o)
 

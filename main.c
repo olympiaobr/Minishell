@@ -40,6 +40,42 @@ void display_commands(t_data *data)
     if (data->output_file)
         ft_printf("Output Redirection: %s\n", data->output_file);
 }
+void reset_shell_state(t_data *data, char **envp)
+{
+    free(data->user_input);
+    data->user_input = NULL;
+
+    t_token *current_token = data->token_list;
+    while (current_token) {
+        t_token *next_token = current_token->next;
+        free(current_token->value);
+        free(current_token);
+        current_token = next_token;
+    }
+    data->token_list = NULL;
+
+    free_commands(data->commands);
+    data->commands = NULL;
+
+    free(data->input_file);
+    data->input_file = NULL;
+    free(data->output_file);
+    data->output_file = NULL;
+
+    data->std_input_fd = STDIN_FILENO;
+    data->std_output_fd = STDOUT_FILENO;
+    data->append = 0;
+    data->heredoc = 0;
+    initialize_shell_components(data);
+    if (data->env == NULL)
+    {
+        if (init_env(data, envp) == EXIT_FAILURE)
+        {
+            fprintf(stderr, "Failed to reinitialize environment variables.\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
 
 
 int main(int argc, char *argv[], char **envp )
@@ -103,17 +139,14 @@ int main(int argc, char *argv[], char **envp )
             	current = current->next;
         	}
 			display_commands(data);
-			free(data->user_input);
-			data->user_input = NULL;
-			free_all(data);
-			ft_memset(data, 0, sizeof(*data));
-			initialize_shell_components(data);
+            reset_shell_state(data, envp);
     	}
 	}
 	else
 	{
         ft_printf("Non-valid number of arguments!\n");
     }
+    free_all(data);
 	free(data);
 	return (EXIT_SUCCESS);
 }

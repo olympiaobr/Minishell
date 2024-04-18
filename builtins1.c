@@ -65,6 +65,10 @@ int env_cmd(t_data *data)
         ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
         return (EXIT_FAILURE);
     }
+    if (!envp) {
+    fprintf(stderr, "Environment uninitialized.\n");
+    return EXIT_FAILURE;
+    }
     while (envp[i])
 	{
         if (ft_strchr(envp[i], '='))
