@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/12 14:50:07 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/18 15:07:33 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,14 +126,20 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
     size_t length;
 
     while (str[*idx])
-	{
+	{	
+		
+		
         if (str[*idx] == '\\' && in_quote && quote_char == '\"' &&
             (str[*idx + 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
-			{
+		{
+			printf("a\n");
             // Move past the escape character and the escaped character in the context of double quotes
-            	(*idx) += 2;
-            	continue;
-			}
+            (*idx) += 2;
+            continue; 
+		
+		}
+		
+		
         quote_status(str[*idx], &in_quote, &quote_char);
         if (!in_quote && (whitespace_chars(str[*idx]) || shell_operators(str[*idx])))
 		{
