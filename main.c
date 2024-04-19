@@ -78,7 +78,7 @@ void reset_shell_state(t_data *data, char **envp)
 }
 
 
-int main(int argc, char *argv[], char **envp )
+int main(int argc, char *argv[], char **envp)
 {
     (void)argv;
     t_data *data;

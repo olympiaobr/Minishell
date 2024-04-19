@@ -62,6 +62,7 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
     token->value = trimmed_val;
     token->is_quoted = is_quoted;
     token->next = NULL;
+    printf("Token created - Type: %d, Value: '%s', Quoted: %d\n", type, trimmed_val, is_quoted);
     return (token);
 }
 

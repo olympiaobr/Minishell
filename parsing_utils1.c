@@ -33,6 +33,7 @@ t_command *init_command(char *command)
     cmd->next = NULL;
     cmd->argc = 0;
     cmd->argv_array = NULL;
+    printf("Initialized command - Command: '%s'\n", cmd->command);
     return (cmd);
 }
 
@@ -97,7 +98,7 @@ t_command *create_command(t_data *data, t_token *token)
     ft_memset(new_command, 0, sizeof(t_command));
     new_command->command = ft_strdup(token->value);
     new_command->argv = NULL;
-    new_command->argc = 0;
+    new_command->argc = 1;
     new_command->next = NULL;
     if (!data->commands)
     {
@@ -118,7 +119,6 @@ t_command *create_command(t_data *data, t_token *token)
 int link_arg_to_command(t_command *last_command, t_token *token)
 {
     t_token *new_arg;
-    t_token *last_arg;
 
     if (!last_command || !token || token->type != T_ARGUMENT)
 	{
@@ -147,14 +147,14 @@ int link_arg_to_command(t_command *last_command, t_token *token)
     }
 	else
 	{
-        last_arg = last_command->argv;
-        while (last_arg->next != NULL)
-		{
-            last_arg = last_arg->next;
+        t_token *current = last_command->argv;
+        while (current->next) {
+            current = current->next;
         }
-        last_arg->next = new_arg;
+        current->next = new_arg;
     }
-    last_command->argc += 1;
+    last_command->argc++;
+    printf("Linked argument - Command: '%s', Arg: '%s', Total Args: %d\n", last_command->command, new_arg->value, last_command->argc);
     return 0;
 }
 

@@ -13,16 +13,13 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int check_args(t_command *cmd)
+int is_builtin(const char *command)
 {
-    if (cmd->argc > 2)
-    {
-        fprintf(stderr, "cd: too many arguments\n");
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
+    return (ft_strcmp(command, "cd") == 0 || ft_strcmp(command, "echo") == 0 ||
+            ft_strcmp(command, "pwd") == 0 || ft_strcmp(command, "export") == 0 ||
+            ft_strcmp(command, "unset") == 0 || ft_strcmp(command, "env") == 0 ||
+            ft_strcmp(command, "exit") == 0);
 }
-
 
 // Function to fetch an environment variable's value
 char *get_env_var(char **envp, const char *name)
@@ -43,7 +40,6 @@ char *get_env_var(char **envp, const char *name)
     return NULL;
 }
 
-// update or add an environment variable if valid
 int set_env_var(char **envp, const char *name, const char *value)
 {
     char *new_val;
@@ -53,7 +49,7 @@ int set_env_var(char **envp, const char *name, const char *value)
     if (!name || !value || name[0] == '\0' || name[0] == '=' || ft_strchr(name, '=') != NULL)
     {
         fprintf(stderr, "Invalid environment variable name\n");
-        return -1;  // Invalid name
+        return -1;
     }
     new_val = malloc(ft_strlen(name) + ft_strlen(value) + 2);
     if (new_val == NULL)
@@ -64,7 +60,7 @@ int set_env_var(char **envp, const char *name, const char *value)
     sprintf(new_val, "%s=%s", name, value);
 
     // Replace or add new variable
-    name_len = strlen(name);
+    name_len = ft_strlen(name);
     i = 0;
     while (envp[i] != NULL)
     {
@@ -76,7 +72,6 @@ int set_env_var(char **envp, const char *name, const char *value)
         }
         i++;
     }
-
      // Handle adding a new variable when no match is found
     i = 0;
     while (envp[i] != NULL)
@@ -90,93 +85,77 @@ int set_env_var(char **envp, const char *name, const char *value)
 
 int cd_cmd(t_data *data, t_command *cmd)
 {
-    char *oldpwd;
     char *target;
+    char *arg_value;
     char *newpwd;
-    char *home;
-    char *oldPath;
-    int status;
+    char *oldpwd;
+    int result;
 
-    oldpwd = getcwd(NULL, 0);
-    if (check_args(cmd) != EXIT_SUCCESS)
+    if (cmd->argc == 1)
     {
-        free(oldpwd);
-        data->exit_status = EXIT_FAILURE;
-        return EXIT_FAILURE;
-    }
-
-    if (cmd->argc > 1)
-    {
-        target = cmd->argv->next->value;
-    }
-    else
-    {
-        target = NULL;
-    }
-    if (target == NULL || strcmp(target, "~") == 0)
-    {
-        home = get_env_var(data->env, "HOME");
-        if (home != NULL)
-        {
-            target = home;
-        }
-        else
+        target = get_env_var(data->env, "HOME");
+        if (!target)
         {
             target = "/";
         }
     }
-    else if (ft_strcmp(target, "-") == 0)
+    else if (cmd->argc == 2)
     {
-        oldPath = get_env_var(data->env, "OLDPWD");
-        if (oldPath == NULL)
+        arg_value = cmd->argv->value;
+        if (ft_strcmp(arg_value, "-") == 0)
         {
-            fprintf(stderr, "cd: OLDPWD not set\n");
-            free(oldpwd);
-            data->exit_status = EXIT_FAILURE;
-            return EXIT_FAILURE;
+            target = get_env_var(data->env, "OLDPWD");
+            if (!target)
+            {
+                fprintf(stderr, "cd: OLDPWD not set\n");
+                return EXIT_FAILURE;
+            }
+            printf("%s\n", target); // Echo the previous directory
         }
-        printf("%s\n", oldPath);
-        target = oldPath;
+        else if (ft_strcmp(arg_value, "~") == 0)
+        {
+            target = get_env_var(data->env, "HOME");
+            if (!target)
+            {
+                target = "/";
+            }
+        }
+        else
+        {
+            target = arg_value;
+        }
     }
-
-    status = chdir(target);
-    if (status != 0)
+    else
     {
-        perror("cd");
-        free(oldpwd);
-        data->exit_status = EXIT_FAILURE;
+        fprintf(stderr, "cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
+        return EXIT_FAILURE;
+    }
+    if (chdir(target) != 0)
+    {
+        perror("cd failed");
         return EXIT_FAILURE;
     }
     newpwd = getcwd(NULL, 0);
-    if (newpwd == NULL)
-        newpwd = ft_strdup("");
-
-    if (set_env_var(data->env, "OLDPWD", oldpwd) != 0)
+    if (!newpwd)
+    {
+        perror("getcwd failed");
+        return EXIT_FAILURE;
+    }
+    oldpwd = get_env_var(data->env, "PWD");
+    result = set_env_var(data->env, "OLDPWD", oldpwd);
+    if (result != 0)
     {
         fprintf(stderr, "cd: error updating OLDPWD environment variable\n");
-        free(oldpwd);
         free(newpwd);
-        data->exit_status = EXIT_FAILURE;
         return EXIT_FAILURE;
     }
-    if (set_env_var(data->env, "PWD", newpwd) != 0)
+    result = set_env_var(data->env, "PWD", newpwd);
+    if (result != 0)
     {
         fprintf(stderr, "cd: error updating PWD environment variable\n");
-        free(oldpwd);
         free(newpwd);
-        data->exit_status = EXIT_FAILURE;
         return EXIT_FAILURE;
     }
-    free(oldpwd);
     free(newpwd);
-    data->exit_status = EXIT_SUCCESS;
     return EXIT_SUCCESS;
-}
-
-int is_builtin(const char *command)
-{
-    return (strcmp(command, "cd") == 0 || strcmp(command, "echo") == 0 ||
-            strcmp(command, "pwd") == 0 || strcmp(command, "export") == 0 ||
-            strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
-            strcmp(command, "exit") == 0);
 }

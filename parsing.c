@@ -126,30 +126,28 @@ int check_valid_command(t_data *data)
         fprintf(stderr, "Allocation failed\n");
         return -1;
     }
-    memset(data->command_list, 0, sizeof(t_command));
-
+    ft_memset(data->command_list, 0, sizeof(t_command));
     path = getenv("PATH");
     if (!path)
     {
         free(data->command_list);
         return -1;
     }
-    path_copy = strdup(path);
+    path_copy = ft_strdup(path);
     if (!path_copy)
     {
         free(data->command_list);
         return -1;
     }
-
     dir = custom_strtok(path_copy, ":");
     while (current)
     {
         if (current->type == T_COMMAND)
         {
-            if (!strcmp(current->value, "cd") || !strcmp(current->value, "echo") ||
-                !strcmp(current->value, "pwd") || !strcmp(current->value, "export") ||
-                !strcmp(current->value, "unset") || !strcmp(current->value, "env") ||
-                !strcmp(current->value, "exit"))
+            if (!ft_strcmp(current->value, "cd") || !ft_strcmp(current->value, "echo") ||
+                !ft_strcmp(current->value, "pwd") || !ft_strcmp(current->value, "export") ||
+                !ft_strcmp(current->value, "unset") || !ft_strcmp(current->value, "env") ||
+                !ft_strcmp(current->value, "exit"))
             {
                 valid = 1;
             }
@@ -172,7 +170,7 @@ int check_valid_command(t_data *data)
                     snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);
                     if (access(full_path, X_OK) == 0)
                     {
-                        data->commands->path = strdup(full_path);
+                        data->commands->path = ft_strdup(full_path);
                         valid = 1;
                         break;
                     }
@@ -184,7 +182,6 @@ int check_valid_command(t_data *data)
             not_valid = -1;
         current = current->next;
     }
-
     free(path_copy);
     if (not_valid == -1)
     {
