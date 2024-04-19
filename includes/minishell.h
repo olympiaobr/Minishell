@@ -34,7 +34,7 @@ typedef enum token_type
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
 	T_ENV,
-	T_FILE, 
+	T_FILE,
 	T_DELIMITER// for heredoc
 }					token_type;
 
@@ -80,6 +80,7 @@ typedef struct data_all
 	t_command *commands;
 	int *create_new_command;
 	int exit_status;
+	int max_env_size;
 }	t_data;
 
 //lexing functions
@@ -159,6 +160,7 @@ int cd_cmd(t_data *data, t_command *cmd);
 int pwd_cmd(void);
 int env_cmd(t_data *data);
 int echo_cmd(t_command *cmd);
+int exit_cmd(t_data *data, t_command *cmd);
 
 void execute_external_command(t_data *data, t_command *cmd);
 

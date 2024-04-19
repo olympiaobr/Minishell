@@ -152,6 +152,7 @@ void initialize_shell_components(t_data *data)
     data->commands = NULL;
     data->create_new_command = 0;
     data->exit_status = 0;
+    data->max_env_size = 0;
 }
 t_data *init_data(char **envp)
 {

@@ -40,46 +40,71 @@ char *get_env_var(char **envp, const char *name)
     return NULL;
 }
 
-int set_env_var(char **envp, const char *name, const char *value)
+char **expand_env(char **env, int newsize)
+{
+    char **new_env;
+    int j;
+
+    new_env = (char **)malloc(sizeof(char *) * newsize);
+    if (new_env == NULL)
+    {
+        return NULL;
+    }
+    j = 0;
+    while (env[j] != NULL)
+    {
+        new_env[j] = env[j];
+        j++;
+    }
+    while (j < newsize)
+    {
+        new_env[j] = NULL;
+        j++;
+    }
+    return new_env;
+}
+
+int set_env_var(t_data *data, const char *name, const char *value)
 {
     char *new_val;
-    int i;
     size_t name_len;
+    int i = 0;
 
     if (!name || !value || name[0] == '\0' || name[0] == '=' || ft_strchr(name, '=') != NULL)
     {
         fprintf(stderr, "Invalid environment variable name\n");
         return -1;
     }
-    new_val = malloc(ft_strlen(name) + ft_strlen(value) + 2);
+
+    new_val = malloc(ft_strlen(name) + ft_strlen(value) + 2); // +2 for '=' and '\0'
     if (new_val == NULL)
     {
         perror("Memory allocation failed for environment variable");
         return -1;
     }
     sprintf(new_val, "%s=%s", name, value);
-
-    // Replace or add new variable
     name_len = ft_strlen(name);
-    i = 0;
-    while (envp[i] != NULL)
+    while (data->env[i] != NULL)
     {
-        if (ft_strncmp(envp[i], name, name_len) == 0 && envp[i][name_len] == '=')
+        if (ft_strncmp(data->env[i], name, name_len) == 0 && data->env[i][name_len] == '=')
         {
-            free(envp[i]);
-            envp[i] = new_val;
+            free(data->env[i]);
+            data->env[i] = new_val;
             return 0;
         }
         i++;
     }
-     // Handle adding a new variable when no match is found
-    i = 0;
-    while (envp[i] != NULL)
+    char **new_env = expand_env(data->env, i + 2);
+    if (new_env == NULL)
     {
-        i++;
+        free(new_val);
+        fprintf(stderr, "Failed to expand environment space\n");
+        return -1;
     }
-    envp[i] = new_val;
-    envp[i + 1] = NULL;
+    new_env[i] = new_val;
+    new_env[i + 1] = NULL;
+    free(data->env);
+    data->env = new_env;
     return 0;
 }
 
@@ -142,14 +167,14 @@ int cd_cmd(t_data *data, t_command *cmd)
         return EXIT_FAILURE;
     }
     oldpwd = get_env_var(data->env, "PWD");
-    result = set_env_var(data->env, "OLDPWD", oldpwd);
+    result = set_env_var(data, "OLDPWD", oldpwd);
     if (result != 0)
     {
         fprintf(stderr, "cd: error updating OLDPWD environment variable\n");
         free(newpwd);
         return EXIT_FAILURE;
     }
-    result = set_env_var(data->env, "PWD", newpwd);
+    result = set_env_var(data, "PWD", newpwd);
     if (result != 0)
     {
         fprintf(stderr, "cd: error updating PWD environment variable\n");
@@ -158,4 +183,40 @@ int cd_cmd(t_data *data, t_command *cmd)
     }
     free(newpwd);
     return EXIT_SUCCESS;
+}
+int validate_num(const char *str)
+{
+    while (*str)
+    {
+        if (!ft_isdigit(*str))
+            return 0;
+        str++;
+    }
+    return 1;
+}
+
+int exit_cmd(t_data *data, t_command *cmd)
+{
+    (void)data;
+    int exit_status = 0;
+
+    if (cmd->argc > 2)
+    {
+        fprintf(stderr, "exit: too many arguments\n");
+        return 1;
+    }
+    if (cmd->argc == 2)
+    {
+        char *arg = cmd->argv->value;
+        if (validate_num(arg))
+        {
+            exit_status = ft_atoi(arg);
+        } else
+        {
+            fprintf(stderr, "exit: numeric argument required\n");
+            exit_status = 255;
+        }
+    }
+    exit(exit_status);
+    return (0);
 }

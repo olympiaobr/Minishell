@@ -15,7 +15,8 @@
 
 void free_command(t_command *cmd)
 {
-    if (!cmd) return;
+    if (!cmd)
+		return;
 
     free(cmd->command);
     t_token *arg = cmd->argv;
