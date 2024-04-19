@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/15 15:10:23 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:08:01 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ typedef enum token_type
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
 	T_ENV,
-	T_FILE
+	T_FILE, 
+	T_DELIMITER// for heredoc
 }					token_type;
 
 typedef struct s_token

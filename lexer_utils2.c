@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/18 15:07:33 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:58:21 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,11 +188,13 @@ void	process_input(t_data *data, char *str)
 {
 	size_t	idx;
 	int		expect_command;
+	int		expect_delimiter;
 	token_type type;
 	t_token	*last_token;
 
 	idx = 0;
 	expect_command = 1;
+	expect_delimiter = 0;
 	while (str[idx])
 	{
 		if (whitespace_chars(str[idx]))
@@ -210,18 +212,34 @@ void	process_input(t_data *data, char *str)
 					|| data->token_list->type == T_APPEND
 					|| data->token_list->type == T_HEREDOC)
 				{
-					expect_command = 1;
+					if(data->token_list->type == T_HEREDOC)
+					{
+						expect_delimiter = 1;
+						expect_command = 0;
+					}
+					/* else
+					{
+							expect_command = 1;
+					} */
+				
 				}
 			}
 			else
 			{
 				if (expect_command)
 				{
+					
 					type = T_COMMAND;
 					expect_command = 0;
 				}
-				else
+				else if(expect_delimiter)
 				{
+					
+					type = T_DELIMITER;
+					expect_delimiter = 0;
+				}
+				else
+				{printf("hello\n");
 					type = T_ARGUMENT;
 				}
 				tokenize_word(data, str, &idx, type);

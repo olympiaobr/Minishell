@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/17 15:04:28 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/19 12:12:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,8 @@ void execution(t_data *data)
 	{
         ft_printf("Valid command.\n");
         t_command *cmd = data->commands;
-        while (cmd != NULL) {
+        while (cmd != NULL) 
+		{
             if (is_builtin(cmd->command))
 			{
                 ft_printf("Executing built-in command: %s\n", cmd->command);

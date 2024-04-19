@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/18 18:34:29 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:01:44 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 //then we read until the delimiters appears again and we tokenize this input
 //error check if there is no second appearance of the delimiter
 
-void heredoc(/* t_data *data, */ char *delimiter)
+void write_to_heredoc_file(/* t_data *data, */ char *delimiter)
 {
 	char *input;
 	char *temp_file = "heredoc_tempfile";
@@ -43,22 +43,27 @@ void heredoc(/* t_data *data, */ char *delimiter)
 	free(input);
 }
 
-void execute_heredoc()
+void redirect_to_standard_input()
 {
 	char *temp_file = "heredoc_tempfile";
 	int fd = open(temp_file, O_RDONLY);
+
 	if(!fd)
 	{
 		perror("failure opening file\n");
 		exit(EXIT_FAILURE);
 	}
-	if(dup2(fd, STDIN_FILENO) == -1)
-	{
-		perror("failure dup2\n");
-		exit(EXIT_FAILURE);
-	}
-	close(fd);
+
 	
+	if (dup2(fd, STDIN_FILENO) == -1) //redirects	
+	{
+        perror("Error duplicating file descriptor");
+		close(fd);
+        exit(EXIT_FAILURE);
+    }
+	
+	close(fd);
+
 }
 
 void check_for_heredoc(t_data *data)
@@ -69,9 +74,9 @@ void check_for_heredoc(t_data *data)
 		if(current->type == T_HEREDOC)
 		{
 			char *delimiter = current->next->value;// go to next token and pass it to heredoc function
-			heredoc(/* data, */ delimiter);
-			execute_heredoc();
-			//execution(data);
+			write_to_heredoc_file(/* data, */ delimiter);
+			redirect_to_standard_input();
+			
 		}
 		current = current->next;
 	}
