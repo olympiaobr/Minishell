@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 14:26:01 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/22 17:10:24 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,81 @@ int check_valid_command(t_data *data)
     	}
 		char *path_copy = ft_strdup(path);
 
+<<<<<<< HEAD
+    current = data->token_list;
+    valid = 1;
+    not_valid = 1;
+    data->command_list = malloc(sizeof(t_command));
+    if (!data->command_list)
+    {
+        fprintf(stderr, "Allocation failed\n");
+        return -1;
+    }
+    ft_memset(data->command_list, 0, sizeof(t_command));
+    path = getenv("PATH");
+    if (!path)
+    {
+        free(data->command_list);
+        return -1;
+    }
+    path_copy = ft_strdup(path);
+    if (!path_copy)
+    {
+        free(data->command_list);
+        return -1;
+    }
+    dir = custom_strtok(path_copy, ":");
+    while (current)
+    {
+        if (current->type == T_COMMAND)
+        {
+            if (!ft_strcmp(current->value, "cd") || !ft_strcmp(current->value, "echo") ||
+                !ft_strcmp(current->value, "pwd") || !ft_strcmp(current->value, "export") ||
+                !ft_strcmp(current->value, "unset") || !ft_strcmp(current->value, "env") ||
+                !ft_strcmp(current->value, "exit"))
+            {
+                valid = 1;
+            }
+            else if (current->value[0] == '/')
+            {
+                if (access(current->value, X_OK) == 0)
+                {
+                    data->commands->path = strdup(current->value);
+                    valid = 1;
+                }
+                else
+                {
+                    not_valid = -1;
+                }
+            }
+            else
+            {
+                while (dir)
+                {
+                    snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);//not allowed
+                    if (access(full_path, X_OK) == 0)
+                    {
+                        data->commands->path = ft_strdup(full_path);
+                        valid = 1;
+                        break;
+                    }
+                    dir = custom_strtok(NULL, ":");
+                }
+            }
+        }
+        if (!valid)
+            not_valid = -1;
+        current = current->next;
+    }
+    free(path_copy);
+    if (not_valid == -1)
+    {
+        free(data->command_list);
+        data->command_list = NULL;
+        return -1;
+    }
+    return valid;
+=======
 		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
 		free(path_copy);
 		char full_path[1024];
@@ -181,6 +256,7 @@ int check_valid_command(t_data *data)
 		current = current->next;
 	}
 	return (valid * not_valid);
+>>>>>>> 4b5898eba91b73de0b03f24a87f75a884c712d27
 }
 
 
