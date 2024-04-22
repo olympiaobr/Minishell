@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/15 12:14:00 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:22:00 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ t_command *create_command(t_data *data, t_token *token)
     else
     {
         t_command *last_command = data->commands;
-        while (last_command->next)
+        while (last_command && last_command->next)
         {
             last_command = last_command->next;
         }

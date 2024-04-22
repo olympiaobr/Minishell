@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/19 14:08:01 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:59:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct data_all
 	char **path_dirs;  // stores parsed PATH directories
     // char *path;        // stores duplicated PATH env var
 	char **env;
+	char *heredoc_input;
 	t_command *commands;
 	int *create_new_command;
 	int exit_status;

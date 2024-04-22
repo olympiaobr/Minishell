@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/16 14:26:01 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/22 17:10:24 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ int check_valid_command(t_data *data)
             {
                 while (dir)
                 {
-                    snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);
+                    snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);//not allowed
                     if (access(full_path, X_OK) == 0)
                     {
                         data->commands->path = ft_strdup(full_path);

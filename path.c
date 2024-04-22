@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:36:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/15 14:07:26 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:11:21 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ void initialize_shell_components(t_data *data)
     data->create_new_command = 0;
     data->exit_status = 0;
     data->max_env_size = 0;
+	data->heredoc_input = NULL;
 }
 t_data *init_data(char **envp)
 {
