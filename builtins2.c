@@ -135,7 +135,7 @@ int cd_cmd(t_data *data, t_command *cmd)
                 fprintf(stderr, "cd: OLDPWD not set\n");
                 return EXIT_FAILURE;
             }
-            printf("%s\n", target); // Echo the previous directory
+            printf("%s\n", target);
         }
         else if (ft_strcmp(arg_value, "~") == 0)
         {
@@ -220,3 +220,4 @@ int exit_cmd(t_data *data, t_command *cmd)
     exit(exit_status);
     return (0);
 }
+

@@ -110,87 +110,72 @@ char *custom_strtok(char *str, const char *delim)
 int check_valid_command(t_data *data)
 {
     t_token *current;
-    int valid;
-    int not_valid;
     char *path;
     char *path_copy;
     char *dir;
     char full_path[1024];
+    int command_found;
 
     current = data->token_list;
-    valid = 1;
-    not_valid = 1;
-    data->command_list = malloc(sizeof(t_command));
-    if (!data->command_list)
-    {
-        fprintf(stderr, "Allocation failed\n");
-        return -1;
-    }
-    ft_memset(data->command_list, 0, sizeof(t_command));
     path = getenv("PATH");
     if (!path)
-    {
-        free(data->command_list);
+	{
+        fprintf(stderr, "PATH environment variable not set\n");
         return -1;
     }
     path_copy = ft_strdup(path);
     if (!path_copy)
-    {
-        free(data->command_list);
+	{
+        perror("Memory allocation failed for path copy");
         return -1;
     }
-    dir = custom_strtok(path_copy, ":");
+    command_found = 0;
     while (current)
-    {
+	{
         if (current->type == T_COMMAND)
-        {
+		{
+            command_found = 0;
             if (!ft_strcmp(current->value, "cd") || !ft_strcmp(current->value, "echo") ||
                 !ft_strcmp(current->value, "pwd") || !ft_strcmp(current->value, "export") ||
                 !ft_strcmp(current->value, "unset") || !ft_strcmp(current->value, "env") ||
                 !ft_strcmp(current->value, "exit"))
-            {
-                valid = 1;
-            }
-            else if (current->value[0] == '/')
-            {
-                if (access(current->value, X_OK) == 0)
-                {
-                    data->commands->path = strdup(current->value);
-                    valid = 1;
-                }
-                else
-                {
-                    not_valid = -1;
-                }
-            }
-            else
-            {
+				{
+                	command_found = 1;
+				}
+				else
+				{
+                dir = custom_strtok(path_copy, ":");
                 while (dir)
-                {
+				{
                     snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);
                     if (access(full_path, X_OK) == 0)
-                    {
+					{
+                        if (data->commands->path)
+						{
+                            free(data->commands->path);
+                        }
                         data->commands->path = ft_strdup(full_path);
-                        valid = 1;
+                        command_found = 1;
                         break;
                     }
-                    dir = custom_strtok(NULL, ":");
+                    dir = strtok(NULL, ":");
                 }
+                free(path_copy);
+                path_copy = ft_strdup(path);
+            }
+            if (!command_found)
+			{
+                free(path_copy);
+                fprintf(stderr, "Invalid command: %s\n", current->value);
+                return -1;
             }
         }
-        if (!valid)
-            not_valid = -1;
         current = current->next;
     }
     free(path_copy);
-    if (not_valid == -1)
-    {
-        free(data->command_list);
-        data->command_list = NULL;
-        return -1;
-    }
-    return valid;
+    return (command_found);
 }
+
 
 
 
