@@ -109,71 +109,78 @@ char *custom_strtok(char *str, const char *delim)
 
 int check_valid_command(t_data *data)
 {
-    t_token *current;
-    char *path;
-    char *path_copy;
-    char *dir;
-    char full_path[1024];
-    int command_found;
-
-    current = data->token_list;
-    path = getenv("PATH");
-    if (!path)
+	t_token *current = data->token_list;
+	int valid = 1;
+	int not_valid = 1;
+	data->command_list = (t_command *)malloc(sizeof(t_command));
+	if (data->command_list == NULL)
 	{
-        fprintf(stderr, "PATH environment variable not set\n");
-        return -1;
-    }
-    path_copy = ft_strdup(path);
-    if (!path_copy)
+    	ft_printf("allocation failed\n");
+	}
+	data->command_list->path = NULL;
+	while(current != NULL)
 	{
-        perror("Memory allocation failed for path copy");
-        return -1;
-    }
-    command_found = 0;
-    while (current)
-	{
-        if (current->type == T_COMMAND)
+		char *path = getenv("PATH");
+		if (!path)  // PATH variable not set
 		{
-            command_found = 0;
-            if (!ft_strcmp(current->value, "cd") || !ft_strcmp(current->value, "echo") ||
-                !ft_strcmp(current->value, "pwd") || !ft_strcmp(current->value, "export") ||
-                !ft_strcmp(current->value, "unset") || !ft_strcmp(current->value, "env") ||
-                !ft_strcmp(current->value, "exit"))
-				{
-                	command_found = 1;
-				}
-				else
-				{
-                dir = custom_strtok(path_copy, ":");
-                while (dir)
-				{
-                    snprintf(full_path, sizeof(full_path), "%s/%s", dir, current->value);
-                    if (access(full_path, X_OK) == 0)
-					{
-                        if (data->commands->path)
-						{
-                            free(data->commands->path);
-                        }
-                        data->commands->path = ft_strdup(full_path);
-                        command_found = 1;
-                        break;
-                    }
-                    dir = strtok(NULL, ":");
-                }
-                free(path_copy);
-                path_copy = ft_strdup(path);
-            }
-            if (!command_found)
+        	not_valid = -1;
+    	}
+		char *path_copy = ft_strdup(path);
+
+		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
+		free(path_copy);
+		char full_path[1024];
+		full_path[0] = '\0';
+
+		if(current->type == T_COMMAND)//only true for first token and token after pipe
+		{
+			if(ft_strcmp(current->value, "cd") == 0 || ft_strcmp(current->value, "echo") == 0
+			|| ft_strcmp(current->value, "pwd") == 0 ||ft_strcmp(current->value, "export") == 0
+			||ft_strcmp(current->value, "unset") == 0 ||ft_strcmp(current->value, "env") == 0
+			||ft_strcmp(current->value, "exit") == 0)
 			{
-                free(path_copy);
-                fprintf(stderr, "Invalid command: %s\n", current->value);
-                return -1;
-            }
-        }
-        current = current->next;
-    }
-    free(path_copy);
-    return (command_found);
+				valid = 1;
+			}
+			else if(current->value[0] == '/')
+			{
+
+				valid = 1;
+				data->commands->path = data->token_list->value;
+				printf("path in check(): %s\n", data->commands->path);
+
+			}
+			else
+			{
+    			while (dir != NULL)
+    			{
+       			 	// Concatenate the directory and command
+        			ft_strcpy(full_path, dir);
+       	 			ft_strcat(full_path, "/");
+       	 			ft_strcat(full_path, current->value);
+        			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
+        			{
+
+
+            			//ft_printf("Is a valid executable file in the path\n");
+						data->commands->path = ft_strdup(full_path);
+						printf("path in check(): %s\n", full_path);
+						valid = 1;
+            			break;
+        			}
+        			// Move to the next directory
+        			dir = custom_strtok(NULL, ":");
+				}
+
+				if (access(full_path, X_OK) != 0)
+    			{
+					not_valid = -1;
+        			//ft_printf("Not a valid command.\n");
+   				}
+			}
+		}
+		current = current->next;
+	}
+	return (valid * not_valid);
 }
 
 
