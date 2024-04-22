@@ -26,10 +26,10 @@ int execute_builtin(t_command *cmd, t_data *data)
         return (pwd_cmd());
     else if (ft_strcmp(cmd->command, "env") == 0)
         return (env_cmd(data));
-    //else if (ft_strcmp(cmd->command, "export") == 0)
-        //return (export_cmd(cmd, data));
-    //else if (ft_strcmp(cmd->command, "unset") == 0)
-        //return (unset_cmd(cmd, data));
+    else if (ft_strcmp(cmd->command, "export") == 0)
+        return (export_cmd(data, cmd));
+    else if (ft_strcmp(cmd->command, "unset") == 0)
+        return (unset_cmd(data, cmd));
     else if (ft_strcmp(cmd->command, "exit") == 0)
         return (exit_cmd(data, cmd));
     return (-1);

@@ -63,27 +63,49 @@ char **expand_env(char **env, int newsize)
     }
     return new_env;
 }
+char	*ft_strncpy(char *dest, const char *src, unsigned int n)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (src[i] != '\0' && i < n)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
 
 int set_env_var(t_data *data, const char *name, const char *value)
 {
     char *new_val;
-    size_t name_len;
+    size_t name_len, value_len;
     int i = 0;
 
-    if (!name || !value || name[0] == '\0' || name[0] == '=' || ft_strchr(name, '=') != NULL)
+    if (!name || !value || name[0] == '\0' || name[0] == '=' || strchr(name, '=') != NULL)
     {
         fprintf(stderr, "Invalid environment variable name\n");
         return -1;
     }
-
-    new_val = malloc(ft_strlen(name) + ft_strlen(value) + 2); // +2 for '=' and '\0'
+    name_len = ft_strlen(name);
+    value_len = ft_strlen(value);
+    // Allocate memory for the new environment variable
+    new_val = malloc(name_len + value_len + 2); // +2 for '=' and '\0'
     if (new_val == NULL)
     {
         perror("Memory allocation failed for environment variable");
         return -1;
     }
-    sprintf(new_val, "%s=%s", name, value);
-    name_len = ft_strlen(name);
+    ft_strncpy(new_val, name, name_len);
+    new_val[name_len] = '=';
+    ft_strncpy(new_val + name_len + 1, value, value_len);
+    new_val[name_len + value_len + 1] = '\0';
+    // search for existing variable and update it if found
     while (data->env[i] != NULL)
     {
         if (ft_strncmp(data->env[i], name, name_len) == 0 && data->env[i][name_len] == '=')
@@ -94,6 +116,7 @@ int set_env_var(t_data *data, const char *name, const char *value)
         }
         i++;
     }
+    // if var was not found, add to the environment
     char **new_env = expand_env(data->env, i + 2);
     if (new_env == NULL)
     {
@@ -107,6 +130,7 @@ int set_env_var(t_data *data, const char *name, const char *value)
     data->env = new_env;
     return 0;
 }
+
 
 int cd_cmd(t_data *data, t_command *cmd)
 {
@@ -220,4 +244,111 @@ int exit_cmd(t_data *data, t_command *cmd)
     exit(exit_status);
     return (0);
 }
+void remove_var(t_data *data, const char *var_name)
+{
+    int len = ft_strlen(var_name);
+    char **current = data->env;
+
+    while (*current && ft_strncmp(*current, var_name, len))
+    {
+        current++;
+    }
+    if (*current && (*current)[len] == '=')
+    {
+        free(*current);
+        while (*(current + 1))
+        {
+            *current = *(current + 1);
+            current++;
+        }
+        *current = NULL;
+    }
+    else
+    {
+        ft_printf("Variable not found.\n");
+    }
+}
+int valid_identifier(const char *name)
+{
+    const char *valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+
+    if (!name || *name == '\0' || (!ft_isalpha(*name) && *name != '_'))
+        return 0;
+    name++;
+    if (*name && ft_strspn(name, valid_chars) != ft_strlen(name))
+        return 0;
+    return 1;
+}
+
+int unset_cmd(t_data *data, t_command *cmd)
+{
+    t_token *arg = cmd->argv;
+
+    while (arg)
+    {
+        if (!valid_identifier(arg->value))
+        {
+            fprintf(stderr, "unset: '%s' is not a valid identifier\n", arg->value);
+        }
+        else
+        {
+            ft_printf("Unsetting variable: %s\n", arg->value);
+            remove_var(data, arg->value);
+        }
+        arg = arg->next;
+    }
+    return 0;
+}
+
+int export_cmd(t_data *data, t_command *cmd)
+{
+    t_token *arg = cmd->argv;
+    char *var_name;
+    char *value;
+
+    while (arg)
+    {
+        var_name = custom_strtok(arg->value, "=");
+        value = custom_strtok(NULL, "");
+        if (!valid_identifier(var_name))
+        {
+            fprintf(stderr, "export: '%s': not a valid identifier\n", var_name);
+        }
+        else
+        {
+            char *existing_value = get_env_var(data->env, var_name);
+            if (existing_value)
+            {
+                if (value)
+                {
+                    set_env_var(data, var_name, value);
+                }
+                else
+                {
+                    set_env_var(data, var_name, "");
+                }
+            }
+            else
+            {
+                if (value)
+                {
+                    if (set_env_var(data, var_name, value) == -1)
+                    {
+                        fprintf(stderr, "Failed to export variable: %s\n", var_name);
+                    }
+                }
+                else
+                {
+                    if (set_env_var(data, var_name, "") == -1)
+                    {
+                        fprintf(stderr, "Failed to export variable: %s\n", var_name);
+                    }
+                }
+            }
+        }
+        arg = arg->next;
+    }
+    return 0;
+}
+
 

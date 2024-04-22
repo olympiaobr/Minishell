@@ -161,6 +161,8 @@ int pwd_cmd(void);
 int env_cmd(t_data *data);
 int echo_cmd(t_command *cmd);
 int exit_cmd(t_data *data, t_command *cmd);
+int export_cmd(t_data *data, t_command *cmd);
+int unset_cmd(t_data *data, t_command *cmd);
 
 void execute_external_command(t_data *data, t_command *cmd);
 
