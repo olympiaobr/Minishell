@@ -34,7 +34,7 @@ char *ft_strcpy(char *dest, const char *src)
 	dest[i] = '\0';
 	return(dest);
 }
-char *ft_strcat(char *dest, char *src)
+char *ft_strcat(char *dest, const char *src)
 {
 	int i = 0;
 	int j = 0;
@@ -106,82 +106,59 @@ char *custom_strtok(char *str, const char *delim)
     last = end;
     return str;
 }
+int find_command_path(const char *command, char *dir, char *full_path)
+{
+    while (dir)
+	{
+        ft_strcpy(full_path, dir);
+        ft_strcat(full_path, "/");
+        ft_strcat(full_path, command);
+        if (access(full_path, X_OK) == 0)
+		{
+            return 1;
+        }
+        dir = custom_strtok(NULL, ":");
+    }
+    return 0;
+}
+
 
 int check_valid_command(t_data *data)
 {
-	t_token *current = data->token_list;
-	int valid = 1;
-	int not_valid = 1;
-	data->command_list = (t_command *)malloc(sizeof(t_command));
-	if (data->command_list == NULL)
-	{
-    	ft_printf("allocation failed\n");
-	}
-	data->command_list->path = NULL;
-	while(current != NULL)
-	{
-		char *path = getenv("PATH");
-		if (!path)  // PATH variable not set
+    t_token *current = data->token_list;
+    char *path = getenv("PATH");
+    char *path_copy;
+    char *dir;
+    char full_path[1024];
+
+    if (!path) return -1;
+
+    path_copy = ft_strdup(path);
+    if (!path_copy) return -1;
+
+    dir = custom_strtok(path_copy, ":");
+    while (current) {
+        if (current->type == T_COMMAND)
 		{
-        	not_valid = -1;
-    	}
-		char *path_copy = ft_strdup(path);
-
-		char *dir = custom_strtok(path_copy, ":");// Iterate through each directory in PATH
-		free(path_copy);
-		char full_path[1024];
-		full_path[0] = '\0';
-
-		if(current->type == T_COMMAND)//only true for first token and token after pipe
-		{
-			if(ft_strcmp(current->value, "cd") == 0 || ft_strcmp(current->value, "echo") == 0
-			|| ft_strcmp(current->value, "pwd") == 0 ||ft_strcmp(current->value, "export") == 0
-			||ft_strcmp(current->value, "unset") == 0 ||ft_strcmp(current->value, "env") == 0
-			||ft_strcmp(current->value, "exit") == 0)
+            if (is_builtin(current->value))
 			{
-				valid = 1;
-			}
-			else if(current->value[0] == '/')
+                free(path_copy);
+                return 1;
+            }
+            if (find_command_path(current->value, dir, full_path))
 			{
-
-				valid = 1;
-				data->commands->path = data->token_list->value;
-				printf("path in check(): %s\n", data->commands->path);
-
-			}
-			else
-			{
-    			while (dir != NULL)
-    			{
-       			 	// Concatenate the directory and command
-        			ft_strcpy(full_path, dir);
-       	 			ft_strcat(full_path, "/");
-       	 			ft_strcat(full_path, current->value);
-        			if (access(full_path, X_OK) == 0)// Check if the file exists and is executable
-        			{
-
-
-            			//ft_printf("Is a valid executable file in the path\n");
-						data->commands->path = ft_strdup(full_path);
-						printf("path in check(): %s\n", full_path);
-						valid = 1;
-            			break;
-        			}
-        			// Move to the next directory
-        			dir = custom_strtok(NULL, ":");
-				}
-
-				if (access(full_path, X_OK) != 0)
-    			{
-					not_valid = -1;
-        			//ft_printf("Not a valid command.\n");
-   				}
-			}
-		}
-		current = current->next;
-	}
-	return (valid * not_valid);
+                data->commands->path = ft_strdup(full_path);
+                free(path_copy);
+                return 1;
+            }
+        }
+        current = current->next;
+    }
+    free(path_copy);
+    return -1;
 }
+
+
 
 
 

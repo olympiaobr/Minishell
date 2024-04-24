@@ -148,7 +148,7 @@ void check_for_heredoc(t_data *data);
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
 char *ft_strcpy(char *dest, const char *src);
-char *ft_strcat(char *dest, char *src);
+char *ft_strcat(char *dest, const char *src);
 size_t ft_strspn(const char *str, const char *delim);
 size_t ft_strcspn(const char *str, const char *reject);
 char *custom_strtok(char *str, const char *delim);
