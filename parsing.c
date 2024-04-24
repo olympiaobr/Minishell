@@ -151,12 +151,12 @@ int check_valid_command(t_data *data)
                 result = 1;
                 break;
             }
-            if (current->value[0] == '/' || strncmp(current->value, "./", 2) == 0 || strncmp(current->value, "../", 3) == 0)
+            if (current->value[0] == '/' || ft_strncmp(current->value, "./", 2) == 0 || ft_strncmp(current->value, "../", 3) == 0)
 			{
                 if (current->value[0] != '/')
 				{
                     ft_strcpy(full_path, cwd);
-                    if (full_path[strlen(full_path) - 1] != '/')
+                    if (full_path[ft_strlen(full_path) - 1] != '/')
                         ft_strcat(full_path, "/");
                     ft_strcat(full_path, current->value);
                 }
