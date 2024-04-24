@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 13:43:42 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 15:50:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,18 @@ void bla(t_data *data, t_command *cmd)
         }
         else if (pid == 0)  // Child process
         {
-            // Close the read end of the pipe
-            close(pipe_fd[0]);
+            // Close the write end of the pipe
+            close(pipe_fd[1]);
 
-            // Redirect standard input to the write end of the pipe
-            if (dup2(pipe_fd[1], STDIN_FILENO) == -1)
+            // Redirect standard input to the read end of the pipe
+            if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
             {
                 perror("dup2");
                 exit(EXIT_FAILURE);
             }
 
-            // Close the write end of the pipe
-            close(pipe_fd[1]);
-
+            // Close the read end of the pipe
+			close(pipe_fd[0]);
             // Execute the command
             execve(path, argv, NULL);
             perror("execve");
@@ -55,8 +54,8 @@ void bla(t_data *data, t_command *cmd)
         }
         else  // Parent process
         {
-            // Close the write end of the pipe
-            //close(pipe_fd[1]);
+            // Close the read end of the pipe
+            close(pipe_fd[0]);
 
             // Write heredoc input to the pipe
 			printf("heredoc input: %s\n", data->heredoc_input);
@@ -66,11 +65,15 @@ void bla(t_data *data, t_command *cmd)
                 perror("write");//write: Bad file descriptor issue fixed by removing the first close()
                 exit(EXIT_FAILURE);
             }
-            // Close the read end of the pipe
-            close(pipe_fd[0]);
+            // Close the write end of the pipe
+			close(pipe_fd[1]);
 
             // Wait for the child process to complete
-            wait(NULL);
+			if(wait(NULL) == -1)
+			{
+				perror("wait");
+				exit(EXIT_FAILURE);
+			}
 		}
 }
 
