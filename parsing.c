@@ -131,21 +131,41 @@ int check_valid_command(t_data *data)
     char full_path[1024];
     int result = -1;
 
-    if (!path) return -1;
+    if (!path)
+		return -1;
 
     path_copy = ft_strdup(path);
-    if (!path_copy) return -1;
+    if (!path_copy)
+		return -1;
 
     dir = custom_strtok(path_copy, ":");
-    while (current) {
-        if (current->type == T_COMMAND) {
-            if (check_builtin(current->value)) {
+    while (current)
+	{
+        if (current->type == T_COMMAND)
+		{
+            if (check_builtin(current->value))
+			{
                 result = 1;
                 break;
             }
-            if (find_command_path(current->value, dir, full_path)) {
-                if (data->commands->path) {
-                    free(data->commands->path);  // Free previous path if exists
+            if (current->value[0] == '/')
+			{
+                if (access(current->value, X_OK) == 0)
+				{
+                    if (data->commands->path)
+					{
+                        free(data->commands->path);
+                    }
+                    data->commands->path = ft_strdup(current->value);
+                    result = 1;
+                    break;
+                }
+            }
+            if (find_command_path(current->value, dir, full_path))
+			{
+                if (data->commands->path)
+				{
+                    free(data->commands->path);
                 }
                 data->commands->path = ft_strdup(full_path);
                 result = 1;
@@ -154,9 +174,10 @@ int check_valid_command(t_data *data)
         }
         current = current->next;
     }
-    free(path_copy);  // Always free the duplicated path
+    free(path_copy);
     return result;
 }
+
 
 
 
