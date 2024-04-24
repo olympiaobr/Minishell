@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/19 14:59:34 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 11:48:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,13 @@ int main(int argc, char *argv[], char **envp)
             }
             add_history(data->user_input);
             lexing_input(data);
+			printf("data.heredoc: %d\n", data->heredoc);
+			if(data->heredoc == 1)
+			{
+				check_for_heredoc(data);
+				execution(data);
+				continue;
+			}
 			check_for_heredoc(data);
             expansion(data);
             parser(data);

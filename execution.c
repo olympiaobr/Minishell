@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/22 17:56:45 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/23 17:34:29 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,17 +56,16 @@ void bla(t_data *data, t_command *cmd)
         else  // Parent process
         {
             // Close the write end of the pipe
-            close(pipe_fd[1]);
+            //close(pipe_fd[1]);
 
             // Write heredoc input to the pipe
 			printf("heredoc input: %s\n", data->heredoc_input);
-            ssize_t bytes_written = write(pipe_fd[0], data->heredoc_input, ft_strlen(data->heredoc_input));
+			ssize_t bytes_written =write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
             if (bytes_written == -1)
             {
-                perror("write");//write: Bad file descriptor issue
+                perror("write");//write: Bad file descriptor issue fixed by removing the first close()
                 exit(EXIT_FAILURE);
             }
-
             // Close the read end of the pipe
             close(pipe_fd[0]);
 

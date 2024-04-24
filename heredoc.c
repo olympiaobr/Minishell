@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/22 17:23:38 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 11:38:32 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void redirect_to_standard_input()
 
 void check_for_heredoc(t_data *data)
 {
+	// printf("hella\n");
 	t_token *current = data->token_list;
 	while(current != NULL)
 	{
@@ -87,7 +88,6 @@ void check_for_heredoc(t_data *data)
 			data->heredoc = 1;
 			write_to_heredoc_file(data, delimiter);
 			redirect_to_standard_input();
-			
 		}
 		current = current->next;
 	}
