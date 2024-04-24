@@ -179,7 +179,7 @@ void execution(t_data *data)
         t_command *cmd = data->commands;
         while (cmd != NULL)
 		{
-            if (is_builtin(cmd->command))
+            if (check_builtin(cmd->command))
 			{
 				process_command_arguments(cmd);
                 ft_printf("Executing built-in command: %s\n", cmd->command);

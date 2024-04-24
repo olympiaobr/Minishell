@@ -13,7 +13,7 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int is_builtin(const char *command)
+int check_builtin(const char *command)
 {
     const char *builtins[] = {"cd", "echo", "pwd", "export", "unset", "env", "exit", NULL};
     int i;

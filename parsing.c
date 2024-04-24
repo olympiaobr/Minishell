@@ -140,7 +140,7 @@ int check_valid_command(t_data *data)
     while (current) {
         if (current->type == T_COMMAND)
 		{
-            if (is_builtin(current->value))
+            if (check_builtin(current->value))
 			{
                 free(path_copy);
                 return 1;

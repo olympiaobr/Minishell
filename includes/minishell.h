@@ -155,7 +155,7 @@ char *custom_strtok(char *str, const char *delim);
 
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
-int is_builtin(const char *command);
+int check_builtin(const char *command);
 int execute_builtin(t_command *cmd, t_data *data);
 int cd_cmd(t_data *data, t_command *cmd);
 int pwd_cmd(void);
