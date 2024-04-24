@@ -120,7 +120,7 @@ char *edge_case(char *str)
 
 // Extracts the next word from the input string
 //+ tokenizes it as a command or argument.
-void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
+int tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type)
 {
     size_t start_idx = *idx;
     int in_quote = 0;
@@ -129,19 +129,14 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
     size_t length;
 
     while (str[*idx])
-	{	
-		
-		
+	{
         if (str[*idx] == '\\' && in_quote && quote_char == '\"' &&
             (str[*idx + 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
 		{
             // Move past the escape character and the escaped character in the context of double quotes
             (*idx) += 2;
-            continue; 
-		
+            continue;
 		}
-		
-		
         quote_status(str[*idx], &in_quote, &quote_char);
         if (!in_quote && (whitespace_chars(str[*idx]) || shell_operators(str[*idx])))
 		{
@@ -149,7 +144,6 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
         }
         (*idx)++;
     }
-
     length = *idx - start_idx;
     int is_quoted = 0; // 0: unquoted, 1: single-quoted, 2: double-quoted
     if (quote_char == '\'')
@@ -177,12 +171,18 @@ void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_typ
         // Extract the substring as is when no enclosing quotes are adjusted
         word = ft_substr(str, start_idx, length);
     }
-    if (word)
+	if (word)
 	{
         printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
-        create_and_append_token(&data->token_list, word, expected_type, is_quoted);
+        if (create_and_append_token(&data->token_list, word, expected_type, is_quoted) != 0)
+		{
+            free(word);
+            return -1;  // Append failed, return -1
+        }
         free(word);
+        return 0;  // Success
     }
+    return -1;  // Word creation failed, return -1
 }
 
 
@@ -193,6 +193,7 @@ void	process_input(t_data *data, char *str)
 	int		expect_delimiter;
 	token_type type;
 	t_token	*last_token;
+	int result;
 
 	idx = 0;
 	expect_command = 1;
@@ -219,20 +220,28 @@ void	process_input(t_data *data, char *str)
 						expect_delimiter = 1;
 						expect_command = 0;
 					}
+<<<<<<< HEAD
 				
+=======
+					/* else
+					{
+							expect_command = 1;
+					} */
+
+>>>>>>> 49442ecf408a3e328a89124e0fa06c2050d95147
 				}
 			}
 			else
 			{
 				if (expect_command)
 				{
-					
+
 					type = T_COMMAND;
 					expect_command = 0;
 				}
 				else if(expect_delimiter)
 				{
-					
+
 					type = T_DELIMITER;
 					expect_delimiter = 0;
 				}
@@ -240,7 +249,13 @@ void	process_input(t_data *data, char *str)
 				{
 					type = T_ARGUMENT;
 				}
-				tokenize_word(data, str, &idx, type);
+				result = tokenize_word(data, str, &idx, type);
+				if (result != 0)
+				{
+                	ft_printf("Failed to tokenize input at index %zu\n", idx);
+                	free_tokens(data);
+                	break;
+				}
 			}
 		}
 		last_token = data->token_list;
@@ -255,6 +270,7 @@ void	process_input(t_data *data, char *str)
 		}
 	}
 }
+
 
 /*
 void	tokenize_rest(t_data *data, char *str, size_t *idx)

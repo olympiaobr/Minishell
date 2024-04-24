@@ -35,7 +35,10 @@ char	*ft_strtrim(char const *s1, char const *set)
 			return (ft_strdup(""));
 		}
 		newstring = (char *)malloc(sizeof(char) * (rear - front + 1));
-		if (newstring)
+		 if (newstring == NULL)
+        {
+            return NULL;
+        }
 			ft_strlcpy(newstring, &s1[front], rear - front + 1);
 	}
 	return (newstring);

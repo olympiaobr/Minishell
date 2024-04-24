@@ -21,12 +21,16 @@ int	whitespace_chars(char c)
 t_token *init_token(token_type type, char *value, int is_quoted)
 {
     t_token *t = malloc(sizeof(t_token));
-    if (!t) return NULL;
+    if (!t)
+        return NULL;
 
     t->type = type;
-    if (value) {
-        t->value = strdup(value);
-    } else {
+    if (value)
+    {
+        t->value = ft_strdup(value);
+    }
+    else
+    {
         t->value = NULL;
     }
     t->is_quoted = is_quoted;
@@ -58,11 +62,6 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
         free(trimmed_val);
         return (NULL);
     }
-    token->type = type;
-    token->value = trimmed_val;
-    token->is_quoted = is_quoted;
-    token->next = NULL;
-    printf("Token created - Type: %d, Value: '%s', Quoted: %d\n", type, trimmed_val, is_quoted);
     return (token);
 }
 

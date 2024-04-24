@@ -91,7 +91,7 @@ void quote_status(char c, int *in_quote, char *quote_char);
 int	create_and_append_token(t_token **token_list, char *input, token_type type, int is_quoted);
 token_type	determine_type(char *operator);
 void tokenize_operator(t_data *data, char *str, size_t *idx);
-void tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type);
+int tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type);
 // void tokenize_rest(t_data *data, char *str, size_t *idx);
 void process_input(t_data *data, char *str);
 t_token	*allocate_token(token_type type, char *val, int is_quoted);
@@ -164,7 +164,9 @@ int echo_cmd(t_command *cmd);
 int exit_cmd(t_data *data, t_command *cmd);
 int export_cmd(t_data *data, t_command *cmd);
 int unset_cmd(t_data *data, t_command *cmd);
-
+int set_env_var(t_data *data, const char *name, const char *value);
+char *get_env_var(char **envp, const char *name);
+int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);
 
 //free functions
