@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 11:38:32 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 13:33:27 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void write_to_heredoc_file(t_data *data, char *delimiter)
 	free(input);
 }
 
-void redirect_to_standard_input()
+/* void redirect_to_standard_input() //not used
 {
 	char *temp_file = "heredoc_tempfile";
 	int fd = open(temp_file, O_RDONLY);
@@ -74,11 +74,10 @@ void redirect_to_standard_input()
 	
 	close(fd);
 
-}
+} */
 
 void check_for_heredoc(t_data *data)
 {
-	// printf("hella\n");
 	t_token *current = data->token_list;
 	while(current != NULL)
 	{
@@ -87,7 +86,8 @@ void check_for_heredoc(t_data *data)
 			char *delimiter = current->next->value;// go to next token and pass it to heredoc function
 			data->heredoc = 1;
 			write_to_heredoc_file(data, delimiter);
-			redirect_to_standard_input();
+			//redirect_to_standard_input(); // had to remove this
+			
 		}
 		current = current->next;
 	}

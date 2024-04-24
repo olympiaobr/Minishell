@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/23 17:34:29 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 13:43:42 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void bla(t_data *data, t_command *cmd)
 {
 		char *path = cmd->path;
 		printf("the path is: %s\n", path);
-		char *argv[] = {cmd->command, "heredoc_tempfile", NULL};
+		char *argv[] = {path, "heredoc_tempfile", NULL};
 
 		int pipe_fd[2];
         if (pipe(pipe_fd) == -1)
