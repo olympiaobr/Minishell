@@ -183,86 +183,78 @@ int tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type
 }
 
 
-void	process_input(t_data *data, char *str)
+void process_input(t_data *data, char *str)
 {
-	size_t	idx;
-	int		expect_command;
-	int		expect_delimiter;
-	token_type type;
-	t_token	*last_token;
-	int result;
+    size_t idx = 0;
+    int expect_command = 1;
+    int expect_delimiter = 0;
+    token_type type;
+    t_token *last_token = NULL;
+    int result;
 
-	idx = 0;
-	expect_command = 1;
-	expect_delimiter = 0;
-	while (str[idx])
-	{
-		if (whitespace_chars(str[idx]))
-		{
-			idx++;
-		}
-		else
-		{
-			if (shell_operators(str[idx]))
-			{
-				tokenize_operator(data, str, &idx);
-				if (data->token_list->type == T_PIPE
-					|| data->token_list->type == T_OUT
-					|| data->token_list->type == T_IN
-					|| data->token_list->type == T_APPEND
-					|| data->token_list->type == T_HEREDOC)
-				{
-					if(data->token_list->type == T_HEREDOC)
-					{
-						expect_delimiter = 1;
-						expect_command = 0;
-					}
-					/* else
-					{
-							expect_command = 1;
-					} */
-
-				}
-			}
-			else
-			{
-				if (expect_command)
-				{
-
-					type = T_COMMAND;
-					expect_command = 0;
-				}
-				else if(expect_delimiter)
-				{
-
-					type = T_DELIMITER;
-					expect_delimiter = 0;
-				}
-				else
-				{
-					type = T_ARGUMENT;
-				}
-				result = tokenize_word(data, str, &idx, type);
-				if (result != 0)
-				{
-                	ft_printf("Failed to tokenize input at index %zu\n", idx);
-                	free_tokens(data);
-                	break;
-				}
-			}
-		}
-		last_token = data->token_list;
-		while (last_token && last_token->next)
-		{
-			printf("Processing: %s, is_quoted: %d\n", last_token->value, last_token->is_quoted);
-			last_token = last_token->next;
-		}
-		if (last_token && last_token->type == T_PIPE)
-		{
-			expect_command = 1;
-		}
-	}
+    while (str[idx])
+    {
+        if (whitespace_chars(str[idx]))
+        {
+            idx++;
+            continue;
+        }
+        if (shell_operators(str[idx]))
+        {
+            tokenize_operator(data, str, &idx);
+            last_token = data->token_list;
+            while (last_token && last_token->next)
+            {
+                last_token = last_token->next;
+            }
+            if (last_token)
+            {
+                if (last_token->type == T_HEREDOC)
+                {
+                    expect_delimiter = 1;
+                    expect_command = 0;
+                }
+                else if (last_token->type == T_PIPE || last_token->type == T_OUT ||
+                         last_token->type == T_IN || last_token->type == T_APPEND)
+                {
+                    expect_command = 1;
+                    expect_delimiter = 0;
+                }
+            }
+        }
+        else
+        {
+            if (expect_command)
+            {
+                type = T_COMMAND;
+                expect_command = 0;
+            }
+            else if (expect_delimiter)
+            {
+                type = T_DELIMITER;
+                expect_delimiter = 0;
+            }
+            else
+            {
+                type = T_ARGUMENT;
+            }
+            result = tokenize_word(data, str, &idx, type);
+            if (result != 0)
+            {
+                ft_printf("Failed to tokenize input at index %zu\n", idx);
+                free_tokens(data);
+                break;
+            }
+        }
+    }
+    last_token = data->token_list;
+    while (last_token)
+    {
+        printf("Processed token: %s, Type: %d\n", last_token->value, last_token->type);
+        last_token = last_token->next;
+    }
 }
+
 
 
 /*

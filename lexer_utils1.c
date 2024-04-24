@@ -57,11 +57,9 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
         return (NULL);
     }
     token = init_token(type, trimmed_val, is_quoted);
-    if (!token)
-	{
-        free(trimmed_val);
-        return (NULL);
-    }
+    free(trimmed_val);
+    if (token == NULL)
+        return NULL;
     return (token);
 }
 
@@ -70,7 +68,11 @@ void	append_token(t_token **token_list, t_token *new_token)
 	t_token	*current;
 
 	if (!token_list || !new_token)
-		return ;
+    {
+        free(new_token->value);
+        free(new_token);
+        return;
+    }
 	if (!*token_list)
 	{
 		*token_list = new_token;
