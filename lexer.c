@@ -68,6 +68,7 @@ void lexing_input(t_data *data)
     if (!trimmed_input)
 	{
         ft_printf("Error: Memory allocation failed for trimming.\n");
+		free_tokens(data);
         return;
     }
     free(data->user_input);
@@ -75,6 +76,7 @@ void lexing_input(t_data *data)
     if (check_special_chars(data->user_input))
 	{
         ft_printf("Error: Special characters such as '\\' or ';' not allowed.\n");
+		free_tokens(data);
         return;
     }
     if (input_check(data->user_input))
