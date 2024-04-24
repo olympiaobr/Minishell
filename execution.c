@@ -155,7 +155,7 @@ void process_command_arguments(t_command *cmd)
 	printf("Processing arguments for command: %s\n", cmd->command);
 
 	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
-	if (arg && index == 0 && is_builtin(cmd->command))
+	if (arg && index == 0 && check_builtin(cmd->command))
 	{
 		arg = arg->next; // Skip the first if it includes the command
 		index++;
@@ -194,7 +194,10 @@ void execution(t_data *data)
             }
             cmd = cmd->next;
         }
+		display_commands(data);
     }
+	free_commands(data->commands);
+    data->commands = NULL;
 }
 
 

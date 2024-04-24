@@ -122,7 +122,6 @@ int find_command_path(const char *command, char *dir, char *full_path)
     return 0;
 }
 
-
 int check_valid_command(t_data *data)
 {
     t_token *current = data->token_list;
@@ -130,6 +129,7 @@ int check_valid_command(t_data *data)
     char *path_copy;
     char *dir;
     char full_path[1024];
+    int result = -1;
 
     if (!path) return -1;
 
@@ -138,25 +138,27 @@ int check_valid_command(t_data *data)
 
     dir = custom_strtok(path_copy, ":");
     while (current) {
-        if (current->type == T_COMMAND)
-		{
-            if (check_builtin(current->value))
-			{
-                free(path_copy);
-                return 1;
+        if (current->type == T_COMMAND) {
+            if (check_builtin(current->value)) {
+                result = 1;
+                break;
             }
-            if (find_command_path(current->value, dir, full_path))
-			{
+            if (find_command_path(current->value, dir, full_path)) {
+                if (data->commands->path) {
+                    free(data->commands->path);  // Free previous path if exists
+                }
                 data->commands->path = ft_strdup(full_path);
-                free(path_copy);
-                return 1;
+                result = 1;
+                break;
             }
         }
         current = current->next;
     }
-    free(path_copy);
-    return -1;
+    free(path_copy);  // Always free the duplicated path
+    return result;
 }
+
+
 
 
 
