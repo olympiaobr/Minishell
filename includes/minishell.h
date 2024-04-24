@@ -148,14 +148,14 @@ void check_for_heredoc(t_data *data);
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
 char *ft_strcpy(char *dest, const char *src);
-char *ft_strcat(char *dest, char *src);
+char *ft_strcat(char *dest, const char *src);
 size_t ft_strspn(const char *str, const char *delim);
 size_t ft_strcspn(const char *str, const char *reject);
 char *custom_strtok(char *str, const char *delim);
 
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
-int is_builtin(const char *command);
+int check_builtin(const char *command);
 int execute_builtin(t_command *cmd, t_data *data);
 int cd_cmd(t_data *data, t_command *cmd);
 int pwd_cmd(void);
@@ -173,5 +173,5 @@ void free_commands(t_command *commands);
 void free_all(t_data *data);
 
 void ft_error(char *err);
-
+void display_commands(t_data *data);
 #endif

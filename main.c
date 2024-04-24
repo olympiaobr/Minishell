@@ -147,7 +147,6 @@ int main(int argc, char *argv[], char **envp)
             	ft_printf("\n");
             	current = current->next;
         	}
-			display_commands(data);
             reset_shell_state(data, envp);
     	}
 	}
