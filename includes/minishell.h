@@ -164,7 +164,9 @@ int echo_cmd(t_command *cmd);
 int exit_cmd(t_data *data, t_command *cmd);
 int export_cmd(t_data *data, t_command *cmd);
 int unset_cmd(t_data *data, t_command *cmd);
-
+int set_env_var(t_data *data, const char *name, const char *value);
+char *get_env_var(char **envp, const char *name);
+int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);
 
 //free functions

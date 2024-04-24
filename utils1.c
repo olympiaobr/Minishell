@@ -94,3 +94,4 @@ void free_all(t_data *data)
     free(data->output_file);
     data->output_file = NULL;
 }
+

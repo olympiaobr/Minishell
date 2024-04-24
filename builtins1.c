@@ -13,27 +13,6 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int execute_builtin(t_command *cmd, t_data *data)
-{
-    if (!cmd || !cmd->command)
-        return (-1);
-
-    if (ft_strcmp(cmd->command, "cd") == 0)
-        return (cd_cmd(data, cmd));
-    else if (ft_strcmp(cmd->command, "echo") == 0)
-        return (echo_cmd(cmd));
-    else if (ft_strcmp(cmd->command, "pwd") == 0)
-        return (pwd_cmd());
-    else if (ft_strcmp(cmd->command, "env") == 0)
-        return (env_cmd(data));
-    else if (ft_strcmp(cmd->command, "export") == 0)
-        return (export_cmd(data, cmd));
-    else if (ft_strcmp(cmd->command, "unset") == 0)
-        return (unset_cmd(data, cmd));
-    else if (ft_strcmp(cmd->command, "exit") == 0)
-        return (exit_cmd(data, cmd));
-    return (-1);
-}
 int pwd_cmd(void)
 {
     char *cwd;
@@ -126,4 +105,21 @@ int echo_cmd(t_command *cmd)
     if (newline)
         ft_printf("\n");
     return (0);
+}
+char *get_env_var(char **envp, const char *name)
+{
+    size_t len;
+    int i;
+
+    len = ft_strlen(name);
+    i = 0;
+    while (envp[i] != NULL)
+    {
+        if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == '=')
+        {
+            return envp[i] + len + 1;
+        }
+        i++;
+    }
+    return NULL;
 }
