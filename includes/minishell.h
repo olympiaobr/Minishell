@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/22 15:59:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/24 12:24:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ int check_valid_command(t_data *data);
 
 //heredoc functions
 void check_for_heredoc(t_data *data);
-
+void bla(t_data *data, t_command *cmd);
 
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
