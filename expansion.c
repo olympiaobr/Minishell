@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 12:33:06 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 15:11:26 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,11 +113,7 @@ void expansion(t_data *data)
     while (current != NULL)
     {
         //printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
-		if(current->value[0] == '$' && current->value[1] == '?')
-		{
-			ft_printf("exit status: %d\n", data->exit_status);
-			break;
-		}
+		
         if (current->is_quoted != 1)
         {
             char *expanded_value = ft_strdup("");
@@ -125,12 +121,13 @@ void expansion(t_data *data)
             while (current->value[i] != '\0')
             {
                 if (current->value[i] == '$')
-                {
-                    int start = i + 1;
-					if(current->value[1] == '\0') // edge case: echo $
+                {	
+					if(current->value[0] == '$' && current->value[1] == '?')
 					{
-						ft_printf("$");
+						ft_printf("exit status: %d", data->exit_status);
+						break;
 					}
+                    int start = i + 1;
                     while (current->value[start] != '\0' && valid_var_char(current->value[start]))
                     {
                         start++;
@@ -144,6 +141,10 @@ void expansion(t_data *data)
                         expanded_value = ft_strjoin(expanded_value, value);
                         free(temp);
                     }
+					else
+					{
+						expanded_value = ft_strjoin_char(expanded_value, current->value[i]); //edge case
+					}
                     i = start - 1;
                 }
                 else
