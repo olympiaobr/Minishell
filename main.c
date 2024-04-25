@@ -13,7 +13,7 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-void display_commands(t_data *data)
+/*void display_commands(t_data *data)
 {
     t_command *cmd = data->commands;
     int i = 0;
@@ -40,6 +40,7 @@ void display_commands(t_data *data)
     if (data->output_file)
         ft_printf("Output Redirection: %s\n", data->output_file);
 }
+*/
 void reset_shell_state(t_data *data, char **envp)
 {
     free(data->user_input);

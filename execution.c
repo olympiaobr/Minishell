@@ -196,7 +196,6 @@ void execution(t_data *data)
             }
             cmd = cmd->next;
         }
-		display_commands(data);
     }
 	free_commands(data->commands);
     data->commands = NULL;
