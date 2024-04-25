@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 12:12:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:33:06 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void expansion(t_data *data)
         //printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
 		if(current->value[0] == '$' && current->value[1] == '?')
 		{
-			printf("bla\n");
+			ft_printf("exit status: %d\n", data->exit_status);
 			break;
 		}
         if (current->is_quoted != 1)

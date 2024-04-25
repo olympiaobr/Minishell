@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 12:03:59 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:05:50 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,8 @@ void execution(t_data *data)
 {
     if (check_valid_command(data) != 1)
 	{
-        //ft_printf("Not a valid command.\n");
+        ft_printf("%s: command not found\n", data->commands->command);
+		data->exit_status = 127;
     }
 	else
 	{
@@ -189,6 +190,7 @@ void execution(t_data *data)
 				{
                     ft_printf("Error executing built-in command.\n");
                 }
+				data->exit_status = 0;
             }
 			else
 			{
