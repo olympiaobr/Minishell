@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 13:05:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:17:30 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,12 +101,12 @@ void execute_external_command(t_data *data, t_command *cmd)
     	if (cmd->argv != NULL)
     	{
         	argument1 = cmd->argv->value;
-        	ft_printf("argument1 is: %s\n", argument1);
+        	//ft_printf("argument1 is: %s\n", argument1);
         	argc++;
         	if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
         	{
             	argument2 = cmd->argv->next->value;
-            	ft_printf("argument2 is: %s\n", argument2);
+            	//ft_printf("argument2 is: %s\n", argument2);
             	argc++;
         	}
     	}
@@ -133,8 +133,14 @@ void execute_external_command(t_data *data, t_command *cmd)
         	argv[i++] = argument2;
     	}
    	 	argv[i] = NULL;
+		pid_t pid = fork(); //fork a child process
 
-   		if (fork() == 0)  // Child process
+		if(pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+   		else if (pid == 0)  // Child process executes
     	{
         	execve(path, argv, data->env);
         	perror("execve");
@@ -142,7 +148,15 @@ void execute_external_command(t_data *data, t_command *cmd)
     	}
     	else  // Parent process
     	{
-        	wait(NULL);
+			int status;
+            waitpid(pid, &status, 0);  // Wait for the child process to finish
+            if (WIFEXITED(status))
+            {
+                int exit_status = WEXITSTATUS(status);
+                //printf("Command exited with status: %d\n", exit_status);
+				data->exit_status = exit_status;
+            }
+        	//wait(NULL);
     	}
 		free(argv);
 	}
@@ -189,6 +203,7 @@ void execution(t_data *data)
                 if (execute_builtin(cmd, data) == -1)
 				{
                     ft_printf("Error executing built-in command.\n");
+					data->exit_status = 1;
                 }
 				data->exit_status = 0;
             }
