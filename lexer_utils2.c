@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/23 18:10:12 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:00:55 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ int tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type
     }
 	if (word)
 	{
-        printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
+        //printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
         if (create_and_append_token(&data->token_list, word, expected_type, is_quoted) != 0)
 		{
             free(word);
@@ -253,7 +253,7 @@ void process_input(t_data *data, char *str)
     last_token = data->token_list;
     while (last_token)
     {
-        printf("Processed token: %s, Type: %d\n", last_token->value, last_token->type);
+        //printf("Processed token: %s, Type: %d\n", last_token->value, last_token->type);
         last_token = last_token->next;
     }
 }

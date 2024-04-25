@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/04 11:10:13 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:12:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,12 @@ void expansion(t_data *data)
     t_token *current = data->token_list;
     while (current != NULL)
     {
-        printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
+        //printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
+		if(current->value[0] == '$' && current->value[1] == '?')
+		{
+			printf("bla\n");
+			break;
+		}
         if (current->is_quoted != 1)
         {
             char *expanded_value = ft_strdup("");
@@ -122,6 +127,10 @@ void expansion(t_data *data)
                 if (current->value[i] == '$')
                 {
                     int start = i + 1;
+					if(current->value[1] == '\0') // edge case: echo $
+					{
+						ft_printf("$");
+					}
                     while (current->value[start] != '\0' && valid_var_char(current->value[start]))
                     {
                         start++;

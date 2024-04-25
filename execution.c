@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 15:50:47 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:03:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void process_command_arguments(t_command *cmd)
 		return;
 	t_token *arg = cmd->argv;
 	int index = 0;
-	printf("Processing arguments for command: %s\n", cmd->command);
+	//printf("Processing arguments for command: %s\n", cmd->command);
 
 	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
 	if (arg && index == 0 && check_builtin(cmd->command))
@@ -173,18 +173,18 @@ void execution(t_data *data)
 {
     if (check_valid_command(data) != 1)
 	{
-        ft_printf("Not a valid command.\n");
+        //ft_printf("Not a valid command.\n");
     }
 	else
 	{
-        ft_printf("Valid command.\n");
+        //ft_printf("Valid command.\n");
         t_command *cmd = data->commands;
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
 			{
 				process_command_arguments(cmd);
-                ft_printf("Executing built-in command: %s\n", cmd->command);
+               // ft_printf("Executing built-in command: %s\n", cmd->command);
                 if (execute_builtin(cmd, data) == -1)
 				{
                     ft_printf("Error executing built-in command.\n");

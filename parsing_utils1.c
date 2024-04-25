@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/22 16:22:00 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:04:48 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ int link_arg_to_command(t_command *last_command, t_token *token)
         current->next = new_arg;
     }
     last_command->argc++;
-    printf("Linked argument - Command: '%s', Arg: '%s', Total Args: %d\n", last_command->command, new_arg->value, last_command->argc);
+    //printf("Linked argument - Command: '%s', Arg: '%s', Total Args: %d\n", last_command->command, new_arg->value, last_command->argc);
     return 0;
 }
 
