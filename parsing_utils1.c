@@ -239,7 +239,7 @@ int setup_redirection(t_data *data, t_token *token, char *filename, int oflag)//
 int apply_redirection(t_data *data, t_token *token)
 {
     int oflag;
-	char *file_name = NULL; //added another variable to store the filename
+	char *file_name = NULL;
     if (token->type == T_IN)
 	{
         oflag = O_RDONLY;
@@ -256,14 +256,15 @@ int apply_redirection(t_data *data, t_token *token)
 	{
         return (0);
     }
-	 file_name = strdup(token->next->value); //let it point to the next token
-
-	int result = setup_redirection(data, token, file_name, oflag);//pass filename to this function
-
-    free(file_name); // Free the allocated memory
-
-    return result;
-    return (1);
+	file_name = ft_strdup(token->next->value);
+    if (!file_name)
+    {
+        ft_error("Error: strdup failed for file name\n");
+        return -1;
+    }
+	int result = setup_redirection(data, token, file_name, oflag);
+    free(file_name);
+    return (result);
 }
 
 void ft_error(char *err)
