@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 15:11:26 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/26 16:30:41 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,10 @@ void expansion(t_data *data)
             int i = 0;
             while (current->value[i] != '\0')
             {
+				if(current->value[0] == '$')
+				{
+					ft_printf("$"); // edge case echo $
+				}
                 if (current->value[i] == '$')
                 {	
 					if(current->value[0] == '$' && current->value[1] == '?')
@@ -141,10 +145,6 @@ void expansion(t_data *data)
                         expanded_value = ft_strjoin(expanded_value, value);
                         free(temp);
                     }
-					else
-					{
-						expanded_value = ft_strjoin_char(expanded_value, current->value[i]); //edge case
-					}
                     i = start - 1;
                 }
                 else

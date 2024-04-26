@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/25 17:17:30 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/26 14:54:49 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,11 @@ void execute_external_command(t_data *data, t_command *cmd)
             {
                 int exit_status = WEXITSTATUS(status);
                 //printf("Command exited with status: %d\n", exit_status);
+				
 				data->exit_status = exit_status;
+			
+		
+				
             }
         	//wait(NULL);
     	}
@@ -178,7 +182,7 @@ void process_command_arguments(t_command *cmd)
 	}
 	while (arg)
 	{
-		printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
+		//printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
 		arg = arg->next;
 	}
 }
@@ -188,7 +192,7 @@ void execution(t_data *data)
     if (check_valid_command(data) != 1)
 	{
         ft_printf("%s: command not found\n", data->commands->command);
-		data->exit_status = 127;
+		data->exit_status = 127;	
     }
 	else
 	{
@@ -203,9 +207,10 @@ void execution(t_data *data)
                 if (execute_builtin(cmd, data) == -1)
 				{
                     ft_printf("Error executing built-in command.\n");
-					data->exit_status = 1;
+					
+						data->exit_status = 1;
                 }
-				data->exit_status = 0;
+					data->exit_status = 0;	
             }
 			else
 			{
