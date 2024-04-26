@@ -133,7 +133,6 @@ void execute_external_command(t_data *data, t_command *cmd)
         	argv[i++] = argument2;
     	}
    	 	argv[i] = NULL;
-
    		if (fork() == 0)  // Child process
     	{
         	execve(path, argv, data->env);
