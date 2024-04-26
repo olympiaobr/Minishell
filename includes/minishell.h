@@ -81,6 +81,8 @@ typedef struct data_all
 	t_command *commands;
 	int *create_new_command;
 	int exit_status;
+	int count_cmd;
+	int **pipesfd;
 	int max_env_size;
 }	t_data;
 

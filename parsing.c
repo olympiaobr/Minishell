@@ -125,7 +125,7 @@ int find_command_path(const char *command, char *dir, char *full_path)
 int check_valid_command(t_data *data)
 {
     t_token *current = data->token_list;
-    char *path = getenv("PATH");
+    char *path = cust_getenv("PATH", data);
     char *path_copy;
     char *dir;
     char full_path[1024];

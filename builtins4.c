@@ -88,17 +88,8 @@ int execute_builtin(t_command *cmd, t_data *data)
 
 int check_builtin(const char *command)
 {
-    const char *builtins[] = {"cd", "echo", "pwd", "export", "unset", "env", "exit", NULL};
-    int i;
-
-    i = 0;
-    while (builtins[i] != NULL)
-    {
-        if (!ft_strcmp(command, builtins[i]))
-        {
-            return 1;
-        }
-        i++;
-    }
-    return 0;
+    return (ft_strcmp(command, "cd") == 0 || ft_strcmp(command, "echo") == 0 ||
+            ft_strcmp(command, "pwd") == 0 || ft_strcmp(command, "export") == 0 ||
+            ft_strcmp(command, "unset") == 0 || ft_strcmp(command, "env") == 0 ||
+            ft_strcmp(command, "exit") == 0);
 }
