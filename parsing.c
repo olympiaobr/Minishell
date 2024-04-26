@@ -133,56 +133,58 @@ int check_valid_command(t_data *data)
     int result = -1;
 
     if (!path)
-		return -1;
+        path = "";
     path_copy = ft_strdup(path);
     if (!path_copy)
-		return -1;
+        return -1;
     if (getcwd(cwd, sizeof(cwd)) == NULL)
-	{
+    {
         free(path_copy);
         return -1;
     }
     dir = custom_strtok(path_copy, ":");
-    while (current) {
+    while (current)
+    {
         if (current->type == T_COMMAND)
-		{
+        {
             if (check_builtin(current->value))
-			{
-                result = 1;
-                break;
+            {
+                free(path_copy);
+                return 1;
             }
             if (current->value[0] == '/' || ft_strncmp(current->value, "./", 2) == 0 || ft_strncmp(current->value, "../", 3) == 0)
-			{
+            {
                 if (current->value[0] != '/')
-				{
+                {
                     ft_strcpy(full_path, cwd);
                     if (full_path[ft_strlen(full_path) - 1] != '/')
                         ft_strcat(full_path, "/");
                     ft_strcat(full_path, current->value);
                 }
-				else
-				{
+                else
+                {
                     ft_strcpy(full_path, current->value);
                 }
                 if (access(full_path, X_OK) == 0)
-				{
+                {
                     if (data->commands->path)
-					{
+                    {
                         free(data->commands->path);
                     }
                     data->commands->path = ft_strdup(full_path);
-                    result = 1;
-                    break;
+                    free(path_copy);
+                    return 1;
                 }
             }
             if (find_command_path(current->value, dir, full_path))
-			{
-                if (data->commands->path) {
+            {
+                if (data->commands->path)
+                {
                     free(data->commands->path);
                 }
                 data->commands->path = ft_strdup(full_path);
-                result = 1;
-                break;
+                free(path_copy);
+                return 1;
             }
         }
         current = current->next;
@@ -190,6 +192,9 @@ int check_valid_command(t_data *data)
     free(path_copy);
     return result;
 }
+
+
+
 
 
 
