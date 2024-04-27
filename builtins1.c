@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 17:32:07 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/15 17:32:11 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:05:29 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int echo_cmd(t_command *cmd)
     t_token *current_arg = cmd->argv;
     int newline = 1;
     int first = 1;
-
+	
     while (option && n_option(option->value))
 	{
         newline = 0;

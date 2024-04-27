@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 13:00:56 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:55:20 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[], char **envp)
             }
             add_history(data->user_input);
             lexing_input(data);
-			printf("data.heredoc: %d\n", data->heredoc);
+			//printf("data.heredoc: %d\n", data->heredoc);
 			if(data->heredoc == 1)
 			{
 				data->heredoc = 0;
@@ -127,27 +127,27 @@ int main(int argc, char *argv[], char **envp)
             t_token *current = data->token_list;
             while (current != NULL)
 			{
-            	ft_printf("Value: %s Type: ", current->value);
+            	//ft_printf("Value: %s Type: ", current->value);
             	if (current->type == T_COMMAND) {
-                	ft_printf("T_COMMAND");
+                	//ft_printf("T_COMMAND");
             	} else if (current->type == T_PIPE) {
-            		ft_printf("T_PIPE");
+            		//ft_printf("T_PIPE");
             	} else if (current->type == T_IN) {
-           			ft_printf("T_IN");
+           			//ft_printf("T_IN");
             	} else if (current->type == T_OUT) {
-           	    	ft_printf("T_OUT");
+           	    	//ft_printf("T_OUT");
             	} else if (current->type == T_HEREDOC) {
-                	ft_printf("T_HEREDOC");
+                	//ft_printf("T_HEREDOC");
             	} else if (current->type == T_APPEND) {
-                	ft_printf("T_APPEND");
+                	//ft_printf("T_APPEND");
             	} else if (current->type == T_DELIMITER) {
-                	ft_printf("T_DELIMITER");
+                	//ft_printf("T_DELIMITER");
             	} else if (current->type == T_ARGUMENT){
-					ft_printf("T_ARGUMENT");
+					//ft_printf("T_ARGUMENT");
 				} else {
-                	ft_printf("Unknown Type");
+                	//ft_printf("Unknown Type");
             	}
-            	ft_printf("\n");
+            	//ft_printf("\n");
             	current = current->next;
         	}
             reset_shell_state(data, envp);
