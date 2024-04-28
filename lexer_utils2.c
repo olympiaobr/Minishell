@@ -253,7 +253,7 @@ void process_input(t_data *data, char *str)
     last_token = data->token_list;
     while (last_token)
     {
-        //printf("Processed token: %s, Type: %d\n", last_token->value, last_token->type);
+        printf("Processed token: %s, Type: %d\n", last_token->value, last_token->type);
         last_token = last_token->next;
     }
 }

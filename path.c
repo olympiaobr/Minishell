@@ -173,19 +173,3 @@ t_data *init_data(char **envp)
     initialize_shell_components(data);
     return (data);
 }
-
-/*
-
-
-int check_valid_command(t_data *data, const char *command)
-{
-    	if (strcmp(command, "cd") == 0 || strcmp(command, "echo") == 0 ||
-        strcmp(command, "pwd") == 0 || strcmp(command, "export") == 0 ||
-        strcmp(command, "unset") == 0 || strcmp(command, "env") == 0 ||
-        strcmp(command, "exit") == 0)
-		{
-        	return 1;
-		}
-		return check_command_in_path(data->env_paths, command);
-}
-*/

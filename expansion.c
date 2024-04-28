@@ -13,9 +13,9 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-char *get_value(char *variable_name)
+char *get_value(char *variable_name, t_data *data)
 {
-	return getenv(variable_name);
+	return cust_getenv(variable_name, data);
 }
 
 int	expansion_delimiters(char c)
@@ -113,7 +113,7 @@ void expansion(t_data *data)
     while (current != NULL)
     {
         //printf("Expanding: %s, is_quoted: %d\n", current->value, current->is_quoted);
-		
+
         if (current->is_quoted != 1)
         {
             char *expanded_value = ft_strdup("");
@@ -125,7 +125,7 @@ void expansion(t_data *data)
 					ft_printf("$"); // edge case echo $
 				}
                 if (current->value[i] == '$')
-                {	
+                {
 					if(current->value[0] == '$' && current->value[1] == '?')
 					{
 						ft_printf("exit status: %d", data->exit_status);
@@ -137,7 +137,7 @@ void expansion(t_data *data)
                         start++;
                     }
                     char *variable_name = ft_substr(current->value, i + 1, start - (i + 1));
-                    char *value = get_value(variable_name);
+                    char *value = get_value(variable_name, data);
                     free(variable_name);
                     if (value)
                     {

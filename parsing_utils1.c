@@ -154,7 +154,7 @@ int link_arg_to_command(t_command *last_command, t_token *token)
         current->next = new_arg;
     }
     last_command->argc++;
-    //printf("Linked argument - Command: '%s', Arg: '%s', Total Args: %d\n", last_command->command, new_arg->value, last_command->argc);
+    printf("Linked argument - Command: '%s', Arg: '%s', Total Args: %d\n", last_command->command, new_arg->value, last_command->argc);
     return 0;
 }
 
