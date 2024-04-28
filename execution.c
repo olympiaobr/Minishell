@@ -6,14 +6,14 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 15:50:47 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/28 18:42:23 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
 
-void bla(t_data *data, t_command *cmd)
+void handle_heredocs(t_data *data, t_command *cmd)
 {
 		char *path = cmd->path;
 		printf("the path is: %s\n", path);
@@ -88,10 +88,16 @@ void execute_external_command(t_data *data, t_command *cmd)
 
 	if(data->heredoc == 1)
 	{
-		bla(data, cmd);
+		handle_heredocs(data, cmd);
 	}
 	else
 	{
+		if(ft_strcmp(data->token_list->value, "expr")/*  && ft_strcmp(cmd->next->argv->value, "+") */)
+		{
+			printf("hello\n");
+
+			//in progress
+		}
 		 if (cmd->option != NULL)
     	{
         	option = cmd->option->value;
@@ -100,7 +106,8 @@ void execute_external_command(t_data *data, t_command *cmd)
    		}
     	if (cmd->argv != NULL)
     	{
-        	argument1 = cmd->argv->value;
+			argument1 = cmd->argv->value;
+			
         	ft_printf("argument1 is: %s\n", argument1);
         	argc++;
         	if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
@@ -133,7 +140,14 @@ void execute_external_command(t_data *data, t_command *cmd)
         	argv[i++] = argument2;
     	}
    	 	argv[i] = NULL;
-   		if (fork() == 0)  // Child process
+   		
+		pid_t pid = fork(); //fork a child process
+		if(pid == -1)
+		{
+			perror("fork");
+			exit(EXIT_FAILURE);
+		}
+   		else if (pid == 0)  // Child process executes
     	{
         	execve(path, argv, data->env);
         	perror("execve");
@@ -141,7 +155,14 @@ void execute_external_command(t_data *data, t_command *cmd)
     	}
     	else  // Parent process
     	{
-        	wait(NULL);
+			int status;
+            waitpid(pid, &status, 0);  // Wait for the child process to finish
+            if (WIFEXITED(status))
+            {
+                int exit_status = WEXITSTATUS(status);//get exit status
+                //printf("Command exited with status: %d\n", exit_status);
+				data->exit_status = exit_status;
+            }
     	}
 		free(argv);
 	}
@@ -153,7 +174,7 @@ void process_command_arguments(t_command *cmd)
 		return;
 	t_token *arg = cmd->argv;
 	int index = 0;
-	printf("Processing arguments for command: %s\n", cmd->command);
+	//printf("Processing arguments for command: %s\n", cmd->command);
 
 	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
 	if (arg && index == 0 && check_builtin(cmd->command))
@@ -172,22 +193,25 @@ void execution(t_data *data)
 {
     if (check_valid_command(data) != 1)
 	{
-        ft_printf("Not a valid command.\n");
+        ft_printf("%s: command not found\n", data->commands->command);
+		data->exit_status = 127;
     }
 	else
 	{
-        ft_printf("Valid command.\n");
+        //ft_printf("Valid command.\n");
         t_command *cmd = data->commands;
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
 			{
 				process_command_arguments(cmd);
-                ft_printf("Executing built-in command: %s\n", cmd->command);
+                //ft_printf("Executing built-in command: %s\n", cmd->command);
                 if (execute_builtin(cmd, data) == -1)
 				{
                     ft_printf("Error executing built-in command.\n");
+					data->exit_status = 1;
                 }
+				data->exit_status = 0;
             }
 			else
 			{
