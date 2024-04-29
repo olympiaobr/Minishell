@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/29 14:18:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:46:34 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,15 @@
 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
-		char *path = cmd->path;
-		//printf("the path is: %s\n", path);
+		char *path = cmd->path;//printf("the path is: %s\n", path);
 		char *argv[] = {path, "heredoc_tempfile", NULL};
-
 		int pipe_fd[2];
         if (pipe(pipe_fd) == -1)
         {
             perror("pipe");
             exit(EXIT_FAILURE);
         }
-
-        // Fork a child process to handle the command
-        pid_t pid = fork();
+        pid_t pid = fork();// Fork a child process to handle the command
         if (pid == -1)
         {
             perror("fork");
@@ -35,41 +31,28 @@ void handle_heredocs(t_data *data, t_command *cmd)
         }
         else if (pid == 0)  // Child process
         {
-            // Close the write end of the pipe
-            close(pipe_fd[1]);
-
-            // Redirect standard input to the read end of the pipe
-            if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+            close(pipe_fd[1]);// Close the write end of the pipe
+            if (dup2(pipe_fd[0], STDIN_FILENO) == -1)// Redirect standard input to the read end of the pipe
             {
                 perror("dup2");
                 exit(EXIT_FAILURE);
             }
-
-            // Close the read end of the pipe
-			close(pipe_fd[0]);
-            // Execute the command
-            execve(path, argv, NULL);
+			close(pipe_fd[0]);// Close the read end of the pipe
+            execve(path, argv, NULL);  // Execute the command
             perror("execve");
             exit(EXIT_FAILURE);
         }
         else  // Parent process
         {
-            // Close the read end of the pipe
-            close(pipe_fd[0]);
-
-            // Write heredoc input to the pipe
-			//printf("heredoc input: %s\n", data->heredoc_input);
-			ssize_t bytes_written =write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
+            close(pipe_fd[0]); // Close the read end of the pipe
+			ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));//printf("heredoc input: %s\n", data->heredoc_input);
             if (bytes_written == -1)
             {
                 perror("write");//write: Bad file descriptor issue fixed by removing the first close()
                 exit(EXIT_FAILURE);
             }
-            // Close the write end of the pipe
-			close(pipe_fd[1]);
-
-            // Wait for the child process to complete
-			if(wait(NULL) == -1)
+			close(pipe_fd[1]);// Close the write end of the pipe
+			if(wait(NULL) == -1) // Wait for the child process to complete
 			{
 				perror("wait");
 				exit(EXIT_FAILURE);
