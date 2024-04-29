@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/29 15:46:34 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/29 19:12:58 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,14 +121,50 @@ void handle_expr_function(t_data *data)
            		}
 			}
 }
+char **set_argv_array(t_command *cmd, char *option, char *argument1, char *argument2)
+{
+	int argc = 1;
+	if (cmd->option != NULL)
+    {
+        option = cmd->option->value;//ft_printf("option is: %s\n", option);
+       	argc++;
+   	}
+    if (cmd->argv != NULL)
+    {
+		argument1 = cmd->argv->value;//ft_printf("argument1 is: %s\n", argument1);
+        argc++;
+    	if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
+    	{
+            argument2 = cmd->argv->next->value;//ft_printf("argument2 is: %s\n", argument2);
+            argc++;
+        }
+    }
+    char **argv = malloc(sizeof(char *) * (argc + 1));
+    if (!argv)
+    {
+        ft_printf("memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    int i = 0;
+    argv[i++] = cmd->command;
+    if (option != NULL)
+		argv[i++] = option;   
+    if (argument1 != NULL)
+		 argv[i++] = argument1;
+    if (argument2 != NULL)
+		  argv[i++] = argument2;
+	argv[i] = NULL;
+	return(argv);
+}
+
 void execute_external_command(t_data *data, t_command *cmd)
 {
     char *path = cmd->path;
-    char *command = cmd->command;
+   // char *command = cmd->command;
     char *option = NULL;
     char *argument1 = NULL;
     char *argument2 = NULL;
-    int argc = 1;
+   // int argc = 1;
 
 	if(data->heredoc == 1)
 		handle_heredocs(data, cmd);
@@ -138,44 +174,9 @@ void execute_external_command(t_data *data, t_command *cmd)
 			handle_expr_function(data);
 		else
 		{
-				if (cmd->option != NULL)
-    			{
-        			option = cmd->option->value;ft_printf("option is: %s\n", option);
-       	 			argc++;
-   				}
-    			if (cmd->argv != NULL)
-    			{
-					argument1 = cmd->argv->value;ft_printf("argument1 is: %s\n", argument1);
-        			argc++;
-        			if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
-        			{
-            			argument2 = cmd->argv->next->value;ft_printf("argument2 is: %s\n", argument2);
-            			argc++;
-        			}
-    			}
-    			char **argv = malloc(sizeof(char *) * (argc + 1));
-    			if (!argv)
-    			{
-        			ft_printf("memory allocation failed\n");
-        			exit(EXIT_FAILURE);
-    			}
-    			int i = 0;
-    			argv[i++] = command;
-    			if (option != NULL)
-    			{
-        			argv[i++] = option;
-    			}
-    			if (argument1 != NULL)
-    			{
-        			argv[i++] = argument1;
-    			}
-    			if (argument2 != NULL)
-    			{
-        			argv[i++] = argument2;
-    			}
-   	 			argv[i] = NULL;
-				get_exit_status(data, argv, path);
-				free(argv);
+			char **argv = set_argv_array(cmd, option, argument1, argument2);
+			get_exit_status(data, argv, path);
+			free(argv);
 		}
 	
 	}
@@ -211,14 +212,12 @@ void execution(t_data *data)
     }
 	else
 	{
-        //ft_printf("Valid command.\n");
-        t_command *cmd = data->commands;
+        t_command *cmd = data->commands;  //ft_printf("Valid command.\n");
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
 			{
-				process_command_arguments(cmd);
-                //ft_printf("Executing built-in command: %s\n", cmd->command);
+				process_command_arguments(cmd); //ft_printf("Executing built-in command: %s\n", cmd->command);
                 if (execute_builtin(cmd, data) == -1)
 				{
                     ft_printf("Error executing built-in command.\n");
@@ -227,14 +226,11 @@ void execution(t_data *data)
 				data->exit_status = 0;
             }
 			else
-			{
                 execute_external_command(data, cmd);
-            }
             cmd = cmd->next;
         }
     }
 	free_commands(data->commands);
     data->commands = NULL;
 }
-
 

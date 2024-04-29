@@ -6,17 +6,11 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/29 15:44:17 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:51:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
-
-//if there is << call this function heredoc()
-//look what is after << that will be the delimiter
-//it then calls a different function that -> > input (infinite loop)
-//then we read until the delimiters appears again and we tokenize this input
-//error check if there is no second appearance of the delimiter
 
 void write_to_heredoc_file(t_data *data, char *delimiter)
 {
