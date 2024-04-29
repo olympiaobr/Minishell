@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/28 18:42:23 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/29 14:18:19 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 void handle_heredocs(t_data *data, t_command *cmd)
 {
 		char *path = cmd->path;
-		printf("the path is: %s\n", path);
+		//printf("the path is: %s\n", path);
 		char *argv[] = {path, "heredoc_tempfile", NULL};
 
 		int pipe_fd[2];
@@ -58,7 +58,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
             close(pipe_fd[0]);
 
             // Write heredoc input to the pipe
-			printf("heredoc input: %s\n", data->heredoc_input);
+			//printf("heredoc input: %s\n", data->heredoc_input);
 			ssize_t bytes_written =write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
             if (bytes_written == -1)
             {
@@ -77,6 +77,67 @@ void handle_heredocs(t_data *data, t_command *cmd)
 		}
 }
 
+void get_exit_status(t_data *data, char **argv, char *path)
+{
+	pid_t pid = fork(); //fork a child process
+				if(pid == -1)
+				{
+					perror("fork");
+					exit(EXIT_FAILURE);
+				}
+   				else if (pid == 0)  // Child process executes
+    			{
+        			execve(path, argv, data->env);
+        			perror("execve");
+        			exit(EXIT_FAILURE);
+    			}
+    			else  // Parent process
+    			{
+					int status;
+            		waitpid(pid, &status, 0);  // Wait for the child process to finish
+            		if (WIFEXITED(status))
+            		{
+                		int exit_status = WEXITSTATUS(status);//get exit status
+                		//printf("Command exited with status: %d\n", exit_status);
+						data->exit_status = exit_status;
+            		}
+    			}
+}
+void handle_expr_function(t_data *data)
+{
+			pid_t pid = fork();
+			if(pid == -1)
+			{
+				perror("fork");
+				exit(EXIT_FAILURE);
+			}
+			if(pid == 0) //in the child
+			{
+				char *exit_status_str_1 = ft_itoa(data->exit_status);
+    			char *exit_status_str_2 = ft_itoa(data->exit_status);
+    			if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
+				{
+        			perror("Memory allocation failed");
+        			exit(EXIT_FAILURE);
+    			}
+    			char *argv[] = {"/usr/bin/expr", exit_status_str_1, "+", exit_status_str_2, NULL};
+    			execve("/usr/bin/expr", argv, NULL);
+    			perror("execve");
+    			exit(EXIT_FAILURE);
+   				free(exit_status_str_1);
+    			free(exit_status_str_2); 
+			}
+			else //parent
+			{
+				int status;
+				waitpid(pid, &status, 0);  // Wait for the child process to finish
+            	if (WIFEXITED(status))
+           		{
+                	int exit_status = WEXITSTATUS(status);//get exit status
+					data->exit_status = exit_status;
+           		}
+			}
+}
 void execute_external_command(t_data *data, t_command *cmd)
 {
     char *path = cmd->path;
@@ -87,84 +148,53 @@ void execute_external_command(t_data *data, t_command *cmd)
     int argc = 1;
 
 	if(data->heredoc == 1)
-	{
 		handle_heredocs(data, cmd);
-	}
 	else
-	{
-		if(ft_strcmp(data->token_list->value, "expr")/*  && ft_strcmp(cmd->next->argv->value, "+") */)
+	{	
+		if(ft_strcmp(data->token_list->value, "expr") == 0  && ft_strcmp(data->token_list->next->next->value, "+") == 0)
+			handle_expr_function(data);
+		else
 		{
-			printf("hello\n");
-
-			//in progress
+				if (cmd->option != NULL)
+    			{
+        			option = cmd->option->value;ft_printf("option is: %s\n", option);
+       	 			argc++;
+   				}
+    			if (cmd->argv != NULL)
+    			{
+					argument1 = cmd->argv->value;ft_printf("argument1 is: %s\n", argument1);
+        			argc++;
+        			if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
+        			{
+            			argument2 = cmd->argv->next->value;ft_printf("argument2 is: %s\n", argument2);
+            			argc++;
+        			}
+    			}
+    			char **argv = malloc(sizeof(char *) * (argc + 1));
+    			if (!argv)
+    			{
+        			ft_printf("memory allocation failed\n");
+        			exit(EXIT_FAILURE);
+    			}
+    			int i = 0;
+    			argv[i++] = command;
+    			if (option != NULL)
+    			{
+        			argv[i++] = option;
+    			}
+    			if (argument1 != NULL)
+    			{
+        			argv[i++] = argument1;
+    			}
+    			if (argument2 != NULL)
+    			{
+        			argv[i++] = argument2;
+    			}
+   	 			argv[i] = NULL;
+				get_exit_status(data, argv, path);
+				free(argv);
 		}
-		 if (cmd->option != NULL)
-    	{
-        	option = cmd->option->value;
-        	ft_printf("option is: %s\n", option);
-       	 	argc++;
-   		}
-    	if (cmd->argv != NULL)
-    	{
-			argument1 = cmd->argv->value;
-			
-        	ft_printf("argument1 is: %s\n", argument1);
-        	argc++;
-        	if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
-        	{
-            	argument2 = cmd->argv->next->value;
-            	ft_printf("argument2 is: %s\n", argument2);
-            	argc++;
-        	}
-    	}
-
-    	char **argv = malloc(sizeof(char *) * (argc + 1));
-    	if (!argv)
-    	{
-        	ft_printf("memory allocation failed\n");
-        	exit(EXIT_FAILURE);
-    	}
-
-    	int i = 0;
-    	argv[i++] = command;
-    	if (option != NULL)
-    	{
-        	argv[i++] = option;
-    	}
-    	if (argument1 != NULL)
-    	{
-        	argv[i++] = argument1;
-    	}
-    	if (argument2 != NULL)
-    	{
-        	argv[i++] = argument2;
-    	}
-   	 	argv[i] = NULL;
-   		
-		pid_t pid = fork(); //fork a child process
-		if(pid == -1)
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-   		else if (pid == 0)  // Child process executes
-    	{
-        	execve(path, argv, data->env);
-        	perror("execve");
-        	exit(EXIT_FAILURE);
-    	}
-    	else  // Parent process
-    	{
-			int status;
-            waitpid(pid, &status, 0);  // Wait for the child process to finish
-            if (WIFEXITED(status))
-            {
-                int exit_status = WEXITSTATUS(status);//get exit status
-                //printf("Command exited with status: %d\n", exit_status);
-				data->exit_status = exit_status;
-            }
-    	}
-		free(argv);
+	
 	}
 
 }
@@ -184,7 +214,7 @@ void process_command_arguments(t_command *cmd)
 	}
 	while (arg)
 	{
-		printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
+		//printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
 		arg = arg->next;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 17:27:10 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/28 18:42:34 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/29 11:54:11 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,30 +123,13 @@ void expansion(t_data *data)
                 if (current->value[i] == '$')
                 {
 
-					if (current->value[0] == '$' && current->value[1] == '?')
+					if (current->value[0] == '$' && current->value[1] == '?' && ft_strcmp(data->token_list->value, "expr") != 0)
 					{
-						// in progress
-						/*
-							char *exit_status_str_1 = ft_itoa(data->exit_status);
-    						char *exit_status_str_2 = ft_itoa(data->exit_status);
-    						if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
-							{
-        						perror("Memory allocation failed");
-        						exit(EXIT_FAILURE);
-    						}
-
-    						char *argv[] = { "/usr/bin/expr", exit_status_str_1, "+", exit_status_str_2, NULL };
-    						execve("/usr/bin/expr", argv, NULL);
-    						perror("execve");
-    						exit(EXIT_FAILURE);
-
-   							free(exit_status_str_1);
-    						free(exit_status_str_2); */
-						ft_printf("exit status: %d", data->exit_status);
+						ft_printf("%d", data->exit_status);
 						break;
 					}
 
-					if(current->value[0] == '$')
+					if(current->value[0] == '$'&& ft_strcmp(data->token_list->value, "expr") != 0 )
 					{
 						ft_printf("$"); //edge case
 					}
