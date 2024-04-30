@@ -58,6 +58,7 @@ typedef struct s_command
 	//bool built-in?
 	char *path;
 	char **argv_array;
+	int command_index;
 }	t_command;
 
 typedef struct data_all
@@ -70,6 +71,8 @@ typedef struct data_all
 	char	*std_output;
     char    *input_file;    // For < redirection
     char    *output_file;   // For > or >> redirection
+	int original_stdout; // Store the original STDOUT file descriptor
+    int original_stdin;  // Store the original STDIN file descriptor
 	int      std_input_fd;   // File descriptor for input redirection
     int      std_output_fd;  // File descriptor for output redirection
     int     append;         // Flag for append mode (>>)
@@ -84,6 +87,7 @@ typedef struct data_all
 	int count_cmd;
 	int **pipesfd;
 	int max_env_size;
+	int command_index;
 }	t_data;
 
 //lexing functions
@@ -170,6 +174,10 @@ int set_env_var(t_data *data, const char *name, const char *value);
 char *get_env_var(char **envp, const char *name);
 int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);
+
+int operators_setup(t_data *data);
+int create_pipes(t_data *data);
+int count_commands(t_data *data);
 
 //free functions
 void	free_tokens(t_data *data);

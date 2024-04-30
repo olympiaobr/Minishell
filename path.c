@@ -154,6 +154,8 @@ void initialize_shell_components(t_data *data)
    // data->exit_status = 0;
     data->max_env_size = 0;
 	data->heredoc_input = NULL;
+    data->original_stdout = -1;
+    data->original_stdin = -1;
 }
 t_data *init_data(char **envp)
 {
