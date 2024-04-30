@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/30 14:50:53 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:11:40 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ int operators_setup(t_data *data);
 void determine_io_channels(t_data *data, int cmd_index, int io[2]);
 int handle_redirections(t_data *data, int cmd_index);
 void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds[2]);
-int execute_builtin(t_command *cmd, t_data *data);
+
 
 //free functions
 void	free_tokens(t_data *data);

@@ -6,7 +6,7 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 10:49:49 by jasnguye          #+#    #+#              #
-#    Updated: 2024/04/30 14:54:30 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/04/30 15:10:54 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,9 +23,9 @@ SRCS	=	main.c lexer.c \
 			tokenization.c parsing.c\
 			heredoc.c\
 			parsing_utils1.c\
-			path.c execution.c\
+			path.c utils1.c \
 			builtins1.c builtins2.c builtins3.c builtins4.c\
-			utils1.c  execution.c execution2.c\
+			execution.c execution2.c\
 
 OBJS	=	$(SRCS:.c=.o)
 

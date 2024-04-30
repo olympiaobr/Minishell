@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/30 15:01:31 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:04:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ void process_command_arguments(t_command *cmd)
 	}
 }
 
-void wait_and_(t_data *data, int num_processes)
+void wait_and_close_pipes(t_data *data, int num_processes)
 {
     int status;
     pid_t pid;
