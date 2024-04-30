@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/28 17:32:48 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:39:15 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct s_command
 	//bool built-in?
 	char *path;
 	char **argv_array;
+	int command_index;
 }	t_command;
 
 typedef struct data_all
