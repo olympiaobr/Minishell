@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 11:57:12 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/30 15:12:26 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:19:15 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int export_cmd(t_data *data, t_command *cmd)
     }
     return 0;
 }
-/* 
+
 int execute_builtin(t_command *cmd, t_data *data)
 {
     if (!cmd || !cmd->command)
@@ -84,7 +84,7 @@ int execute_builtin(t_command *cmd, t_data *data)
     else if (ft_strcmp(cmd->command, "exit") == 0)
         return (exit_cmd(data, cmd));
     return (-1);
-} */
+}
 
 int check_builtin(const char *command)
 {

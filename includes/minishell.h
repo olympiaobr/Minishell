@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/30 15:11:40 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:17:10 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,12 +174,7 @@ void execute_external_command(t_data *data, t_command *cmd);
 
 
 //redirection and pipe functions
-int count_commands(t_data *data);
-int create_pipes(t_data *data);
-int operators_setup(t_data *data);
-void determine_io_channels(t_data *data, int cmd_index, int io[2]);
-int handle_redirections(t_data *data, int cmd_index);
-void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds[2]);
+
 
 
 //free functions
