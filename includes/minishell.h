@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/30 14:39:15 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:50:53 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,16 @@ int set_env_var(t_data *data, const char *name, const char *value);
 char *get_env_var(char **envp, const char *name);
 int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);
+
+
+//redirection and pipe functions
+int count_commands(t_data *data);
+int create_pipes(t_data *data);
+int operators_setup(t_data *data);
+void determine_io_channels(t_data *data, int cmd_index, int io[2]);
+int handle_redirections(t_data *data, int cmd_index);
+void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds[2]);
+int execute_builtin(t_command *cmd, t_data *data);
 
 //free functions
 void	free_tokens(t_data *data);
