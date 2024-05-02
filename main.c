@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/28 17:41:44 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:26:02 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int main(int argc, char *argv[], char **envp)
  	data = init_data(envp);
     if (argc == 1)
     {
-
         if (!data)
         {
             perror("Failed to initialize shell data structure");

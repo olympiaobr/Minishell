@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/30 15:17:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:46:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ void execute_external_command(t_data *data, t_command *cmd);
 
 
 //redirection and pipe functions
-
+void count_commands(t_data *data);
 
 
 //free functions

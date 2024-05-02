@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/30 15:17:04 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/02 12:47:44 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,8 @@ void execution(t_data *data)
 	else
 	{
         t_command *cmd = data->commands;  //ft_printf("Valid command.\n");
+		count_commands(data);
+		printf("number of commands: %d\n", data->count_cmd);
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
