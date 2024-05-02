@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/02 12:47:44 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/02 16:13:27 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,23 @@ void execution(t_data *data)
         t_command *cmd = data->commands;  //ft_printf("Valid command.\n");
 		count_commands(data);
 		printf("number of commands: %d\n", data->count_cmd);
+		
+		if(setup_filedescriptors_for_redirection(data) != 0)
+		{
+			ft_printf("Failed to setup filedescriptors for redirection\n");
+			return;
+		}
+		if(data->count_cmd > 1)
+		{
+			if(create_pipes(data) != 0)
+			{
+				ft_printf("Failed to create pipes\n");
+				return;
+			}
+			execute_pipeline(data, cmd);// not implemented yet//maybe it needs to be incorporated with the actual exection part
+		}
+			
+		
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
