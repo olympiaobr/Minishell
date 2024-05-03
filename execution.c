@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/28 18:42:23 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 13:45:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,67 +76,102 @@ void handle_heredocs(t_data *data, t_command *cmd)
 			}
 		}
 }
-
+void handle_expr_function(t_data *data)
+{
+			pid_t pid = fork();
+			if(pid == -1)
+			{
+				perror("fork");
+				exit(EXIT_FAILURE);
+			}
+			if(pid == 0) //in the child
+			{
+				char *exit_status_str_1 = ft_itoa(data->exit_status);
+    			char *exit_status_str_2 = ft_itoa(data->exit_status);
+    			if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
+				{
+        			perror("Memory allocation failed");
+        			exit(EXIT_FAILURE);
+    			}
+    			char *argv[] = {"/usr/bin/expr", exit_status_str_1, "+", exit_status_str_2, NULL};
+    			execve("/usr/bin/expr", argv, NULL);
+    			perror("execve");
+    			exit(EXIT_FAILURE);
+   				free(exit_status_str_1);
+    			free(exit_status_str_2); 
+			}
+			else //parent
+			{
+				int status;
+				waitpid(pid, &status, 0);  // Wait for the child process to finish
+            	if (WIFEXITED(status))
+           		{
+                	int exit_status = WEXITSTATUS(status);//get exit status
+					data->exit_status = exit_status;
+           		}
+			}
+}
 void execute_external_command(t_data *data, t_command *cmd)
 {
 	if (data->heredoc == 1)
 	{
         handle_heredocs(data, cmd);
     }
+	else if(ft_strcmp(data->token_list->value, "expr") == 0 && ft_strcmp(data->token_list->next->next->value, "+") == 0) 
+	{
+        handle_expr_function(data);
+    }
 	else
 	{
-        if (ft_strcmp(data->token_list->value, "expr") == 0 && ft_strcmp(data->token_list->next->next->value, "+") == 0) {
-            handle_expr_function(data);
-        }
-    }
+		if (!cmd->path || access(cmd->path, X_OK) != 0) 
+		{
+        	perror("Invalid command path or command is not executable");
+        	return;
+    	}
 
-    if (!cmd->path || access(cmd->path, X_OK) != 0) {
-        perror("Invalid command path or command is not executable");
-        return;
-    }
+    	int io[2];
+    	determine_io_channels(data, cmd->command_index, io);
 
-    int io[2];
-    determine_io_channels(data, cmd->command_index, io);
-
-    int argc = 1;
-    if (cmd->option != NULL) {
+    	int argc = 1;
+    	if (cmd->option != NULL) 
+		{
         argc++;
-    }
-    t_token *arg = cmd->argv;
-    while (arg)
-	{
-        argc++;
-        arg = arg->next;
-    }
+    	}
+    	t_token *arg = cmd->argv;
+    	while (arg)
+		{
+        	argc++;
+        	arg = arg->next;
+   		}
 
-    char **argv = malloc(sizeof(char *) * (argc + 1));
-    if (!argv)
-	{
-        perror("Memory allocation failed for argv");
-        return;
-    }
+    	char **argv = malloc(sizeof(char *) * (argc + 1));
+    	if (!argv)
+		{
+        	perror("Memory allocation failed for argv");
+        	return;
+    	}
 
-    argv[0] = cmd->command;
-    int i = 1;
-    if (cmd->option != NULL)
-	{
-        argv[i++] = cmd->option->value;
-    }
-    for (arg = cmd->argv; arg != NULL; arg = arg->next)
-	{
-        argv[i++] = arg->value;
-    }
-    argv[i] = NULL;
+    	argv[0] = cmd->command;
+    	int i = 1;
+    	if (cmd->option != NULL)
+		{
+        	argv[i++] = cmd->option->value;
+    	}
+    	for (arg = cmd->argv; arg != NULL; arg = arg->next)
+		{
+        	argv[i++] = arg->value;
+    	}
+    	argv[i] = NULL;
 
-    pid_t pid = fork();
-    if (pid == -1)
-	{
-        perror("Fork failed");
-        free(argv);
-        return;
-    }
-    if (pid == 0)
-	{ // Child process
+    	pid_t pid = fork();
+    	if (pid == -1)
+		{
+        	perror("Fork failed");
+        	free(argv);
+        	return;
+    	}
+    	if (pid == 0)
+		{ // Child process
         if (io[0] != STDIN_FILENO)
 		{
             dup2(io[0], STDIN_FILENO);
@@ -160,6 +195,8 @@ void execute_external_command(t_data *data, t_command *cmd)
         }
         free(argv);
     }
+	}
+   
 }
 
 
