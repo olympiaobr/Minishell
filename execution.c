@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/03 12:33:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:55:34 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ void handle_heredocs(t_data *data, t_command *cmd)
 		}
 }
 
+
+
 void get_exit_status(t_data *data, char **argv, char *path)
 {
 	pid_t pid = fork(); //fork a child process
@@ -86,6 +88,22 @@ void get_exit_status(t_data *data, char **argv, char *path)
             		}
     			}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void handle_expr_function(t_data *data)
 {
 			pid_t pid = fork();

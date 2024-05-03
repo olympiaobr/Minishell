@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/03 12:21:01 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:52:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,3 +212,4 @@ void close_pipes(t_data *data)
     }
     free(data->pipesfd);
 }
+
