@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/02 15:49:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:15:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ void execute_external_command(t_data *data, t_command *cmd);
 void count_commands(t_data *data);
 int setup_filedescriptors_for_redirection(t_data *data);
 int create_pipes(t_data *data);
+void execute_pipeline(t_data *data, t_command *cmd);
 
 //free functions
 void	free_tokens(t_data *data);

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 14:35:53 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 12:19:44 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:27:25 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ int check_valid_command(t_data *data)
             }
             if (find_command_path(current->value, dir, full_path))
             {
-                if (data->commands->path)
+                if (data->commands->path && data->commands)
                 {
                     free(data->commands->path);
                 }

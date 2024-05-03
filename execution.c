@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/02 16:13:27 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 12:33:57 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,6 @@ void execution(t_data *data)
 			execute_pipeline(data, cmd);// not implemented yet//maybe it needs to be incorporated with the actual exection part
 		}
 			
-		
         while (cmd != NULL)
 		{
             if (check_builtin(cmd->command))
@@ -247,7 +246,7 @@ void execution(t_data *data)
 			else
                 execute_external_command(data, cmd);
             cmd = cmd->next;
-        }
+        } 
     }
 	free_commands(data->commands);
     data->commands = NULL;
