@@ -89,16 +89,7 @@ int operators_setup(t_data *data)
 {
     int flags;
 
-    /* if (data->heredoc)
-	{
-        data->std_input_fd = open(data->heredoc_input, O_RDONLY);
-        if (data->std_input_fd == -1)
-		{
-            perror("Failed to open heredoc input file");
-            data->std_input_fd = STDIN_FILENO;
-        }
-    } 
-	else*/ if (data->input_file)
+	if (data->input_file)
 	{
         data->std_input_fd = open(data->input_file, O_RDONLY);
         if (data->std_input_fd == -1)
@@ -138,7 +129,6 @@ int operators_setup(t_data *data)
 
     return 0;
 }
-
 
 void determine_io_channels(t_data *data, int cmd_index, int io[2])
  {
@@ -229,6 +219,26 @@ void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds
     close(backup_fds[1]);
 }
 
+int call_builtin(t_command *cmd, t_data *data)
+{
+    if (ft_strcmp(cmd->command, "cd") == 0)
+        return cd_cmd(data, cmd);
+    else if (ft_strcmp(cmd->command, "echo") == 0)
+        return echo_cmd(cmd);
+    else if (ft_strcmp(cmd->command, "pwd") == 0)
+        return pwd_cmd();
+    else if (ft_strcmp(cmd->command, "env") == 0)
+        return env_cmd(data);
+    else if (ft_strcmp(cmd->command, "export") == 0)
+        return export_cmd(data, cmd);
+    else if (ft_strcmp(cmd->command, "unset") == 0)
+        return unset_cmd(data, cmd);
+    else if (ft_strcmp(cmd->command, "exit") == 0)
+        return exit_cmd(data, cmd);
+    return -1;
+}
+
+
 int execute_builtin(t_command *cmd, t_data *data)
 {
     int backup_fds[2];
@@ -254,23 +264,7 @@ int execute_builtin(t_command *cmd, t_data *data)
         perror("Failed to redirect standard output");
         return -1;
     }
-    int result = -1;
-    if (ft_strcmp(cmd->command, "cd") == 0)
-        result = cd_cmd(data, cmd);
-    else if (ft_strcmp(cmd->command, "echo") == 0)
-        result = echo_cmd(cmd);
-    else if (ft_strcmp(cmd->command, "pwd") == 0)
-        result = pwd_cmd();
-    else if (ft_strcmp(cmd->command, "env") == 0)
-        result = env_cmd(data);
-    else if (ft_strcmp(cmd->command, "export") == 0)
-        result = export_cmd(data, cmd);
-    else if (ft_strcmp(cmd->command, "unset") == 0)
-        result = unset_cmd(data, cmd);
-    else if (ft_strcmp(cmd->command, "exit") == 0)
-        result = exit_cmd(data, cmd);
-
-    // restore original file descriptors
+    int result = call_builtin(cmd, data);
     dup2(backup_fds[0], STDIN_FILENO);
     dup2(backup_fds[1], STDOUT_FILENO);
     close(backup_fds[0]);
