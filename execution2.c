@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/03 16:43:47 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 17:11:21 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ int operators_setup(t_data *data)
         if (data->append)
 		{
             flags |= O_APPEND;
+			printf("here append\n");
         }
 		else
 		{

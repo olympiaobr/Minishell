@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/28 15:55:28 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 17:18:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,10 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
 	//
+	if(type == T_APPEND)
+	{
+		data->append = 1;
+	}
 	if(type == T_HEREDOC)
 	{
 		data->heredoc = 1;
