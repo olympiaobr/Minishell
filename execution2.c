@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/24 15:39:29 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/03 16:43:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int operators_setup(t_data *data)
 {
     int flags;
 
-    if (data->heredoc)
+    /* if (data->heredoc)
 	{
         data->std_input_fd = open(data->heredoc_input, O_RDONLY);
         if (data->std_input_fd == -1)
@@ -97,8 +97,8 @@ int operators_setup(t_data *data)
             perror("Failed to open heredoc input file");
             data->std_input_fd = STDIN_FILENO;
         }
-    }
-	else if (data->input_file)
+    } 
+	else*/ if (data->input_file)
 	{
         data->std_input_fd = open(data->input_file, O_RDONLY);
         if (data->std_input_fd == -1)

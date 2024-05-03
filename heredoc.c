@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/24 15:59:58 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 16:45:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ void write_to_heredoc_file(t_data *data, char *delimiter)
 		}
 		else
 		{
-			data->heredoc_input = ft_strcat(data->heredoc_input, input);
+			char *temp = ft_strjoin(data->heredoc_input, input);
+			free(data->heredoc_input);
+			data->heredoc_input = temp;
 			//data->heredoc_input = ft_strcat(data->heredoc_input, "\n");
 		}
 		write(fd, input, ft_strlen(input));

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/03 13:45:07 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/03 16:25:32 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void execute_simple_command(t_data *data, t_command *cmd)
 
     if (check_builtin(cmd->command))
 	{
-		ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
+		//ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
 		exit_status = execute_builtin(cmd, data);
         data->exit_status = exit_status;
         return;
@@ -342,7 +342,7 @@ void execution(t_data *data)
         return;
     }
     count_commands(data);
-    ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
+    //ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
     if (operators_setup(data) != 0)
 	{
         ft_printf("Failed to setup redirections.\n");
@@ -356,7 +356,7 @@ void execution(t_data *data)
     }
 	else
 	{
-        ft_printf("Debug: Executing simple command...\n");
+        //ft_printf("Debug: Executing simple command...\n");
         execute_simple_command(data, data->commands);
     }
     free_commands(data->commands);
