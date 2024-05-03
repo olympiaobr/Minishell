@@ -98,7 +98,7 @@ void handle_expr_function(t_data *data)
     			perror("execve");
     			exit(EXIT_FAILURE);
    				free(exit_status_str_1);
-    			free(exit_status_str_2); 
+    			free(exit_status_str_2);
 			}
 			else //parent
 			{
@@ -111,94 +111,6 @@ void handle_expr_function(t_data *data)
            		}
 			}
 }
-void execute_external_command(t_data *data, t_command *cmd)
-{
-	if (data->heredoc == 1)
-	{
-        handle_heredocs(data, cmd);
-    }
-	else if(ft_strcmp(data->token_list->value, "expr") == 0 && ft_strcmp(data->token_list->next->next->value, "+") == 0) 
-	{
-        handle_expr_function(data);
-    }
-	else
-	{
-		if (!cmd->path || access(cmd->path, X_OK) != 0) 
-		{
-        	perror("Invalid command path or command is not executable");
-        	return;
-    	}
-
-    	int io[2];
-    	determine_io_channels(data, cmd->command_index, io);
-
-    	int argc = 1;
-    	if (cmd->option != NULL) 
-		{
-        argc++;
-    	}
-    	t_token *arg = cmd->argv;
-    	while (arg)
-		{
-        	argc++;
-        	arg = arg->next;
-   		}
-
-    	char **argv = malloc(sizeof(char *) * (argc + 1));
-    	if (!argv)
-		{
-        	perror("Memory allocation failed for argv");
-        	return;
-    	}
-
-    	argv[0] = cmd->command;
-    	int i = 1;
-    	if (cmd->option != NULL)
-		{
-        	argv[i++] = cmd->option->value;
-    	}
-    	for (arg = cmd->argv; arg != NULL; arg = arg->next)
-		{
-        	argv[i++] = arg->value;
-    	}
-    	argv[i] = NULL;
-
-    	pid_t pid = fork();
-    	if (pid == -1)
-		{
-        	perror("Fork failed");
-        	free(argv);
-        	return;
-    	}
-    	if (pid == 0)
-		{ // Child process
-        if (io[0] != STDIN_FILENO)
-		{
-            dup2(io[0], STDIN_FILENO);
-            close(io[0]);
-        }
-        if (io[1] != STDOUT_FILENO)
-		{
-            dup2(io[1], STDOUT_FILENO);
-            close(io[1]);
-        }
-        execve(cmd->path, argv, data->env);
-        perror("Execve failed");
-        exit(EXIT_FAILURE);
-    }
-	else
-	{ // Parent process
-        int status;
-        waitpid(pid, &status, 0);
-        if (WIFEXITED(status)) {
-            data->exit_status = WEXITSTATUS(status);
-        }
-        free(argv);
-    }
-	}
-   
-}
-
 
 void process_command_arguments(t_command *cmd)
 {
@@ -251,6 +163,109 @@ void wait_and_close_pipes(t_data *data, int num_processes)
     }
 }
 
+void execute_external_command(t_data *data, t_command *cmd)
+{
+        if (!cmd->path || access(cmd->path, X_OK) != 0)
+		{
+            perror("Invalid command path or command is not executable");
+            return;
+        }
+
+        int io[2];
+        determine_io_channels(data, cmd->command_index, io);
+
+        int argc = 1;
+        if (cmd->option != NULL)
+		{
+            argc++;
+        }
+        t_token *arg = cmd->argv;
+        while (arg)
+		{
+            argc++;
+            arg = arg->next;
+        }
+
+        char **argv = malloc(sizeof(char *) * (argc + 1));
+        if (!argv)
+		{
+            perror("Memory allocation failed for argv");
+            return;
+        }
+
+        argv[0] = cmd->command;
+        int i = 1;
+        if (cmd->option != NULL)
+		{
+            argv[i++] = cmd->option->value;
+        }
+        arg = cmd->argv;
+    	while (arg)
+		{
+        	argv[i++] = arg->value;
+        	arg = arg->next;
+    	}
+    	argv[i] = NULL;
+
+        pid_t pid = fork();
+        if (pid == -1)
+		{
+            perror("Fork failed");
+            free(argv);
+            return;
+        }
+        if (pid == 0)
+		{ // Child process
+            if (io[0] != STDIN_FILENO)
+			{
+                dup2(io[0], STDIN_FILENO);
+                close(io[0]);
+            }
+            if (io[1] != STDOUT_FILENO)
+			{
+                dup2(io[1], STDOUT_FILENO);
+                close(io[1]);
+            }
+            execve(cmd->path, argv, data->env);
+            perror("Execve failed");
+            exit(EXIT_FAILURE);
+        }
+		else
+		{ // Parent process
+            int status;
+            waitpid(pid, &status, 0);
+            if (WIFEXITED(status))
+			{
+                data->exit_status = WEXITSTATUS(status);
+            }
+            free(argv);
+        }
+}
+void execute_simple_command(t_data *data, t_command *cmd)
+{
+	int exit_status;
+
+    if (check_builtin(cmd->command))
+	{
+		ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
+		exit_status = execute_builtin(cmd, data);
+        data->exit_status = exit_status;
+        return;
+    }
+    if (data->heredoc == 1)
+	{
+        handle_heredocs(data, cmd);
+    }
+	else if (ft_strcmp(data->token_list->value, "expr") == 0 &&
+               ft_strcmp(data->token_list->next->next->value, "+") == 0)
+				{
+       				 handle_expr_function(data);
+    			}
+	else
+	{
+        execute_external_command(data, cmd);
+    }
+}
 
 void execute_pipeline(t_data *data, t_command *cmd)
 {
@@ -321,55 +336,33 @@ void close_pipes(t_data *data)
 void execution(t_data *data)
 {
     if (check_valid_command(data) != 1)
-    {
+	{
         ft_printf("%s: command not found\n", data->commands->command);
         data->exit_status = 127;
         return;
     }
     count_commands(data);
     ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
-
     if (operators_setup(data) != 0)
-    {
+	{
         ft_printf("Failed to setup redirections.\n");
         return;
     }
     if (data->count_cmd > 1)
-    {
+	{
         ft_printf("Debug: Executing pipeline...\n");
         create_pipes(data);
         execute_pipeline(data, data->commands);
     }
-    else
-    {
-        ft_printf("Debug: Executing single command...\n");
-        t_command *cmd = data->commands;
-        while (cmd != NULL)
-        {
-            if (check_builtin(cmd->command))
-            {
-                ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
-                if (execute_builtin(cmd, data) == -1)
-                {
-                    ft_printf("Error executing built-in command.\n");
-                    data->exit_status = 1;
-                }
-                else
-                {
-                    data->exit_status = 0;
-                }
-            }
-            else
-            {
-                ft_printf("Debug: Recognized as external command.\n");
-                execute_external_command(data, cmd);
-            }
-            cmd = cmd->next;
-        }
+	else
+	{
+        ft_printf("Debug: Executing simple command...\n");
+        execute_simple_command(data, data->commands);
     }
     free_commands(data->commands);
     data->commands = NULL;
 }
+
 
 
 
