@@ -141,7 +141,7 @@ int operators_setup(t_data *data)
 
 void determine_io_channels(t_data *data, int cmd_index, int io[2])
  {
-    // determine the  input channel
+    // determine input channel
     if (cmd_index == 0)
 	{
         io[0] = data->std_input_fd;
@@ -228,38 +228,56 @@ void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds
     close(backup_fds[1]);
 }
 
-int execute_builtin(t_command *cmd, t_data *data) {
-    int original_stdout = dup(STDOUT_FILENO);
-    int original_stdin = dup(STDIN_FILENO);
-    int result = -1;
+int execute_builtin(t_command *cmd, t_data *data)
+{
+    int backup_fds[2];
+    int io_channels[2];
 
-    if (handle_redirections(data, cmd->command_index) == -1)
+    // backup original file descriptors
+    backup_fds[0] = dup(STDIN_FILENO);
+    backup_fds[1] = dup(STDOUT_FILENO);
+    if (backup_fds[0] == -1 || backup_fds[1] == -1)
 	{
-        fprintf(stderr, "Failed to setup redirections\n");
+        perror("Failed to backup file descriptors");
         return -1;
     }
-
-    if (strcmp(cmd->command, "cd") == 0)
+    // Setup redirections
+    determine_io_channels(data, cmd->command_index, io_channels);
+    if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO) == -1)
+	{
+        perror("Failed to redirect standard input");
+        return -1;
+    }
+    if (io_channels[1] != STDOUT_FILENO && dup2(io_channels[1], STDOUT_FILENO) == -1)
+	{
+        perror("Failed to redirect standard output");
+        return -1;
+    }
+    int result = -1;
+    if (ft_strcmp(cmd->command, "cd") == 0)
         result = cd_cmd(data, cmd);
-    else if (strcmp(cmd->command, "echo") == 0)
+    else if (ft_strcmp(cmd->command, "echo") == 0)
         result = echo_cmd(cmd);
-    else if (strcmp(cmd->command, "pwd") == 0)
+    else if (ft_strcmp(cmd->command, "pwd") == 0)
         result = pwd_cmd();
-    else if (strcmp(cmd->command, "env") == 0)
+    else if (ft_strcmp(cmd->command, "env") == 0)
         result = env_cmd(data);
-    else if (strcmp(cmd->command, "export") == 0)
+    else if (ft_strcmp(cmd->command, "export") == 0)
         result = export_cmd(data, cmd);
-    else if (strcmp(cmd->command, "unset") == 0)
+    else if (ft_strcmp(cmd->command, "unset") == 0)
         result = unset_cmd(data, cmd);
-    else if (strcmp(cmd->command, "exit") == 0)
+    else if (ft_strcmp(cmd->command, "exit") == 0)
         result = exit_cmd(data, cmd);
 
-    dup2(original_stdin, STDIN_FILENO);
-    dup2(original_stdout, STDOUT_FILENO);
-    close(original_stdin);
-    close(original_stdout);
+    // restore original file descriptors
+    dup2(backup_fds[0], STDIN_FILENO);
+    dup2(backup_fds[1], STDOUT_FILENO);
+    close(backup_fds[0]);
+    close(backup_fds[1]);
 
     return result;
 }
+
+
 
 

@@ -85,6 +85,9 @@ void execute_external_command(t_data *data, t_command *cmd)
     char *argument1 = NULL;
     char *argument2 = NULL;
     int argc = 1;
+	int io[2];
+
+	determine_io_channels(data, cmd->command_index, io);
 
 	if(data->heredoc == 1)
 	{
@@ -141,34 +144,42 @@ void execute_external_command(t_data *data, t_command *cmd)
     	}
    	 	argv[i] = NULL;
 
-		pid_t pid = fork(); //fork a child process
-		if(pid == -1)
+		pid_t pid = fork();
+    	if (pid == -1)
 		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
-   		else if (pid == 0)  // Child process executes
-    	{
+        	perror("fork");
+        	free(argv);
+        	return;
+    	}
+		else if (pid == 0)
+		{ // child process
+        // apply redirections
+        	if (io[0] != STDIN_FILENO)
+			{
+                dup2(io[0], STDIN_FILENO);
+                close(io[0]);
+            }
+            if (io[1] != STDOUT_FILENO)
+			{
+                dup2(io[1], STDOUT_FILENO);
+                close(io[1]);
+            }
         	execve(path, argv, data->env);
         	perror("execve");
         	exit(EXIT_FAILURE);
-    	}
-    	else  // Parent process
-    	{
-			int status;
-            waitpid(pid, &status, 0);  // Wait for the child process to finish
-            if (WIFEXITED(status))
-            {
-                int exit_status = WEXITSTATUS(status);//get exit status
-                //printf("Command exited with status: %d\n", exit_status);
-				data->exit_status = exit_status;
-            }
-    	}
-		free(argv);
-	}
-
+    		}
+				else
+				{ // Parent process
+        			int status;
+        			waitpid(pid, &status, 0);
+        			if (WIFEXITED(status))
+					{
+           				 data->exit_status = WEXITSTATUS(status);
+       				 }
+        	free(argv);
+    }
 }
-
+}
 void process_command_arguments(t_command *cmd)
 {
 	if (!cmd)
@@ -290,54 +301,55 @@ void close_pipes(t_data *data)
 void execution(t_data *data)
 {
     if (check_valid_command(data) != 1)
-	{
+    {
         ft_printf("%s: command not found\n", data->commands->command);
-		data->exit_status = 127;
-		return;
+        data->exit_status = 127;
+        return;
     }
-	count_commands(data);
-	if (operators_setup(data) != 0)
+    count_commands(data);
+    ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
+
+    if (operators_setup(data) != 0)
     {
         ft_printf("Failed to setup redirections.\n");
         return;
     }
-	if (data->count_cmd > 1)
-	{
-        if (create_pipes(data) != 0)
-		{
-            ft_printf("Failed to create pipes.\n");
-            return;
-        }
+    if (data->count_cmd > 1)
+    {
+        ft_printf("Debug: Executing pipeline...\n");
+        create_pipes(data);
         execute_pipeline(data, data->commands);
     }
-	else
-	{
-    	t_command *cmd = data->commands;
-    	while (cmd != NULL)
-		{
-        	if (check_builtin(cmd->command))
-			{
-				process_command_arguments(cmd);
-                ft_printf("Executing built-in command: %s\n", cmd->command);
+    else
+    {
+        ft_printf("Debug: Executing single command...\n");
+        t_command *cmd = data->commands;
+        while (cmd != NULL)
+        {
+            if (check_builtin(cmd->command))
+            {
+                ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
                 if (execute_builtin(cmd, data) == -1)
-				{
+                {
                     ft_printf("Error executing built-in command.\n");
-					data->exit_status = 1;
+                    data->exit_status = 1;
                 }
-				else
-				{
-					data->exit_status = 0;
-				}
+                else
+                {
+                    data->exit_status = 0;
+                }
             }
-			else
-			{
+            else
+            {
+                ft_printf("Debug: Recognized as external command.\n");
                 execute_external_command(data, cmd);
             }
             cmd = cmd->next;
+        }
     }
-	free_commands(data->commands);
+    free_commands(data->commands);
     data->commands = NULL;
-	}
 }
+
 
 

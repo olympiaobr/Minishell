@@ -156,6 +156,7 @@ void initialize_shell_components(t_data *data)
 	data->heredoc_input = NULL;
     data->original_stdout = -1;
     data->original_stdin = -1;
+    data->pipesfd = NULL;
 }
 t_data *init_data(char **envp)
 {
