@@ -79,107 +79,90 @@ void handle_heredocs(t_data *data, t_command *cmd)
 
 void execute_external_command(t_data *data, t_command *cmd)
 {
-    char *path = cmd->path;
-    char *command = cmd->command;
-    char *option = NULL;
-    char *argument1 = NULL;
-    char *argument2 = NULL;
-    int argc = 1;
-	int io[2];
-
-	determine_io_channels(data, cmd->command_index, io);
-
-	if(data->heredoc == 1)
+	if (data->heredoc == 1)
 	{
-		handle_heredocs(data, cmd);
-	}
+        handle_heredocs(data, cmd);
+    }
 	else
 	{
-		if(ft_strcmp(data->token_list->value, "expr")/*  && ft_strcmp(cmd->next->argv->value, "+") */)
+        if (ft_strcmp(data->token_list->value, "expr") == 0 && ft_strcmp(data->token_list->next->next->value, "+") == 0) {
+            handle_expr_function(data);
+        }
+    }
+
+    if (!cmd->path || access(cmd->path, X_OK) != 0) {
+        perror("Invalid command path or command is not executable");
+        return;
+    }
+
+    int io[2];
+    determine_io_channels(data, cmd->command_index, io);
+
+    int argc = 1;
+    if (cmd->option != NULL) {
+        argc++;
+    }
+    t_token *arg = cmd->argv;
+    while (arg)
+	{
+        argc++;
+        arg = arg->next;
+    }
+
+    char **argv = malloc(sizeof(char *) * (argc + 1));
+    if (!argv)
+	{
+        perror("Memory allocation failed for argv");
+        return;
+    }
+
+    argv[0] = cmd->command;
+    int i = 1;
+    if (cmd->option != NULL)
+	{
+        argv[i++] = cmd->option->value;
+    }
+    for (arg = cmd->argv; arg != NULL; arg = arg->next)
+	{
+        argv[i++] = arg->value;
+    }
+    argv[i] = NULL;
+
+    pid_t pid = fork();
+    if (pid == -1)
+	{
+        perror("Fork failed");
+        free(argv);
+        return;
+    }
+    if (pid == 0)
+	{ // Child process
+        if (io[0] != STDIN_FILENO)
 		{
-			printf("hello\n");
-
-			//in progress
-		}
-		 if (cmd->option != NULL)
-    	{
-        	option = cmd->option->value;
-        	ft_printf("option is: %s\n", option);
-       	 	argc++;
-   		}
-    	if (cmd->argv != NULL)
-    	{
-			argument1 = cmd->argv->value;
-
-        	ft_printf("argument1 is: %s\n", argument1);
-        	argc++;
-        	if (cmd->argv->next != NULL && cmd->argv->next->value != NULL)
-        	{
-            	argument2 = cmd->argv->next->value;
-            	ft_printf("argument2 is: %s\n", argument2);
-            	argc++;
-        	}
-    	}
-
-    	char **argv = malloc(sizeof(char *) * (argc + 1));
-    	if (!argv)
-    	{
-        	ft_printf("memory allocation failed\n");
-        	exit(EXIT_FAILURE);
-    	}
-
-    	int i = 0;
-    	argv[i++] = command;
-    	if (option != NULL)
-    	{
-        	argv[i++] = option;
-    	}
-    	if (argument1 != NULL)
-    	{
-        	argv[i++] = argument1;
-    	}
-    	if (argument2 != NULL)
-    	{
-        	argv[i++] = argument2;
-    	}
-   	 	argv[i] = NULL;
-
-		pid_t pid = fork();
-    	if (pid == -1)
+            dup2(io[0], STDIN_FILENO);
+            close(io[0]);
+        }
+        if (io[1] != STDOUT_FILENO)
 		{
-        	perror("fork");
-        	free(argv);
-        	return;
-    	}
-		else if (pid == 0)
-		{ // child process
-        // apply redirections
-        	if (io[0] != STDIN_FILENO)
-			{
-                dup2(io[0], STDIN_FILENO);
-                close(io[0]);
-            }
-            if (io[1] != STDOUT_FILENO)
-			{
-                dup2(io[1], STDOUT_FILENO);
-                close(io[1]);
-            }
-        	execve(path, argv, data->env);
-        	perror("execve");
-        	exit(EXIT_FAILURE);
-    		}
-				else
-				{ // Parent process
-        			int status;
-        			waitpid(pid, &status, 0);
-        			if (WIFEXITED(status))
-					{
-           				 data->exit_status = WEXITSTATUS(status);
-       				 }
-        	free(argv);
+            dup2(io[1], STDOUT_FILENO);
+            close(io[1]);
+        }
+        execve(cmd->path, argv, data->env);
+        perror("Execve failed");
+        exit(EXIT_FAILURE);
+    }
+	else
+	{ // Parent process
+        int status;
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status)) {
+            data->exit_status = WEXITSTATUS(status);
+        }
+        free(argv);
     }
 }
-}
+
+
 void process_command_arguments(t_command *cmd)
 {
 	if (!cmd)
