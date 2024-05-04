@@ -108,66 +108,102 @@ void wait_and_close_pipes(t_data *data, int num_processes)
     }
     data->exit_status = exit_status;
     int i = 0;
-    while (i < data->count_cmd - 1) {
+    while (i < data->count_cmd - 1)
+    {
         close(data->pipesfd[i][0]);
         close(data->pipesfd[i][1]);
         i++;
     }
+}
+
+char **prepare_command_args(t_command *cmd)
+{
+    int argc = 1;  // Start with 1 for the command itself
+    t_token *arg;
+
+    if (cmd->option != NULL)
+        argc++;  // Add one if there's an option
+
+    // Count the arguments
+    arg = cmd->argv;
+    while (arg != NULL)
+    {
+        argc++;
+        arg = arg->next;
+    }
+    // Allocate space for arguments + NULL terminator
+    char **args = malloc(sizeof(char *) * (argc + 1));
+    if (!args)
+    {
+        perror("Memory allocation failed for argv");
+        exit(EXIT_FAILURE);
+    }
+    // Fill args array
+    int i = 0;
+    args[i++] = cmd->command;  // Set the command
+    if (cmd->option != NULL)
+    {
+        args[i++] = cmd->option->value;
+    }
+    // Set each argument's value
+    arg = cmd->argv;
+    while (arg != NULL)
+    {
+        args[i++] = arg->value;
+        arg = arg->next;
+    }
+    args[i] = NULL;
+    return args;
 }
 
 void execute_pipeline(t_data *data, t_command *cmd)
 {
-    t_command *current_cmd = cmd;
     int j = 0;
+    int io[2];
 
-    while (current_cmd != NULL)
-	{
+    while (cmd != NULL)
+    {
         pid_t pid = fork();
         if (pid == -1)
-		{
+        {
             perror("fork");
             exit(EXIT_FAILURE);
         }
-		else if (pid == 0)
-		{ // Child process
-            if (j != 0) {
-                if (dup2(data->pipesfd[j - 1][0], STDIN_FILENO) == -1)
-				{
-                    perror("dup2 stdin");
-                    exit(EXIT_FAILURE);
-                }
+        else if (pid == 0)
+        { // Child process
+            // Determine I/O channels for the current command
+            determine_io_channels(data, j, io);
+            // Setup input from previous command if not the first command
+            if (j != 0)
+            {
+                dup2(io[0], STDIN_FILENO);
+                close(io[0]); // Close the read end of the previous pipe after duping
             }
-            if (j != data->count_cmd - 1)
-			{
-                if (dup2(data->pipesfd[j][1], STDOUT_FILENO) == -1)
-				{
-                    perror("dup2 stdout");
-                    exit(EXIT_FAILURE);
-                }
+            // Setup output to next command if not the last command
+            if (cmd->next != NULL) {
+                dup2(io[1], STDOUT_FILENO);
+                close(io[1]); // Close the write end of the current pipe after duping
             }
-            int i = 0;
-            while (i < data->count_cmd - 1)
-			{
-                close(data->pipesfd[i][0]);
-                close(data->pipesfd[i][1]);
-                i++;
-            }
-            execvp(current_cmd->command, (char *[]){current_cmd->command, NULL});
+            char **args = prepare_command_args(cmd);
+            execvp(args[0], args); // first element is command, followed by args
             perror("execvp");
             exit(EXIT_FAILURE);
         }
-        current_cmd = current_cmd->next;
+        // In parent, close the ends of the pipe this child used
+        if (j != 0)
+        {
+            close(data->pipesfd[j - 1][0]); // Close the read end of the previous pipe
+        }
+        if (cmd->next != NULL)
+        {
+            close(data->pipesfd[j][1]); // Close the write end of the current pipe
+        }
+        cmd = cmd->next;
         j++;
-    }
-    int i = 0;
-    while (i < data->count_cmd - 1)
-	{
-        close(data->pipesfd[i][0]);
-        close(data->pipesfd[i][1]);
-        i++;
     }
     wait_and_close_pipes(data, data->count_cmd);
 }
+
 
 void close_pipes(t_data *data)
 {
