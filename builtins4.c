@@ -19,6 +19,16 @@ int export_cmd(t_data *data, t_command *cmd)
     char *var_name;
     char *value;
 
+    if (!arg)
+    {
+        int i = 0;
+        while (data->env[i] != NULL)
+        {
+            printf("declare -x %s\n", data->env[i]);
+            i++;
+        }
+        return 0;
+    }
     while (arg)
     {
         var_name = custom_strtok(arg->value, "=");
@@ -38,7 +48,7 @@ int export_cmd(t_data *data, t_command *cmd)
                 }
                 else
                 {
-                    set_env_var(data, var_name, "");
+                    set_env_var(data, var_name, existing_value); // Keep existing value if no new value provided
                 }
             }
             else
@@ -63,6 +73,7 @@ int export_cmd(t_data *data, t_command *cmd)
     }
     return 0;
 }
+
 
 int check_builtin(const char *command)
 {
