@@ -74,6 +74,7 @@ void remove_var(t_data *data, const char *var_name)
         ft_printf("Variable not found.\n");
     }
 }
+
 int valid_identifier(const char *name)
 {
     const char *valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";

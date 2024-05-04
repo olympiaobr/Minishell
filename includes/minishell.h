@@ -172,8 +172,8 @@ int set_env_var(t_data *data, const char *name, const char *value);
 char *get_env_var(char **envp, const char *name);
 int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);
-int handle_redirections(t_data *data, int cmd_index);
 void determine_io_channels(t_data *data, int cmd_index, int io[2]);
+void execute_pipeline(t_data *data, t_command *cmd);
 
 
 int operators_setup(t_data *data);

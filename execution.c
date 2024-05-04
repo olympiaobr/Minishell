@@ -76,6 +76,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
 			}
 		}
 }
+
 void handle_expr_function(t_data *data)
 {
 			pid_t pid = fork();
@@ -112,56 +113,6 @@ void handle_expr_function(t_data *data)
 			}
 }
 
-void process_command_arguments(t_command *cmd)
-{
-	if (!cmd)
-		return;
-	t_token *arg = cmd->argv;
-	int index = 0;
-	printf("Processing arguments for command: %s\n", cmd->command);
-
-	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
-	if (arg && index == 0 && check_builtin(cmd->command))
-	{
-		arg = arg->next; // Skip the first if it includes the command
-		index++;
-	}
-	while (arg)
-	{
-		printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
-		arg = arg->next;
-	}
-}
-
-void wait_and_close_pipes(t_data *data, int num_processes)
-{
-    int status;
-    pid_t pid;
-    int exit_status = 0;
-
-    while (num_processes > 0)
-	{
-        pid = wait(&status);
-        if (pid == -1) {
-            perror("wait");
-            continue;
-        }
-        if (WIFEXITED(status))
-		{
-            int current_status = WEXITSTATUS(status);
-            printf("Process %d exited with status: %d\n", pid, current_status);
-            exit_status = (current_status > exit_status) ? current_status : exit_status;
-        }
-        num_processes--;
-    }
-    data->exit_status = exit_status;
-    int i = 0;
-    while (i < data->count_cmd - 1) {
-        close(data->pipesfd[i][0]);
-        close(data->pipesfd[i][1]);
-        i++;
-    }
-}
 
 void execute_external_command(t_data *data, t_command *cmd)
 {
@@ -241,6 +192,7 @@ void execute_external_command(t_data *data, t_command *cmd)
             free(argv);
         }
 }
+
 void execute_simple_command(t_data *data, t_command *cmd)
 {
 	int exit_status;
@@ -265,72 +217,6 @@ void execute_simple_command(t_data *data, t_command *cmd)
 	{
         execute_external_command(data, cmd);
     }
-}
-
-void execute_pipeline(t_data *data, t_command *cmd)
-{
-    t_command *current_cmd = cmd;
-    int j = 0;
-
-    while (current_cmd != NULL)
-	{
-        pid_t pid = fork();
-        if (pid == -1)
-		{
-            perror("fork");
-            exit(EXIT_FAILURE);
-        }
-		else if (pid == 0)
-		{ // Child process
-            if (j != 0) {
-                if (dup2(data->pipesfd[j - 1][0], STDIN_FILENO) == -1)
-				{
-                    perror("dup2 stdin");
-                    exit(EXIT_FAILURE);
-                }
-            }
-            if (j != data->count_cmd - 1)
-			{
-                if (dup2(data->pipesfd[j][1], STDOUT_FILENO) == -1)
-				{
-                    perror("dup2 stdout");
-                    exit(EXIT_FAILURE);
-                }
-            }
-            int i = 0;
-            while (i < data->count_cmd - 1)
-			{
-                close(data->pipesfd[i][0]);
-                close(data->pipesfd[i][1]);
-                i++;
-            }
-            execvp(current_cmd->command, (char *[]){current_cmd->command, NULL});
-            perror("execvp");
-            exit(EXIT_FAILURE);
-        }
-        current_cmd = current_cmd->next;
-        j++;
-    }
-    int i = 0;
-    while (i < data->count_cmd - 1)
-	{
-        close(data->pipesfd[i][0]);
-        close(data->pipesfd[i][1]);
-        i++;
-    }
-    wait_and_close_pipes(data, data->count_cmd);
-}
-
-void close_pipes(t_data *data)
-{
-    int i = 0;
-    while (i < data->count_cmd - 1)
-	{
-        close(data->pipesfd[i][0]);
-        close(data->pipesfd[i][1]);
-        i++;
-    }
-    free(data->pipesfd);
 }
 
 void execution(t_data *data)
@@ -363,6 +249,25 @@ void execution(t_data *data)
     data->commands = NULL;
 }
 
+/*
+void process_command_arguments(t_command *cmd)
+{
+	if (!cmd)
+		return;
+	t_token *arg = cmd->argv;
+	int index = 0;
+	printf("Processing arguments for command: %s\n", cmd->command);
 
-
-
+	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
+	if (arg && index == 0 && check_builtin(cmd->command))
+	{
+		arg = arg->next; // Skip the first if it includes the command
+		index++;
+	}
+	while (arg)
+	{
+		printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
+		arg = arg->next;
+	}
+}
+*/

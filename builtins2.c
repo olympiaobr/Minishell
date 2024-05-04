@@ -36,6 +36,7 @@ char **expand_env(char **env, int newsize)
     }
     return new_env;
 }
+
 char	*ft_strncpy(char *dest, const char *src, unsigned int n)
 {
 	unsigned int	i;
@@ -181,6 +182,3 @@ int cd_cmd(t_data *data, t_command *cmd)
     free(newpwd);
     return EXIT_SUCCESS;
 }
-
-
-

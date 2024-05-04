@@ -106,6 +106,7 @@ int echo_cmd(t_command *cmd)
         ft_printf("\n");
     return (0);
 }
+
 char *get_env_var(char **envp, const char *name)
 {
     size_t len;
