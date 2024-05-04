@@ -191,11 +191,10 @@ int process_commands(t_data *data, t_token *token, t_command **current_cmd)
 
 void clear_previous_redirections(t_data *data, t_token *token)
 {
-    if (token->type == T_OUT || token->type == T_APPEND)
+    if (token->type == T_OUT || (token->type == T_APPEND && !data->append))
     {
         if (data->output_file)
         {
-            //printf("Clearing output redirection, closing FD %d\n", data->std_output_fd);
             close(data->std_output_fd);
             free(data->output_file);
             data->output_file = NULL;
@@ -204,9 +203,7 @@ void clear_previous_redirections(t_data *data, t_token *token)
     }
     else if (token->type == T_IN || token->type == T_HEREDOC)
     {
-        if (data->input_file)
-        {
-            //printf("Clearing input redirection, closing FD %d\n", data->std_input_fd);
+        if (data->input_file) {
             close(data->std_input_fd);
             free(data->input_file);
             data->input_file = NULL;
@@ -215,24 +212,62 @@ void clear_previous_redirections(t_data *data, t_token *token)
     }
 }
 
-// sets up redir for input/output based on the token's type and opens the associated file descriptor.
-int setup_redirection(t_data *data, t_token *token, char *filename, int oflag)
+void setup_append_mode(t_data *data, int fd, token_type type)
 {
+    data->append = (type == T_APPEND);  // Set or unset the append flag
+
+    if (data->std_output_fd != STDOUT_FILENO && data->std_output_fd != fd)
+    {
+        if (close(data->std_output_fd) == -1)
+        {
+            perror("Failed to close file descriptor");
+        }
+    }
+    if (type == T_APPEND)
+    {
+        data->std_output_fd = fd;
+    }
+    else
+    {
+        data->std_output_fd = STDOUT_FILENO;
+    }
+}
+// sets up redir for input/output based on the token's type and opens the associated file descriptor.
+int setup_redirection(t_data *data, t_token *token, char *filename)
+{
+    int flags;
+
+    if (token->type == T_OUT)
+    {
+        flags = O_WRONLY | O_CREAT | O_TRUNC;
+    }
+    else if (token->type == T_APPEND)
+    {
+        flags = O_WRONLY | O_CREAT | O_APPEND;
+    }
+    else if (token->type == T_IN)
+    {
+        flags = O_RDONLY;
+    }
+    else {
+        flags = O_RDONLY;
+    }
+
     char *file_path = ft_strdup(filename);
-    if (!file_path)
-    {
-        ft_error("Error: strdup failed for file path\n");
+    if (!file_path) {
+        perror("Failed to allocate memory for file path");
         return -1;
     }
-    clear_previous_redirections(data, token);
-    //printf("Opening %s with flags %d (O_APPEND=%d)\n", file_path, oflag, O_APPEND);
-    int fd = open(file_path, oflag, 0644);
-    if (fd < 0)
-    {
+
+    int fd = open(file_path, flags, 0644);
+    if (fd < 0) {
+        perror("Error: Failed to open file");
         free(file_path);
-        ft_error("Error: Failed to open file\n");
         return -1;
     }
+
+    clear_previous_redirections(data, token);
+
     if (token->type == T_IN || token->type == T_HEREDOC)
     {
         data->input_file = file_path;
@@ -240,8 +275,13 @@ int setup_redirection(t_data *data, t_token *token, char *filename, int oflag)
     }
     else
     {
+        if (token->type == T_APPEND) {
+            setup_append_mode(data, fd, T_APPEND);
+        }
+        else {
+            setup_append_mode(data, fd, token->type);
+        }
         data->output_file = file_path;
-        data->std_output_fd = fd;
     }
     return 0;
 }
@@ -249,33 +289,16 @@ int setup_redirection(t_data *data, t_token *token, char *filename, int oflag)
 // Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
 int apply_redirection(t_data *data, t_token *token)
 {
-    int oflag;
-	char *file_name = NULL;
-    if (token->type == T_IN)
-	{
-        oflag = O_RDONLY;
-    }
-    if (token->type == T_OUT)
-	{
-        oflag = O_CREAT | O_WRONLY | O_TRUNC;
-    }
-    if (token->type == T_APPEND)
-	{
-        oflag = O_CREAT | O_WRONLY | O_APPEND;
-    }
-    if (token->type == T_HEREDOC)
-	{
-        return (0);
-    }
-	file_name = ft_strdup(token->next->value);
+    char *file_name = ft_strdup(token->next->value);
     if (!file_name)
     {
         ft_error("Error: strdup failed for file name\n");
         return -1;
     }
-	int result = setup_redirection(data, token, file_name, oflag);
+
+    int result = setup_redirection(data, token, file_name);
     free(file_name);
-    return (result);
+    return result;
 }
 
 void ft_error(char *err)
