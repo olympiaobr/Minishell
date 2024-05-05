@@ -35,54 +35,58 @@ int count_commands(t_data *data)
     data->count_cmd = count; // Update command count
     return count;
 }
-void close_pipes(t_data *data) {
+void close_pipes(t_data *data)
+{
     int i = 0;
     while (i < data->count_cmd - 1) {
+
         if (data->pipesfd[i]) {
             close(data->pipesfd[i][0]);
             close(data->pipesfd[i][1]);
-            free(data->pipesfd[i]);  // Ensure to free the individual pipe memory
+            free(data->pipesfd[i]);
         }
         i++;
     }
-    free(data->pipesfd);  // Finally, free the array of pointers
-    data->pipesfd = NULL;  // Set pointer to NULL for safety
+    free(data->pipesfd);
+    data->pipesfd = NULL;
 }
 
-int create_pipes(t_data *data) {
+int create_pipes(t_data *data)
+{
     int num_pipes = data->count_cmd - 1;
-    if (num_pipes <= 0) {
+    if (num_pipes <= 0)
+    {
         printf("No pipes needed.\n");
         return 0;
     }
-
     printf("Number of pipes to create: %d\n", num_pipes);
     data->pipesfd = malloc(num_pipes * sizeof(int[2]));
-    if (!data->pipesfd) {
+    if (!data->pipesfd)
+    {
         perror("Failed to allocate memory for pipe file descriptor arrays");
         return -1;
     }
-
     int i = 0;
-    while (i < num_pipes) {
+    while (i < num_pipes)
+    {
         data->pipesfd[i] = malloc(2 * sizeof(int));
-        if (!data->pipesfd[i]) {
+        if (!data->pipesfd[i])
+        {
             perror("Failed to allocate memory for individual pipes");
-            close_pipes(data);  // Clean up all pipes created up to the current point
+            close_pipes(data);
             return -1;
         }
 
-        if (pipe(data->pipesfd[i]) == -1) {
+        if (pipe(data->pipesfd[i]) == -1)
+        {
             perror("Failed to create a pipe");
-            close_pipes(data);  // Clean up including the current, partially initialized pipe
+            close_pipes(data);
             return -1;
         }
         i++;
     }
-
     return 0;
 }
-
 
 void wait_and_close_pipes(t_data *data, int num_processes)
 {
@@ -154,6 +158,7 @@ char **prepare_command_args(t_command *cmd)
     args[i] = NULL;
     return args;
 }
+
 char *resolve_command_path(char *command, t_data *data)
 {
     if (command[0] == '/' || (command[0] == '.' && command[1] == '/'))
