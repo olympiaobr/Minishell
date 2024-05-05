@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution3.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 18:30:22 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/04 18:30:24 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/05 18:32:15 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int count_commands(t_data *data)
 int create_pipes(t_data *data)
 {
     int num_pipes = data->count_cmd - 1;
+	printf("number of pipes created: %d\n", num_pipes);
     int i = 0;
     if (num_pipes <= 0)
         return 0;
@@ -72,8 +73,8 @@ int create_pipes(t_data *data)
             while (j <= i) {
                 close(data->pipesfd[j][0]);
                 close(data->pipesfd[j][1]);
-                free(data->pipesfd[j]);
-                j++;
+				free(data->pipesfd[j]); 
+				j++;
             }
             free(data->pipesfd);
             data->pipesfd = NULL;
@@ -160,8 +161,9 @@ void execute_pipeline(t_data *data, t_command *cmd)
 {
     int j = 0;
     int io[2];
+	int i = 0;
 
-    while (cmd != NULL)
+    while (cmd != NULL && i < data->count_cmd)
     {
         pid_t pid = fork();
         if (pid == -1)
@@ -190,19 +192,23 @@ void execute_pipeline(t_data *data, t_command *cmd)
             exit(EXIT_FAILURE);
         }
         // In parent, close the ends of the pipe this child used
-        if (j != 0)
-        {
-            close(data->pipesfd[j - 1][0]); // Close the read end of the previous pipe
-        }
-        if (cmd->next != NULL)
-        {
-            close(data->pipesfd[j][1]); // Close the write end of the current pipe
-        }
-        cmd = cmd->next;
-        j++;
+		if(j < data->count_cmd - 1)
+		{
+			if (j != 0)
+        	{
+            	close(data->pipesfd[j - 1][0]); // Close the read end of the previous pipe
+        	}
+        	if (cmd->next != NULL)
+        	{
+            	close(data->pipesfd[j][1]); // Close the write end of the current pipe
+        	}  	
+			j++;    
+		}
+    	cmd = cmd->next;
+		i++;
     }
-    wait_and_close_pipes(data, data->count_cmd);
-}
+	 wait_and_close_pipes(data, data->count_cmd);
+} 
 
 
 void close_pipes(t_data *data)
