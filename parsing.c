@@ -106,6 +106,7 @@ char *custom_strtok(char *str, const char *delim)
     last = end;
     return str;
 }
+
 int find_command_path(const char *command, char *dir, char *full_path)
 {
     while (dir)

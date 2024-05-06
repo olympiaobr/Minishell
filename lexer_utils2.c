@@ -77,7 +77,6 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	{
 		data->heredoc = 1;
 	}
-	//
 	create_and_append_token(&data->token_list, operator_str, type, 0);
 	free(operator_str);
 	*idx += operator_len;

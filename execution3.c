@@ -162,17 +162,14 @@ char **prepare_command_args(t_command *cmd)
 char *resolve_command_path(char *command, t_data *data)
 {
     if (command[0] == '/' || (command[0] == '.' && command[1] == '/'))
-        return ft_strdup(command);
-
+        return (ft_strdup(command));
     char *path_env = cust_getenv("PATH", data);
     if (!path_env)
         return NULL;
-
     char *path = ft_strdup(path_env);
     if (!path)
         return NULL;
-
-    char *token = strtok(path, ":");
+    char *token = custom_strtok(path, ":");
     char full_path[1024];
     while (token)
     {
@@ -185,7 +182,7 @@ char *resolve_command_path(char *command, t_data *data)
             free(path);
             return resolved_path;
         }
-        token = strtok(NULL, ":");
+        token = custom_strtok(NULL, ":");
     }
     free(path);
     return NULL;
