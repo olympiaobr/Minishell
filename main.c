@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/04/28 17:41:44 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/06 16:07:03 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,9 +149,10 @@ int main(int argc, char *argv[], char **envp)
             	}
             	//ft_printf("\n");
             	current = current->next;
-        	}
+        	}	
             reset_shell_state(data, envp);
     	}
+
 	}
 	else
 	{

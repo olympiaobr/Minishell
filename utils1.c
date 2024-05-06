@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 15:22:21 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/10 15:22:32 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/06 16:01:11 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void free_all(t_data *data)
     }
     free(data->env);
     data->env = NULL;
-
     // free path directories
     if (data->path_dirs)
     {

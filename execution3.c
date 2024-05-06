@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 18:30:22 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/06 12:32:16 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/06 16:10:43 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,15 +243,5 @@ void execute_pipeline(t_data *data, t_command *cmd)
         i++;
     }
     wait_and_close_pipes(data, data->count_cmd);
-	if(data->pipesfd != NULL)
-	{
-		int i = 0;
-		while(i < 2)
-		{
-			free(data->pipesfd[i]);
-			i++;
-		}
-	}
-	free(data->pipesfd);
 }
 
