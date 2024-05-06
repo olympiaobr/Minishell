@@ -249,7 +249,8 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
     {
         flags = O_RDONLY;
     }
-    else {
+    else
+    {
         flags = O_RDONLY;
     }
 

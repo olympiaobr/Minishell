@@ -23,6 +23,7 @@
 # include <string.h>
 # include <unistd.h>
 # include <sys/wait.h>
+# include <signal.h>
 
 typedef enum token_type
 {
