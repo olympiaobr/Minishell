@@ -38,19 +38,78 @@ void reset_shell_state(t_data *data)
     data->heredoc = 0;
     initialize_shell_components(data);
 }
+void catch_sigint(int sig)
+{
+    (void)sig;
+    ft_putchar_fd('\n', STDOUT_FILENO);
+    rl_on_new_line();
+    rl_replace_line("", 0);
+    rl_redisplay();
+}
+
+void handle_sigquit(int signum)
+{
+    if (signum == SIGQUIT)
+    {
+        printf("Quit (core dumped)\n");
+        ft_putchar_fd('\n', STDOUT_FILENO);
+        rl_on_new_line();
+    }
+}
+
+void setup_interactive_signals(void)
+{
+    struct sigaction action_int, action_quit;
+
+    ft_memset(&action_int, 0, sizeof(struct sigaction));
+    action_int.sa_handler = catch_sigint;
+    sigemptyset(&action_int.sa_mask);
+    action_int.sa_flags = 0;
+    sigaction(SIGINT, &action_int, NULL);
+
+    ft_memset(&action_quit, 0, sizeof(struct sigaction));
+    action_quit.sa_handler = SIG_IGN;
+    sigemptyset(&action_quit.sa_mask);
+    action_quit.sa_flags = 0;
+    sigaction(SIGQUIT, &action_quit, NULL);
+}
+
+void setup_noninteractive_signals(void)
+{
+    struct sigaction action;
+
+    ft_memset(&action, 0, sizeof(struct sigaction));
+    action.sa_handler = handle_sigquit;
+    sigemptyset(&action.sa_mask);
+    sigaction(SIGINT, &action, NULL);
+    sigaction(SIGQUIT, &action, NULL);
+}
+
+// Signal setup caller function based on the mode
+void signal_setup(int mode)
+{
+    if (mode == 1)
+    {
+        setup_interactive_signals();
+    }
+    else
+    {
+        setup_noninteractive_signals();
+    }
+}
 
 void run_shell(t_data *data)
 {
-    //signals_call();
-
     while (1)
     {
+        setup_interactive_signals();
         data->user_input = readline("minishell: ");
         if (!data->user_input)
         {
             printf("exit\n");
             break;
         }
+        setup_noninteractive_signals();
         if (validate_input(data))
         {
             add_history(data->user_input);
@@ -61,12 +120,14 @@ void run_shell(t_data *data)
 				check_for_heredoc(data);
 				parser(data);
 				execution(data);
+                //signal
 				continue;
 			}
             expansion(data);
             parser(data);
             execution(data);
         }
+        setup_interactive_signals();
         reset_shell_state(data);
         free(data->user_input);
     }
