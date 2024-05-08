@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/06 16:08:02 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:56:23 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,56 @@
 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
-		char *path = cmd->path;
-		printf("the path is: %s\n", path);
-		char *argv[] = {path, "heredoc_tempfile", NULL};
+		char **argv;
+char *path;
+
+if (data->output_file_present == 1)
+{
+    path = cmd->path;
+    printf("the path is: %s\n", path);         
+    char *output_file = data->output_file;
+    argv = malloc(3 * sizeof(char *));
+    if (argv == NULL)
+    {
+        // Handle memory allocation failure
+        perror("Failed to allocate memory for argv");
+        exit(EXIT_FAILURE);
+    }
+    argv[0] = path;
+    argv[1] = output_file;
+    argv[2] = NULL;
+}
+else
+{
+    path = cmd->path;
+    printf("the path is: %s\n", path);
+    argv = malloc(3 * sizeof(char *));
+    if (argv == NULL)
+    {
+        // Handle memory allocation failure
+        perror("Failed to allocate memory for argv");
+        exit(EXIT_FAILURE);
+    }
+    argv[0] = path;
+    argv[1] = "heredoc_tempfile";
+    argv[2] = NULL;
+}
+
+		/* char **argv;
+		char *path;
+		if(data->output_file_present == 1)
+		{
+			path = cmd->path;
+			printf("the path is: %s\n", path);			
+			char *output_file = data->output_file;
+			argv = {path, output_file, NULL};
+		}
+		else
+		{
+			path = cmd->path;
+			printf("the path is: %s\n", path);
+			argv = {path, "heredoc_tempfile", NULL};
+		} */
 
 		int pipe_fd[2];
         if (pipe(pipe_fd) == -1)
@@ -47,6 +94,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
 
             // Close the read end of the pipe
 			close(pipe_fd[0]);
+			
             // Execute the command
             execve(path, argv, NULL);
             perror("execve");
@@ -59,7 +107,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
 
             // Write heredoc input to the pipe
 			printf("heredoc input: %s\n", data->heredoc_input);
-			ssize_t bytes_written =write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
+			ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
             if (bytes_written == -1)
             {
                 perror("write");//write: Bad file descriptor issue fixed by removing the first close()

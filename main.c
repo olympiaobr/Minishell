@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/06 16:07:03 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:00:19 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,11 @@ int main(int argc, char *argv[], char **envp)
             add_history(data->user_input);
             lexing_input(data);
 			//printf("data.heredoc: %d\n", data->heredoc);
+
 			if(data->heredoc == 1)
 			{
 				data->heredoc = 0;
+				data->output_file_present = 0;
 				check_for_heredoc(data);
 				parser(data);
 				execution(data);

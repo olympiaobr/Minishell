@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/03 13:46:02 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:49:49 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ void setup_append_mode(t_data *data, int fd, token_type type)
         data->std_output_fd = STDOUT_FILENO;
     }
 }
+
 // sets up redir for input/output based on the token's type and opens the associated file descriptor.
 int setup_redirection(t_data *data, t_token *token, char *filename)
 {
@@ -239,7 +240,7 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
 
     if (token->type == T_OUT)
     {
-        flags = O_WRONLY | O_CREAT | O_TRUNC;
+        flags = O_WRONLY | O_CREAT | O_APPEND; //O_WRONLY | O_CREAT | O_TRUNC;
     }
     else if (token->type == T_APPEND)
     {
@@ -289,7 +290,18 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
 // Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
 int apply_redirection(t_data *data, t_token *token)
 {
-    char *file_name = ft_strdup(token->next->value);
+	//char *file_name = ft_strdup(token->next->value);
+	char *file_name = NULL;
+	if(data->output_file_present == 1)
+	{
+		file_name = ft_strdup(data->output_file);
+	}
+	else
+	{
+		file_name = ft_strdup(token->next->value);
+	}
+	
+ 
     if (!file_name)
     {
         ft_error("Error: strdup failed for file name\n");

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/28 17:32:48 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:12:37 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <string.h>
 # include <unistd.h>
 # include <sys/wait.h>
-
+# include <errno.h> 
 typedef enum token_type
 {
 	T_COMMAND,  //general command
@@ -71,6 +71,8 @@ typedef struct data_all
 	char	*std_output;
     char    *input_file;    // For < redirection
     char    *output_file;   // For > or >> redirection
+	char	*heredoc_file;
+	char	*delimiter;
 	int original_stdout; // Store the original STDOUT file descriptor
     int original_stdin;  // Store the original STDIN file descriptor
 	int      std_input_fd;   // File descriptor for input redirection
@@ -87,6 +89,7 @@ typedef struct data_all
 	int count_cmd;
 	int **pipesfd;
 	int max_env_size;
+	int output_file_present;
 }	t_data;
 
 //lexing functions
@@ -187,4 +190,9 @@ void free_all(t_data *data);
 
 void ft_error(char *err);
 void display_commands(t_data *data);
+
+
+
+
+void find_heredoc_delimiter(t_data *data);
 #endif

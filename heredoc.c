@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/03 17:57:14 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/08 17:01:33 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,20 @@
 //then we read until the delimiters appears again and we tokenize this input
 //error check if there is no second appearance of the delimiter
 
-void write_to_heredoc_file(t_data *data, char *delimiter)
+void write_to_heredoc_file(t_data *data, char *delimiter, char *output_file)
 {
 	char *input;
-	char *temp_file = "heredoc_tempfile";
-	int fd = open(temp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	//char *temp_file = "heredoc_tempfile";
+	int fd;
+	if (output_file != NULL) {
+        // Check if append redirection is specified
+        //int flags = (data->append_output) ? O_WRONLY | O_CREAT | O_APPEND : O_WRONLY | O_CREAT | O_TRUNC;
+        fd = open(output_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    } else {
+        char *temp_file = "heredoc_tempfile";
+        fd = open(temp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    }
+	//fd = open(temp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if(fd == -1)
 	{
 		perror("failure opening file\n");
@@ -78,16 +87,38 @@ void write_to_heredoc_file(t_data *data, char *delimiter)
 
 } */
 
+
+void check_for_output_file(t_data *data)
+{
+	t_token *current = data->token_list;
+	data->output_file = NULL;
+	while(current != NULL)
+	{
+		if(current->type == T_OUT)
+		{
+			data->output_file = current->next->value;
+			data->output_file_present = 1;
+		}
+		current = current->next;
+	}
+}
 void check_for_heredoc(t_data *data)
 {
 	t_token *current = data->token_list;
+	data->output_file_present = 0;
+	check_for_output_file(data);
+	printf("output file is: %s\n", data->output_file);
+	
 	while(current != NULL)
 	{
+		
 		if(current->type == T_HEREDOC)
 		{
 			char *delimiter = current->next->value;// go to next token and pass it to heredoc function
 			data->heredoc = 1;
-			write_to_heredoc_file(data, delimiter);
+			
+			
+			write_to_heredoc_file(data, delimiter, data->output_file);
 			//redirect_to_standard_input(); // had to remove this
 			
 		}
