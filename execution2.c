@@ -59,26 +59,53 @@ int operators_setup(t_data *data)
 }
 
 void determine_io_channels(t_data *data, int cmd_index, int io[2])
- {
-    // determine input channel
+{
+    int default_input = STDIN_FILENO;
+    int default_output = STDOUT_FILENO;
+
+    // Initialize to invalid file descriptors
+    io[0] = -1;
+    io[1] = -1;
+
+    // Set input channel
     if (cmd_index == 0)
-	{
-        io[0] = data->std_input_fd;
+    {
+        if (data->std_input_fd > 0)
+        {
+            io[0] = data->std_input_fd;
+        }
+        else
+        {
+            io[0] = default_input;
+        }
     }
-	else
-	{
+    else if (data->pipesfd && cmd_index > 0)
+    {
         io[0] = data->pipesfd[cmd_index - 1][0];
     }
-    // determine output channel
+
+    // Set output channel
     if (cmd_index == data->count_cmd - 1)
-	{
-        io[1] = data->std_output_fd;
+    {
+        if (data->std_output_fd > 0)
+        {
+            io[1] = data->std_output_fd;
+        }
+        else
+        {
+            io[1] = default_output;
+        }
     }
-	else
-	{
+    else if (data->pipesfd && cmd_index < data->count_cmd - 1)
+    {
         io[1] = data->pipesfd[cmd_index][1];
     }
+    if (io[0] < 0 || io[1] < 0)
+    {
+        fprintf(stderr, "Error: Invalid IO channels determined for command index %d.\n", cmd_index);
+    }
 }
+
 
 void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds[2])
 {

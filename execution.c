@@ -121,10 +121,14 @@ void execute_external_command(t_data *data, t_command *cmd)
             perror("Invalid command path or command is not executable");
             return;
         }
-
         int io[2];
         determine_io_channels(data, cmd->command_index, io);
 
+        if (io[0] < 0 || io[1] < 0)
+        {
+        fprintf(stderr, "Error: Invalid IO channels determined.\n");
+        return;
+        }
         int argc = 1;
         if (cmd->option != NULL)
 		{
@@ -181,16 +185,23 @@ void execute_external_command(t_data *data, t_command *cmd)
             perror("Execve failed");
             exit(EXIT_FAILURE);
         }
-		else
-		{ // Parent process
-            int status;
-            waitpid(pid, &status, 0);
-            if (WIFEXITED(status))
-			{
-                data->exit_status = WEXITSTATUS(status);
+        else
+        {  // Parent process
+            int status = 0;
+            int ret;
+
+            while ((ret = waitpid(pid, &status, 0)) == -1)
+            {
             }
-            free(argv);
+            if (ret == -1)
+            {
+             perror("waitpid failed");
+            }
+            else if (WIFEXITED(status)) {
+            data->exit_status = WEXITSTATUS(status);
         }
+        free(argv);
+    }
 }
 
 void execute_simple_command(t_data *data, t_command *cmd)

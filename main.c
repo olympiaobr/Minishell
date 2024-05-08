@@ -52,7 +52,6 @@ void handle_sigquit(int signum)
     if (signum == SIGQUIT)
     {
         printf("Quit (core dumped)\n");
-        ft_putchar_fd('\n', STDOUT_FILENO);
         rl_on_new_line();
     }
 }
@@ -109,25 +108,25 @@ void run_shell(t_data *data)
             printf("exit\n");
             break;
         }
-        setup_noninteractive_signals();
         if (validate_input(data))
         {
             add_history(data->user_input);
             lexing_input(data);
+            setup_noninteractive_signals();
             if(data->heredoc == 1)
 			{
 				data->heredoc = 0;
 				check_for_heredoc(data);
 				parser(data);
 				execution(data);
-                //signal
+                //signal handling for heredoc here?
 				continue;
 			}
             expansion(data);
             parser(data);
             execution(data);
+            setup_interactive_signals();
         }
-        setup_interactive_signals();
         reset_shell_state(data);
         free(data->user_input);
     }

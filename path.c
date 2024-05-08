@@ -151,7 +151,7 @@ void initialize_shell_components(t_data *data)
     data->heredoc = 0;
     data->commands = NULL;
     data->create_new_command = 0;
-   // data->exit_status = 0;
+    data->exit_status = 0;
     data->max_env_size = 0;
 	data->heredoc_input = NULL;
     data->original_stdout = -1;
