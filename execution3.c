@@ -93,23 +93,29 @@ void wait_and_close_pipes(t_data *data, int num_processes)
     int status;
     pid_t pid;
     int exit_status = 0;
+    int current_status;
 
     while (num_processes > 0)
-	{
+    {
         pid = wait(&status);
-        if (pid == -1) {
+        if (pid == -1)
+        {
             perror("wait");
             continue;
         }
         if (WIFEXITED(status))
-		{
-            int current_status = WEXITSTATUS(status);
+        {
+            current_status = WEXITSTATUS(status);
             printf("Process %d exited with status: %d\n", pid, current_status);
-            exit_status = (current_status > exit_status) ? current_status : exit_status;
+            if (current_status > exit_status)
+            {
+                exit_status = current_status;
+            }
         }
         num_processes--;
     }
     data->exit_status = exit_status;
+
     int i = 0;
     while (i < data->count_cmd - 1)
     {

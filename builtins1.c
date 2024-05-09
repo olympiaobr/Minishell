@@ -34,33 +34,42 @@ int pwd_cmd(void)
     return (EXIT_SUCCESS);
 }
 
-int env_cmd(t_data *data)
+int print_environment(char **envp)
 {
-    int i = 0;
-    char **envp = data->env;
+    int i;
 
-    if (data->commands && data->commands->argc > 1)
-	{
-        ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
-        return (EXIT_FAILURE);
-    }
-    if (!envp) {
-    fprintf(stderr, "Environment uninitialized.\n");
-    return EXIT_FAILURE;
-    }
+    i = 0;
     while (envp[i])
-	{
+    {
         if (ft_strchr(envp[i], '='))
-		{
+        {
             if (ft_putendl_fd(envp[i], STDOUT_FILENO) < 0)
-			{
+            {
                 perror("minishell: write error");
-                return EXIT_FAILURE;
+                return (EXIT_FAILURE);
             }
         }
         i++;
     }
     return (EXIT_SUCCESS);
+}
+
+int env_cmd(t_data *data)
+{
+    char **envp;
+
+    envp = data->env;
+    if (!envp)
+    {
+        fprintf(stderr, "Environment uninitialized.\n");
+        return (EXIT_FAILURE);
+    }
+    if (data->commands && data->commands->argc > 1)
+    {
+        ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
+        return EXIT_FAILURE;
+    }
+    return (print_environment(envp));
 }
 
 int n_option(const char *arg)
@@ -85,7 +94,7 @@ int echo_cmd(t_command *cmd)
     t_token *current_arg = cmd->argv;
     int newline = 1;
     int first = 1;
-	
+
     while (option && n_option(option->value))
 	{
         newline = 0;
