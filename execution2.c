@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/08 16:24:45 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/09 17:45:29 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,6 @@ int execute_builtin(t_command *cmd, t_data *data)
     }
     int result = call_builtin(cmd, data);
     restore_redirections(data, cmd->command_index, io_channels, backup_fds);
-
     return result;
 }
 

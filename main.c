@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/08 17:00:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:10:48 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ void reset_shell_state(t_data *data, char **envp)
     }
     data->token_list = NULL;
 
-    free_commands(data->commands);
-    data->commands = NULL;
+   free_commands(data->commands);
+   data->commands = NULL;
 
     free(data->input_file);
     data->input_file = NULL;

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/08 17:12:37 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/09 17:28:12 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <errno.h> 
+
+
 typedef enum token_type
 {
 	T_COMMAND,  //general command
@@ -195,4 +197,5 @@ void display_commands(t_data *data);
 
 
 void find_heredoc_delimiter(t_data *data);
+void check_for_output_file(t_data *data);
 #endif

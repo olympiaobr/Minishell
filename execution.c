@@ -6,13 +6,17 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/08 17:56:23 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:06:17 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
-
+/* void signal_handler(int signum) {
+	(void)signum;
+    signal_received = 1;
+	printf("got changed\n");
+} */
 void handle_heredocs(t_data *data, t_command *cmd)
 {
 		char **argv;
@@ -82,9 +86,9 @@ else
         }
         else if (pid == 0)  // Child process
         {
+			
             // Close the write end of the pipe
             close(pipe_fd[1]);
-
             // Redirect standard input to the read end of the pipe
             if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
             {
@@ -102,28 +106,33 @@ else
         }
         else  // Parent process
         {
-            // Close the read end of the pipe
-            close(pipe_fd[0]);
-
+        //     Close the read end of the pipe
+        	close(pipe_fd[0]);
+		
+			
             // Write heredoc input to the pipe
 			printf("heredoc input: %s\n", data->heredoc_input);
 			ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
             if (bytes_written == -1)
             {
-                perror("write");//write: Bad file descriptor issue fixed by removing the first close()
+                perror("write"); //write: Bad file descriptor issue fixed by removing the first close()
                 exit(EXIT_FAILURE);
             }
+		
             // Close the write end of the pipe
 			close(pipe_fd[1]);
 
-            // Wait for the child process to complete
+            //Wait for the child process to complete
 			if(wait(NULL) == -1)
 			{
 				perror("wait");
 				exit(EXIT_FAILURE);
 			}
+			
 		}
+	
 }
+
 
 void handle_expr_function(t_data *data)
 {
@@ -292,6 +301,8 @@ void execution(t_data *data)
 	{
         //ft_printf("Debug: Executing simple command...\n");
         execute_simple_command(data, data->commands);
+	
+
     }
     free_commands(data->commands);
     data->commands = NULL;
@@ -305,6 +316,7 @@ void execution(t_data *data)
 		}
 		free(data->pipesfd);
 	}
+
 }
 
 /*
