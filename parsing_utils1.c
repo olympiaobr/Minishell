@@ -193,7 +193,7 @@ void clear_previous_redirections(t_data *data, t_token *token)
 {
     if (token->type == T_OUT || (token->type == T_APPEND && !data->append))
     {
-        if (data->output_file)
+        if (data->output_file && data->std_output_fd != STDOUT_FILENO)
         {
             close(data->std_output_fd);
             free(data->output_file);
@@ -203,7 +203,8 @@ void clear_previous_redirections(t_data *data, t_token *token)
     }
     else if (token->type == T_IN || token->type == T_HEREDOC)
     {
-        if (data->input_file) {
+        if (data->input_file && data->std_input_fd != STDIN_FILENO)
+        {
             close(data->std_input_fd);
             free(data->input_file);
             data->input_file = NULL;
@@ -212,26 +213,29 @@ void clear_previous_redirections(t_data *data, t_token *token)
     }
 }
 
+
 void setup_append_mode(t_data *data, int fd, token_type type)
 {
-    data->append = (type == T_APPEND);  // Set or unset the append flag
-
-    if (data->std_output_fd != STDOUT_FILENO && data->std_output_fd != fd)
-    {
-        if (close(data->std_output_fd) == -1)
-        {
-            perror("Failed to close file descriptor");
-        }
-    }
     if (type == T_APPEND)
+        data->append = 1;
+    else
+        data->append = 0;
+
+    // Close the current output file descriptor if it's not the standard output
+    if (data->std_output_fd != STDOUT_FILENO)
+    {
+        close(data->std_output_fd);
+    }
+
+    // Set the output file descriptor based on the type of redirection
+    if (type == T_APPEND || type == T_OUT)
     {
         data->std_output_fd = fd;
-    }
-    else
-    {
+    } else {
         data->std_output_fd = STDOUT_FILENO;
     }
 }
+
 // sets up redir for input/output based on the token's type and opens the associated file descriptor.
 int setup_redirection(t_data *data, t_token *token, char *filename)
 {
@@ -347,7 +351,6 @@ int parser(t_data *data)
                     ft_error("Error: Failed to apply redirection.\n");
                     return 1;
                 }
-
             }
         }
         current_token = current_token->next;

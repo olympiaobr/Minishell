@@ -228,7 +228,23 @@ void execute_simple_command(t_data *data, t_command *cmd)
 	{
         execute_external_command(data, cmd);
     }
+    ft_printf("Debug: After executing command, std_input_fd = %d, std_output_fd = %d\n", data->std_input_fd, data->std_output_fd);
+
+    // Close and reset the input and output file descriptors if they were redirected
+    if (data->std_input_fd != STDIN_FILENO)
+    {
+        ft_printf("Debug: Closing std_input_fd = %d\n", data->std_input_fd);
+        close(data->std_input_fd);
+        data->std_input_fd = STDIN_FILENO;
+    }
+    if (data->std_output_fd != STDOUT_FILENO)
+    {
+        ft_printf("Debug: Closing std_output_fd = %d\n", data->std_output_fd);
+        close(data->std_output_fd);
+        data->std_output_fd = STDOUT_FILENO;
+    }
 }
+
 
 void execution(t_data *data)
 {

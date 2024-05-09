@@ -120,6 +120,7 @@ void run_shell(t_data *data)
 				parser(data);
 				execution(data);
                 //signal handling for heredoc here?
+                reset_shell_state(data);
 				continue;
 			}
             expansion(data);
