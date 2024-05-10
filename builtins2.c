@@ -50,11 +50,11 @@ char *get_env_var(char **envp, const char *name)
     {
         if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == '=')
         {
-            return envp[i] + len + 1;
+            return (envp[i] + len + 1);
         }
         i++;
     }
-    return NULL;
+    return (NULL);
 }
 
 char **expand_env(char **env, int newsize)

@@ -164,6 +164,7 @@ void execution(t_data *data/* , t_command *cmd */);
 int check_builtin(const char *command);
 int execute_builtin(t_command *cmd, t_data *data);
 int cd_cmd(t_data *data, t_command *cmd);
+const char *parse_cd_target(t_data *data, t_command *cmd);
 int pwd_cmd(void);
 int env_cmd(t_data *data);
 int echo_cmd(t_command *cmd);
