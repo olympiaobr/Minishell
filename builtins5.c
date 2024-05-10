@@ -46,22 +46,38 @@ int unset_cmd(t_data *data, t_command *cmd)
     return (0);
 }
 
-int export_cmd(t_data *data, t_command *cmd)
+void process_var_update(t_data *data, char *var_name, char *value)
 {
-    t_token *arg = cmd->argv;
+    char *existing_value;
+
+	existing_value = get_env_var(data->env, var_name);
+    if (existing_value)
+    {
+        if (value)
+            set_env_var(data, var_name, value);
+        else
+            set_env_var(data, var_name, existing_value);
+    }
+    else
+    {
+        if (value)
+        {
+            if (set_env_var(data, var_name, value) == -1)
+                fprintf(stderr, "Failed to export variable: %s\n", var_name);
+        }
+        else
+        {
+            if (set_env_var(data, var_name, "") == -1)
+                fprintf(stderr, "Failed to export variable: %s\n", var_name);
+        }
+    }
+}
+
+void handle_export_operation(t_data *data, t_token *arg)
+{
     char *var_name;
     char *value;
 
-    if (!arg)
-    {
-        int i = 0;
-        while (data->env[i] != NULL)
-        {
-            printf("declare -x %s\n", data->env[i]);
-            i++;
-        }
-        return 0;
-    }
     while (arg)
     {
         var_name = custom_strtok(arg->value, "=");
@@ -72,46 +88,20 @@ int export_cmd(t_data *data, t_command *cmd)
         }
         else
         {
-            char *existing_value = get_env_var(data->env, var_name);
-            if (existing_value)
-            {
-                if (value)
-                {
-                    set_env_var(data, var_name, value);
-                }
-                else
-                {
-                    set_env_var(data, var_name, existing_value); // Keep existing value if no new value provided
-                }
-            }
-            else
-            {
-                if (value)
-                {
-                    if (set_env_var(data, var_name, value) == -1)
-                    {
-                        fprintf(stderr, "Failed to export variable: %s\n", var_name);
-                    }
-                }
-                else
-                {
-                    if (set_env_var(data, var_name, "") == -1)
-                    {
-                        fprintf(stderr, "Failed to export variable: %s\n", var_name);
-                    }
-                }
-            }
+            process_var_update(data, var_name, value);
         }
         arg = arg->next;
     }
-    return 0;
 }
 
-
-int check_builtin(const char *command)
+void display_all_env_vars(char **env)
 {
-    return (ft_strcmp(command, "cd") == 0 || ft_strcmp(command, "echo") == 0 ||
-            ft_strcmp(command, "pwd") == 0 || ft_strcmp(command, "export") == 0 ||
-            ft_strcmp(command, "unset") == 0 || ft_strcmp(command, "env") == 0 ||
-            ft_strcmp(command, "exit") == 0);
+    int i;
+
+	i = 0;
+    while (env[i] != NULL)
+    {
+        printf("declare -x %s\n", env[i]);
+        i++;
+    }
 }

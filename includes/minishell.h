@@ -176,6 +176,8 @@ int unset_cmd(t_data *data, t_command *cmd);
 void remove_var(t_data *data, const char *var_name);
 int set_env_var(t_data *data, const char *name, const char *value);
 int add_new_env(t_data *data, char *new_val, int index);
+void display_all_env_vars(char **env);
+void handle_export_operation(t_data *data, t_token *arg);
 int update_existing_env(t_data *data, char *new_val, int i);
 char *get_env_var(char **envp, const char *name);
 int valid_identifier(const char *name);
