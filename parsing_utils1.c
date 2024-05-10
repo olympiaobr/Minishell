@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 11:57:54 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 13:04:10 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
 
     if (token->type == T_OUT)
     {
-        flags = O_WRONLY | O_CREAT | O_TRUNC;
+        flags = O_WRONLY | O_CREAT | O_APPEND;
     }
     else if (token->type == T_APPEND)
     {
@@ -257,7 +257,7 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
     {
         flags = O_RDONLY;
     }
-
+printf("filename in setup redirection: %s\n", filename);
     char *file_path = ft_strdup(filename);
     if (!file_path) {
         perror("Failed to allocate memory for file path");
@@ -303,20 +303,22 @@ int apply_redirection(t_data *data, t_token *token)
 
 
 ///new version to be able to handle cat << EOF properly
-/* if(data->output_file_present == 1)
+char *file_name = NULL;
+if(data->output_file_present == 1)
 	{
 		file_name = ft_strdup(data->output_file);
+		printf("here\n");
 	}
 	else
-	{ */
-	char *file_name = NULL;
+	{
+	
 		if(data->heredoc == 1)
 		{
 			file_name = ft_strdup("heredoc_tempfile");
 		}
 		else
 		file_name = ft_strdup(token->next->value);
-/* 	} */
+	}
 
 
 
