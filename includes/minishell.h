@@ -152,6 +152,7 @@ void bla(t_data *data, t_command *cmd);
 
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
+char	*ft_strncpy(char *dest, const char *src, unsigned int n);
 char *ft_strcpy(char *dest, const char *src);
 char *ft_strcat(char *dest, const char *src);
 size_t ft_strspn(const char *str, const char *delim);
@@ -166,10 +167,13 @@ int cd_cmd(t_data *data, t_command *cmd);
 int pwd_cmd(void);
 int env_cmd(t_data *data);
 int echo_cmd(t_command *cmd);
+int process_options(t_token *option);
 int exit_cmd(t_data *data, t_command *cmd);
 int export_cmd(t_data *data, t_command *cmd);
 int unset_cmd(t_data *data, t_command *cmd);
 int set_env_var(t_data *data, const char *name, const char *value);
+int add_new_env(t_data *data, char *new_val, int index);
+int update_existing_env(t_data *data, char *new_val, int i);
 char *get_env_var(char **envp, const char *name);
 int valid_identifier(const char *name);
 void execute_external_command(t_data *data, t_command *cmd);

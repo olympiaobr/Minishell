@@ -13,6 +13,57 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+int update_existing_env(t_data *data, char *new_val, int i)
+{
+    free(data->env[i]);
+    data->env[i] = new_val;
+    return (0);
+}
+
+int update_or_add_env(t_data *data, char *new_val, const char *name)
+{
+    size_t name_len;
+    int i;
+
+    name_len = ft_strlen(name);
+    i = 0;
+    while (data->env[i] != NULL)
+    {
+        if (ft_strncmp(data->env[i], name, name_len) == 0 && data->env[i][name_len] == '=')
+        {
+            return (update_existing_env(data, new_val, i));
+        }
+        i++;
+    }
+    return (add_new_env(data, new_val, i));
+}
+
+int set_env_var(t_data *data, const char *name, const char *value)
+{
+    char *new_val;
+    size_t name_len;
+    size_t value_len;
+
+    if (!name || !value || name[0] == '\0' || name[0] == '=' || strchr(name, '=') != NULL)
+    {
+        fprintf(stderr, "Invalid environment variable name\n");
+        return -1;
+    }
+    name_len = ft_strlen(name);
+    value_len = ft_strlen(value);
+    new_val = malloc(name_len + value_len + 2); // +2 for '=' and '\0'
+    if (new_val == NULL)
+    {
+        perror("Memory allocation failed for environment variable");
+        return -1;
+    }
+    ft_strncpy(new_val, name, name_len);
+    new_val[name_len] = '=';
+    ft_strncpy(new_val + name_len + 1, value, value_len);
+    new_val[name_len + value_len + 1] = '\0';
+    return (update_or_add_env(data, new_val, name));
+}
+
 int cd_cmd(t_data *data, t_command *cmd)
 {
     char *target;
