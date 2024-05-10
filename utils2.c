@@ -10,4 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Libft/libft.h"
+#include "includes/minishell.h"
 
+void ft_error(char *err)
+{
+    ft_putstr_fd(err, 2);
+}
