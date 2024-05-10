@@ -61,7 +61,7 @@ int env_cmd(t_data *data)
     envp = data->env;
     if (!envp)
     {
-        fprintf(stderr, "Environment uninitialized.\n");
+        printf("Environment uninitialized.\n");
         return (EXIT_FAILURE);
     }
     if (data->commands && data->commands->argc > 1)
@@ -87,31 +87,19 @@ int n_option(const char *arg)
     }
     return (1);
 }
-
-int echo_cmd(t_command *cmd)
+int process_options(t_token *option)
 {
-    t_token *option = cmd->option;
-    t_token *current_arg = cmd->argv;
-    int newline = 1;
-    int first = 1;
+    int newline;
 
-    while (option && n_option(option->value))
-	{
-        newline = 0;
+    newline = 1;
+    while (option)
+    {
+        if (n_option(option->value))
+        {
+            newline = 0;
+        }
         option = option->next;
     }
-    while (current_arg)
-	{
-        if (current_arg->type == T_ARGUMENT)
-		{
-            if (!first)
-                ft_printf(" ");
-            ft_printf("%s", current_arg->value);
-            first = 0;
-        }
-        current_arg = current_arg->next;
-    }
-    if (newline)
-        ft_printf("\n");
-    return (0);
+    return (newline);
 }
+

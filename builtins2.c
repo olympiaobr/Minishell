@@ -13,6 +13,32 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+int echo_cmd(t_command *cmd)
+{
+    t_token *current_arg;
+    int newline;
+    int first;
+
+    current_arg = cmd->argv;
+    newline = process_options(cmd->option);
+    first = 1;
+
+    while (current_arg)
+    {
+        if (current_arg->type == T_ARGUMENT)
+        {
+            if (!first)
+                ft_printf(" ");
+            ft_printf("%s", current_arg->value);
+            first = 0;
+        }
+        current_arg = current_arg->next;
+    }
+    if (newline)
+        ft_printf("\n");
+    return (0);
+}
+
 char *get_env_var(char **envp, const char *name)
 {
     size_t len;
@@ -73,52 +99,20 @@ char	*ft_strncpy(char *dest, const char *src, unsigned int n)
 	return (dest);
 }
 
-int set_env_var(t_data *data, const char *name, const char *value)
+int add_new_env(t_data *data, char *new_val, int index)
 {
-    char *new_val;
-    size_t name_len, value_len;
-    int i = 0;
+    char **new_env;
 
-    if (!name || !value || name[0] == '\0' || name[0] == '=' || strchr(name, '=') != NULL)
-    {
-        fprintf(stderr, "Invalid environment variable name\n");
-        return -1;
-    }
-    name_len = ft_strlen(name);
-    value_len = ft_strlen(value);
-    // Allocate memory for the new environment variable
-    new_val = malloc(name_len + value_len + 2); // +2 for '=' and '\0'
-    if (new_val == NULL)
-    {
-        perror("Memory allocation failed for environment variable");
-        return -1;
-    }
-    ft_strncpy(new_val, name, name_len);
-    new_val[name_len] = '=';
-    ft_strncpy(new_val + name_len + 1, value, value_len);
-    new_val[name_len + value_len + 1] = '\0';
-    // search for existing variable and update it if found
-    while (data->env[i] != NULL)
-    {
-        if (ft_strncmp(data->env[i], name, name_len) == 0 && data->env[i][name_len] == '=')
-        {
-            free(data->env[i]);
-            data->env[i] = new_val;
-            return 0;
-        }
-        i++;
-    }
-    // if var was not found, add to the environment
-    char **new_env = expand_env(data->env, i + 2);
+    new_env = expand_env(data->env, index + 2);
     if (new_env == NULL)
     {
         free(new_val);
-        fprintf(stderr, "Failed to expand environment space\n");
-        return -1;
+        printf("Failed to expand environment space\n");
+        return (-1);
     }
-    new_env[i] = new_val;
-    new_env[i + 1] = NULL;
+    new_env[index] = new_val;
+    new_env[index + 1] = NULL;
     free(data->env);
     data->env = new_env;
-    return 0;
+    return (0);
 }
