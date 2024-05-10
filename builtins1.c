@@ -115,21 +115,3 @@ int echo_cmd(t_command *cmd)
         ft_printf("\n");
     return (0);
 }
-
-char *get_env_var(char **envp, const char *name)
-{
-    size_t len;
-    int i;
-
-    len = ft_strlen(name);
-    i = 0;
-    while (envp[i] != NULL)
-    {
-        if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == '=')
-        {
-            return envp[i] + len + 1;
-        }
-        i++;
-    }
-    return NULL;
-}

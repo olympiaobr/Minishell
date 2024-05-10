@@ -181,10 +181,16 @@ int operators_setup(t_data *data);
 int create_pipes(t_data *data);
 int count_commands(t_data *data);
 
+void catch_sigint(int sig);
+void handle_sigquit(int signum);
+void setup_interactive_signals(void);
+void setup_noninteractive_signals(void);
+
 //free functions
 void	free_tokens(t_data *data);
 void free_commands(t_command *commands);
 void free_all(t_data *data);
+
 
 void ft_error(char *err);
 void display_commands(t_data *data);

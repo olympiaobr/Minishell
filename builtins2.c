@@ -13,6 +13,24 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+char *get_env_var(char **envp, const char *name)
+{
+    size_t len;
+    int i;
+
+    len = ft_strlen(name);
+    i = 0;
+    while (envp[i] != NULL)
+    {
+        if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == '=')
+        {
+            return envp[i] + len + 1;
+        }
+        i++;
+    }
+    return NULL;
+}
+
 char **expand_env(char **env, int newsize)
 {
     char **new_env;
@@ -103,82 +121,4 @@ int set_env_var(t_data *data, const char *name, const char *value)
     free(data->env);
     data->env = new_env;
     return 0;
-}
-
-
-int cd_cmd(t_data *data, t_command *cmd)
-{
-    char *target;
-    char *arg_value;
-    char *newpwd;
-    char *oldpwd;
-    int result;
-
-    if (cmd->argc == 1)
-    {
-        target = get_env_var(data->env, "HOME");
-        if (!target)
-        {
-            target = "/";
-        }
-    }
-    else if (cmd->argc == 2)
-    {
-        arg_value = cmd->argv->value;
-        if (ft_strcmp(arg_value, "-") == 0)
-        {
-            target = get_env_var(data->env, "OLDPWD");
-            if (!target)
-            {
-                fprintf(stderr, "cd: OLDPWD not set\n");
-                return EXIT_FAILURE;
-            }
-            printf("%s\n", target);
-        }
-        else if (ft_strcmp(arg_value, "~") == 0)
-        {
-            target = get_env_var(data->env, "HOME");
-            if (!target)
-            {
-                target = "/";
-            }
-        }
-        else
-        {
-            target = arg_value;
-        }
-    }
-    else
-    {
-        fprintf(stderr, "cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
-        return EXIT_FAILURE;
-    }
-    if (chdir(target) != 0)
-    {
-        perror("cd failed");
-        return EXIT_FAILURE;
-    }
-    newpwd = getcwd(NULL, 0);
-    if (!newpwd)
-    {
-        perror("getcwd failed");
-        return EXIT_FAILURE;
-    }
-    oldpwd = get_env_var(data->env, "PWD");
-    result = set_env_var(data, "OLDPWD", oldpwd);
-    if (result != 0)
-    {
-        fprintf(stderr, "cd: error updating OLDPWD environment variable\n");
-        free(newpwd);
-        return EXIT_FAILURE;
-    }
-    result = set_env_var(data, "PWD", newpwd);
-    if (result != 0)
-    {
-        fprintf(stderr, "cd: error updating PWD environment variable\n");
-        free(newpwd);
-        return EXIT_FAILURE;
-    }
-    free(newpwd);
-    return EXIT_SUCCESS;
 }
