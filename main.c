@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/06 16:07:03 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 13:16:41 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void run_shell(t_data *data)
             if(data->heredoc == 1)
 			{
 				data->heredoc = 0;
+				data->output_file_present = 0;
 				check_for_heredoc(data);
 				parser(data);
 				execution(data);

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/06 16:08:02 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:21:50 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
+	/* 
 		char *path = cmd->path;
 		printf("the path is: %s\n", path);
 		char *argv[] = {path, "heredoc_tempfile", NULL};
@@ -24,8 +25,48 @@ void handle_heredocs(t_data *data, t_command *cmd)
         {
             perror("pipe");
             exit(EXIT_FAILURE);
-        }
+        } */
+char **argv;
+char *path;
 
+if (data->output_file_present == 1)
+{
+    path = cmd->path;
+    printf("the path is: %s\n", path);         
+    char *output_file = data->output_file;
+    argv = malloc(3 * sizeof(char *));
+    if (argv == NULL)
+    {
+        // Handle memory allocation failure
+        perror("Failed to allocate memory for argv");
+        exit(EXIT_FAILURE);
+    }
+    argv[0] = path;
+    argv[1] = output_file;
+    argv[2] = NULL;
+}
+else
+{
+    path = cmd->path;
+    printf("the path is: %s\n", path);
+    argv = malloc(3 * sizeof(char *));
+    if (argv == NULL)
+    {
+        // Handle memory allocation failure
+        perror("Failed to allocate memory for argv");
+        exit(EXIT_FAILURE);
+    }
+    argv[0] = path;
+    argv[1] = "heredoc_tempfile";
+    argv[2] = NULL;
+}
+
+		int pipe_fd[2];
+        if (pipe(pipe_fd) == -1)
+        {
+            perror("pipe");
+            exit(EXIT_FAILURE);
+        }
         // Fork a child process to handle the command
         pid_t pid = fork();
         if (pid == -1)

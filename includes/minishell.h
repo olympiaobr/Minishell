@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/28 17:32:48 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:03:35 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef struct data_all
 	int count_cmd;
 	int **pipesfd;
 	int max_env_size;
+	int output_file_present;
 }	t_data;
 
 //lexing functions
