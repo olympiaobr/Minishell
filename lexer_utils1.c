@@ -20,10 +20,11 @@ int	whitespace_chars(char c)
 
 t_token *init_token(token_type type, char *value, int is_quoted)
 {
-    t_token *t = malloc(sizeof(t_token));
+    t_token *t;
+
+    t = malloc(sizeof(t_token));
     if (!t)
         return NULL;
-
     t->type = type;
     if (value)
     {
@@ -35,7 +36,7 @@ t_token *init_token(token_type type, char *value, int is_quoted)
     }
     t->is_quoted = is_quoted;
     t->next = NULL;
-    return t;
+    return (t);
 }
 
 t_token	*allocate_token(token_type type, char *val, int is_quoted)
@@ -43,7 +44,6 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
     char	*trimmed_val;
     t_token	*token;
 
-    // if token is quoted and decide to trim or not
     if (is_quoted)
 	{
         trimmed_val = ft_strdup(val);
@@ -59,7 +59,7 @@ t_token	*allocate_token(token_type type, char *val, int is_quoted)
     token = init_token(type, trimmed_val, is_quoted);
     free(trimmed_val);
     if (token == NULL)
-        return NULL;
+        return (NULL);
     return (token);
 }
 
@@ -82,4 +82,17 @@ void	append_token(t_token **token_list, t_token *new_token)
 	while (current->next)
 		current = current->next;
 	current->next = new_token;
+}
+
+void	quote_status(char c, int *in_quote, char *quote_char)
+{
+	if (!(*in_quote) && (c == '\'' || c == '\"'))
+	{
+		*in_quote = 1;
+		*quote_char = c;
+	}
+	else if (*in_quote && c == *quote_char)
+	{
+		*in_quote = 0;
+	}
 }

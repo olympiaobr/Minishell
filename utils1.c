@@ -13,35 +13,35 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+void free_token_chain(t_token *token)
+{
+    t_token *next_token;
+
+    while (token)
+    {
+        next_token = token->next;
+        free(token->value);
+        free(token);
+        token = next_token;
+    }
+}
 void free_command(t_command *cmd)
 {
+    int index;
+
     if (!cmd)
-		return;
+        return;
 
-	free(cmd->path);
+    free(cmd->path);
     free(cmd->command);
-    t_token *arg = cmd->argv;
-    while (arg)
-    {
-        t_token *next_arg = arg->next;
-        free(arg->value);
-        free(arg);
-        arg = next_arg;
-    }
-    t_token *opt = cmd->option;
+    free_token_chain(cmd->argv);
+    free_token_chain(cmd->option);
 
-    while (opt)
-    {
-        t_token *next_opt = opt->next;
-        free(opt->value);
-        free(opt);
-        opt = next_opt;
-    }
-    int index = 0;
     if (cmd->argv_array)
     {
+        index = 0;
         while (index < cmd->argc)
-         {
+        {
             free(cmd->argv_array[index]);
             index++;
         }
@@ -60,37 +60,42 @@ void free_commands(t_command *cmd)
     }
 }
 
-void free_all(t_data *data)
+void free_array(char **array)
 {
     int i = 0;
 
-    // free environment var
-    while (data->env && data->env[i])
+    if (!array)
+        return;
+
+    while (array[i] != NULL)
     {
-        free(data->env[i]);
-        data->env[i] = NULL;
+        free(array[i]);
+        array[i] = NULL;
         i++;
     }
-    free(data->env);
-    data->env = NULL;
-    // free path directories
-    if (data->path_dirs)
-    {
-        i = 0;
-        while (data->path_dirs[i])
-        {
-            free(data->path_dirs[i]);
-            data->path_dirs[i] = NULL;
-            i++;
-        }
-        free(data->path_dirs);
-        data->path_dirs = NULL;
-    }
-    free_tokens(data);
-    free_commands(data->commands);
+    free(array);
+}
+
+void free_data_resources(t_data *data)
+{
     free(data->input_file);
     data->input_file = NULL;
     free(data->output_file);
     data->output_file = NULL;
+    free_tokens(data);
+    free_commands(data->commands);
 }
+
+void free_all(t_data *data)
+{
+    if (!data)
+        return;
+
+    free_array(data->env);
+    data->env = NULL;
+    free_array(data->path_dirs);
+    data->path_dirs = NULL;
+    free_data_resources(data);
+}
+
 
