@@ -76,7 +76,6 @@ int add_token_to_list(t_token **token_list, t_token *token)
         while (current->next) current = current->next;
         current->next = new_node;
     }
-
     return (0);
 }
 // for the options/ -
@@ -311,7 +310,7 @@ if(data->output_file_present == 1)
 	}
 	else
 	{
-	
+
 		if(data->heredoc == 1)
 		{
 			file_name = ft_strdup("heredoc_tempfile");
@@ -326,11 +325,6 @@ if(data->output_file_present == 1)
     int result = setup_redirection(data, token, file_name);
     free(file_name);
     return result;
-}
-
-void ft_error(char *err)
-{
-    ft_putstr_fd(err, 2);
 }
 
 int parser(t_data *data)
