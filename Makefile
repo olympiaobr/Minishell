@@ -24,7 +24,7 @@ SRCS	=	main.c lexer.c \
 			heredoc.c\
 			parsing_utils1.c\
 			path.c execution.c execution2.c execution3.c\
-			builtins1.c builtins2.c builtins3.c builtins4.c\
+			builtins1.c builtins2.c builtins3.c builtins4.c builtins5.c\
 			utils1.c signals.c\
 
 OBJS	=	$(SRCS:.c=.o)

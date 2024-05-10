@@ -173,6 +173,7 @@ int process_options(t_token *option);
 int exit_cmd(t_data *data, t_command *cmd);
 int export_cmd(t_data *data, t_command *cmd);
 int unset_cmd(t_data *data, t_command *cmd);
+void remove_var(t_data *data, const char *var_name);
 int set_env_var(t_data *data, const char *name, const char *value);
 int add_new_env(t_data *data, char *new_val, int index);
 int update_existing_env(t_data *data, char *new_val, int i);

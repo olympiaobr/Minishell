@@ -103,7 +103,7 @@ const char *parse_cd_target(t_data *data, t_command *cmd)
     if (cmd->argc == 2)
     {
         arg_value = cmd->argv->value;
-        return (determine_target(data, arg_value)_;
+        return (determine_target(data, arg_value));
     }
     printf("cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
     return (NULL);
