@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/03 13:46:02 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:57:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,12 +294,32 @@ int setup_redirection(t_data *data, t_token *token, char *filename)
 // Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
 int apply_redirection(t_data *data, t_token *token)
 {
-    char *file_name = ft_strdup(token->next->value);
+ /*    char *file_name = ft_strdup(token->next->value);
     if (!file_name)
     {
         ft_error("Error: strdup failed for file name\n");
         return -1;
-    }
+    } */
+
+
+///new version to be able to handle cat << EOF properly
+/* if(data->output_file_present == 1)
+	{
+		file_name = ft_strdup(data->output_file);
+	}
+	else
+	{ */
+	char *file_name = NULL;
+		if(data->heredoc == 1)
+		{
+			file_name = ft_strdup("heredoc_tempfile");
+		}
+		else
+		file_name = ft_strdup(token->next->value);
+/* 	} */
+
+
+
 
     int result = setup_redirection(data, token, file_name);
     free(file_name);
