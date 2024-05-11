@@ -55,6 +55,7 @@ void	free_token_chain(t_token *token)
 		token = next_token;
 	}
 }
+
 char	*trim_value(const char *val)
 {
 	return (ft_strtrim(val, " \t\n\v\f\r"));
