@@ -55,11 +55,11 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	}
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
-	if(type == T_APPEND)
+	if (type == T_APPEND)
 	{
 		data->append = 1;
 	}
-	if(type == T_HEREDOC)
+	if (type == T_HEREDOC)
 	{
 		data->heredoc = 1;
 	}
@@ -89,7 +89,7 @@ char *edge_case(char *str)
             quote_char = str[j];
             j++;
         }
-        else if (in_quote && str[j] == quote_char) // If inside a quoted section and encounter the matching closing quote
+        else if (in_quote && str[j] == quote_char)
         {
             in_quote = 0;
             quote_char = '\0';
