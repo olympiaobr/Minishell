@@ -21,7 +21,8 @@ int is_valid_redirection(const char **curr, int sq, int dq)
     }
     else
     {
-        (*curr)++;
+        if (**curr != '\0')
+            (*curr)++;
         return (0);
     }
 }
@@ -51,13 +52,22 @@ int	validate_operator_sequence(const char **line)
 	int	i;
 
 	i = 0;
+    if (!*line || !**line)
+      return (0);
 	if (shell_operators((*line)[i + 1]))
 		i += 2;
 	else
 		i++;
 	while ((*line)[i] && ((*line)[i] == ' ' || (*line)[i] == '\t'))
 		i++;
-	*line += i;
+	if ((*line)[i] != '\0')
+    {
+        *line += i;
+    }
+    else
+    {
+        *line += i - 1;
+    }
 	if (!**line || shell_operators(**line))
 		return (1);
 	return (0);

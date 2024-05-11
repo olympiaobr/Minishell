@@ -15,7 +15,7 @@
 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
-	/* 
+	/*
 		char *path = cmd->path;
 		printf("the path is: %s\n", path);
 		char *argv[] = {path, "heredoc_tempfile", NULL};
@@ -32,7 +32,7 @@ char *path;
 if (data->output_file_present == 1)
 {
     path = cmd->path;
-    printf("the path is: %s\n", path);         
+    printf("the path is: %s\n", path);
     char *output_file = data->output_file;
     argv = malloc(3 * sizeof(char *));
     if (argv == NULL)
@@ -290,6 +290,10 @@ void execute_simple_command(t_data *data, t_command *cmd)
 
 void execution(t_data *data)
 {
+    if (!data || !data->commands || !data->commands->command)
+    {
+        return;
+    }
     if (check_valid_command(data) != 1)
 	{
         ft_printf("%s: command not found\n", data->commands->command);

@@ -219,18 +219,16 @@ void setup_append_mode(t_data *data, int fd, token_type type)
         data->append = 1;
     else
         data->append = 0;
-
-    // Close the current output file descriptor if it's not the standard output
     if (data->std_output_fd != STDOUT_FILENO)
     {
         close(data->std_output_fd);
     }
-
-    // Set the output file descriptor based on the type of redirection
     if (type == T_APPEND || type == T_OUT)
     {
         data->std_output_fd = fd;
-    } else {
+    }
+    else
+    {
         data->std_output_fd = STDOUT_FILENO;
     }
 }
@@ -310,7 +308,7 @@ if(data->output_file_present == 1)
 	}
 	else
 	{
-	
+
 		if(data->heredoc == 1)
 		{
 			file_name = ft_strdup("heredoc_tempfile");
