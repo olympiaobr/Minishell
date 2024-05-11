@@ -42,3 +42,16 @@ void	free_tokens(t_data *data)
 		data->user_input = NULL;
 	}
 }
+
+void	free_token_chain(t_token *token)
+{
+	t_token	*next_token;
+
+	while (token)
+	{
+		next_token = token->next;
+		free(token->value);
+		free(token);
+		token = next_token;
+	}
+}

@@ -13,110 +13,111 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-void remove_var(t_data *data, const char *var_name)
+void	remove_var(t_data *data, const char *var_name)
 {
-    int len;
-    char **current;
+	int		len;
+	char	**current;
 
-    len = ft_strlen(var_name);
-    current = data->env;
-    while (*current && ft_strncmp(*current, var_name, len))
-    {
-        current++;
-    }
-    if (*current && (*current)[len] == '=')
-    {
-        free(*current);
-        while (*(current + 1))
-        {
-            *current = *(current + 1);
-            current++;
-        }
-        *current = NULL;
-    }
-    else
-    {
-        ft_printf("Variable not found.\n");
-    }
+	len = ft_strlen(var_name);
+	current = data->env;
+	while (*current && ft_strncmp(*current, var_name, len))
+	{
+		current++;
+	}
+	if (*current && (*current)[len] == '=')
+	{
+		free(*current);
+		while (*(current + 1))
+		{
+			*current = *(current + 1);
+			current++;
+		}
+		*current = NULL;
+	}
+	else
+	{
+		ft_printf("Variable not found.\n");
+	}
 }
 
-int valid_identifier(const char *name)
+int	valid_identifier(const char *name)
 {
-    const char *valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+	const char	*valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
 
-    if (!name || *name == '\0' || (!ft_isalpha(*name) && *name != '_'))
-        return 0;
-    name++;
-    if (*name && ft_strspn(name, valid_chars) != ft_strlen(name))
-        return (0);
-    return (1);
+	if (!name || *name == '\0' || (!ft_isalpha(*name) && *name != '_'))
+		return (0);
+	name++;
+	if (*name && ft_strspn(name, valid_chars) != ft_strlen(name))
+		return (0);
+	return (1);
 }
 
-int unset_cmd(t_data *data, t_command *cmd)
+int	unset_cmd(t_data *data, t_command *cmd)
 {
-    t_token *arg;
+	t_token	*arg;
 
 	arg = cmd->argv;
-    while (arg)
-    {
-        if (!valid_identifier(arg->value))
-        {
-            fprintf(stderr, "unset: '%s' is not a valid identifier\n", arg->value);
-        }
-        else
-        {
-            ft_printf("Unsetting variable: %s\n", arg->value);
-            remove_var(data, arg->value);
-        }
-        arg = arg->next;
-    }
-    return (0);
+	while (arg)
+	{
+		if (!valid_identifier(arg->value))
+		{
+			fprintf(stderr, "unset: '%s' is not a valid identifier\n",
+				arg->value);
+		}
+		else
+		{
+			ft_printf("Unsetting variable: %s\n", arg->value);
+			remove_var(data, arg->value);
+		}
+		arg = arg->next;
+	}
+	return (0);
 }
 
-void process_var_update(t_data *data, char *var_name, char *value)
+void	process_var_update(t_data *data, char *var_name, char *value)
 {
-    char *existing_value;
+	char	*existing_value;
 
 	existing_value = get_env_var(data->env, var_name);
-    if (existing_value)
-    {
-        if (value)
-            set_env_var(data, var_name, value);
-        else
-            set_env_var(data, var_name, existing_value);
-    }
-    else
-    {
-        if (value)
-        {
-            if (set_env_var(data, var_name, value) == -1)
-                fprintf(stderr, "Failed to export variable: %s\n", var_name);
-        }
-        else
-        {
-            if (set_env_var(data, var_name, "") == -1)
-                fprintf(stderr, "Failed to export variable: %s\n", var_name);
-        }
-    }
+	if (existing_value)
+	{
+		if (value)
+			set_env_var(data, var_name, value);
+		else
+			set_env_var(data, var_name, existing_value);
+	}
+	else
+	{
+		if (value)
+		{
+			if (set_env_var(data, var_name, value) == -1)
+				printf("Failed to export variable: %s\n", var_name);
+		}
+		else
+		{
+			if (set_env_var(data, var_name, "") == -1)
+				printf("Failed to export variable: %s\n", var_name);
+		}
+	}
 }
 
-void handle_export_operation(t_data *data, t_token *arg)
+void	handle_export_operation(t_data *data, t_token *arg)
 {
-    char *var_name;
-    char *value;
+	char	*var_name;
+	char	*value;
 
-    while (arg)
-    {
-        var_name = custom_strtok(arg->value, "=");
-        value = custom_strtok(NULL, "");
-        if (!valid_identifier(var_name))
-        {
-            fprintf(stderr, "export: '%s': not a valid identifier\n", var_name);
-        }
-        else
-        {
-            process_var_update(data, var_name, value);
-        }
-        arg = arg->next;
-    }
+	while (arg)
+	{
+		var_name = custom_strtok(arg->value, "=");
+		value = custom_strtok(NULL, "");
+		if (!valid_identifier(var_name))
+		{
+			printf("export: '%s': not a valid identifier\n", var_name);
+		}
+		else
+		{
+			process_var_update(data, var_name, value);
+		}
+		arg = arg->next;
+	}
 }
