@@ -13,11 +13,6 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-char	*trim_value(const char *val)
-{
-	return (ft_strtrim(val, " \t\n\v\f\r"));
-}
-
 int	shell_operators(int c)
 {
 	char	*operators;
@@ -59,6 +54,25 @@ int	only_whitespaces(char *str)
 	}
 	return (1);
 }
+int process_input_conditions(t_data *data)
+{
+    if (ft_strncmp(data->user_input, "cd ;", 4) == 0 && ft_strlen(data->user_input) == 4)
+    {
+        process_input(data, data->user_input);
+        return 1;
+    }
+    if (check_special_chars(data->user_input))
+    {
+        ft_printf("Error: Special characters such as '\\' or ';' not allowed/ Command not found.\n");
+        free_tokens(data);
+        return 1;
+    }
+    if (input_check(data->user_input))
+    {
+        return 1;
+    }
+    return 0;
+}
 
 void lexing_input(t_data *data)
 {
@@ -66,31 +80,18 @@ void lexing_input(t_data *data)
 
     trimmed_input = trim_value(data->user_input);
     if (!trimmed_input)
-	{
+    {
         ft_printf("Error: Memory allocation failed for trimming.\n");
-		free_tokens(data);
+        free_tokens(data);
         return;
     }
     free(data->user_input);
     data->user_input = trimmed_input;
-	if (ft_strncmp(data->user_input, "cd ;", 4) == 0 && ft_strlen(data->user_input) == 4)
-    {
-        process_input(data, data->user_input);
+    if (process_input_conditions(data))
         return;
-    }
-    if (check_special_chars(data->user_input))
-	{
-        ft_printf("Error: Special characters such as '\\' or ';' not allowed/ Command not found.\n");
-		free_tokens(data);
-        return;
-    }
-    if (input_check(data->user_input))
-	{
-        return;
-    }
     process_input(data, data->user_input);
     if (data->token_list == NULL)
-	{
+    {
         ft_printf("No tokens generated.\n");
     }
 }
