@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 12:03:35 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/10 16:13:21 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,14 +191,15 @@ void execute_pipeline(t_data *data, t_command *cmd);
 int operators_setup(t_data *data);
 int create_pipes(t_data *data);
 int count_commands(t_data *data);
-
+//signal functions
 void catch_sigint(int sig);
 void handle_sigquit(int signum);
 void setup_interactive_signals(void);
 void setup_noninteractive_signals(void);
+void signal_setup(int mode);
 
 //free functions
-void	free_tokens(t_data *data);
+void free_tokens(t_data *data);
 void free_commands(t_command *commands);
 void free_all(t_data *data);
 

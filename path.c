@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:36:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 13:31:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:02:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void initialize_shell_components(t_data *data)
     data->original_stdout = -1;
     data->original_stdin = -1;
     data->pipesfd = NULL;
+	data->output_file_present = 0;
 }
 
 t_data *init_data(char **envp)

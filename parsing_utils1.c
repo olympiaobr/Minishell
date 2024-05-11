@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 13:04:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:03:18 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,7 +310,7 @@ if(data->output_file_present == 1)
 	}
 	else
 	{
-
+	
 		if(data->heredoc == 1)
 		{
 			file_name = ft_strdup("heredoc_tempfile");

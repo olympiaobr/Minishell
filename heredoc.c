@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/10 12:40:30 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:30:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@
 
 void write_to_heredoc_file(t_data *data, char *delimiter, char *output_file)
 {
-
-
 char *input;
 	//char *temp_file = "heredoc_tempfile";
 int fd;
@@ -46,6 +44,7 @@ int fd;
 		input = readline("> ");
 		if(input && ft_strcmp(input, delimiter) == 0)
 		{
+			free(input);  
 			break;
 		}
 		if(data->heredoc_input == NULL)
@@ -65,9 +64,7 @@ int fd;
 		//process_input(data, input);//puts input into tokens
 	}
 	close(fd);
-	free(input);
-
-    
+	
 }
 void check_for_output_file(t_data *data)
 {
