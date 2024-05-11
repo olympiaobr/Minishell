@@ -13,98 +13,97 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int pwd_cmd(void)
+int	pwd_cmd(void)
 {
-    char *cwd;
-    int write_result;
+	char	*cwd;
+	int		write_result;
 
-    cwd = getcwd(NULL, 0);
-    if (!cwd)
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
 	{
-        perror("minishell: pwd");
-        return (EXIT_FAILURE);
-    }
-    write_result = ft_putendl_fd(cwd, STDOUT_FILENO);
-    free(cwd);
-    if (write_result < 0)
+		perror("minishell: pwd");
+		return (EXIT_FAILURE);
+	}
+	write_result = ft_putendl_fd(cwd, STDOUT_FILENO);
+	free(cwd);
+	if (write_result < 0)
 	{
-        perror("minishell: write error");
-        return (EXIT_FAILURE);
-    }
-    return (EXIT_SUCCESS);
+		perror("minishell: write error");
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
 
-int print_environment(char **envp)
+int	print_environment(char **envp)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (envp[i])
-    {
-        if (ft_strchr(envp[i], '='))
-        {
-            if (ft_putendl_fd(envp[i], STDOUT_FILENO) < 0)
-            {
-                perror("minishell: write error");
-                return (EXIT_FAILURE);
-            }
-        }
-        i++;
-    }
-    return (EXIT_SUCCESS);
+	i = 0;
+	while (envp[i])
+	{
+		if (ft_strchr(envp[i], '='))
+		{
+			if (ft_putendl_fd(envp[i], STDOUT_FILENO) < 0)
+			{
+				perror("minishell: write error");
+				return (EXIT_FAILURE);
+			}
+		}
+		i++;
+	}
+	return (EXIT_SUCCESS);
 }
 
-int env_cmd(t_data *data)
+int	env_cmd(t_data *data)
 {
-    char **envp;
+	char	**envp;
 
-    envp = data->env;
-    if (!envp)
-    {
-        printf("Environment uninitialized.\n");
-        return (EXIT_FAILURE);
-    }
-    if (data->commands && data->commands->argc > 1)
-    {
-        ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
-        return EXIT_FAILURE;
-    }
-    return (print_environment(envp));
+	envp = data->env;
+	if (!envp)
+	{
+		printf("Environment uninitialized.\n");
+		return (EXIT_FAILURE);
+	}
+	if (data->commands && data->commands->argc > 1)
+	{
+		ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	return (print_environment(envp));
 }
-int n_option(const char *arg)
+
+int	n_option(const char *arg)
 {
-    if (arg[0] != '-')
-        return 0;
-    printf("Processing option: %s\n", arg);
+	int	j;
 
-    int j;
-    j = 1;
-    while (arg[j] != '\0')
-    {
-        if (arg[j] != 'n')
-        {
-            printf("Invalid character found: %c\n", arg[j]);  // Debugging output
-            return 0;
-        }
-        j++;
-    }
-    return (1);
+	if (arg[0] != '-')
+		return (0);
+	printf("Processing option: %s\n", arg);
+	j = 1;
+	while (arg[j] != '\0')
+	{
+		if (arg[j] != 'n')
+		{
+			printf("Invalid character found: %c\n", arg[j]);
+			return (0);
+		}
+		j++;
+	}
+	return (1);
 }
 
-int process_options(t_token *option)
+int	process_options(t_token *option)
 {
-    int newline;
+	int	newline;
 
-    newline = 1;
-    while (option)
-    {
-        if (n_option(option->value))
-        {
-            newline = 0;
-        }
-        option = option->next;
-    }
-    return (newline);
+	newline = 1;
+	while (option)
+	{
+		if (n_option(option->value))
+		{
+			newline = 0;
+		}
+		option = option->next;
+	}
+	return (newline);
 }
-
-
