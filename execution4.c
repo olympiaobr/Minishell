@@ -13,6 +13,18 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+void display_all_env_vars(char **env)
+{
+    int i;
+
+	i = 0;
+    while (env[i] != NULL)
+    {
+        printf("declare -x %s\n", env[i]);
+        i++;
+    }
+}
+
 int export_cmd(t_data *data, t_command *cmd)
 {
     if (!cmd->argv)

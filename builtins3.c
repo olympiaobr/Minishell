@@ -73,50 +73,43 @@ const char *determine_target(t_data *data, const char *arg_value)
         if (!target)
         {
             printf("cd: OLDPWD not set\n");
-            return (NULL);
+            return NULL;
         }
         printf("%s\n", target);
-        return (target);
+        return target;
     }
     if (ft_strcmp(arg_value, "~") == 0)
     {
         target = get_env_var(data->env, "HOME");
         if (!target)
-            target = "/";
-        return (target);
+        {
+            printf("cd: HOME not set\n");
+            return NULL;  // Remove the fallback to "/" to adhere to typical Unix behavior
+        }
+        return target;
     }
-    return (arg_value);
+    return arg_value;
 }
 
-const char *parse_cd_target(t_data *data, t_command *cmd)
+const char *handle_cd_arguments(t_data *data, t_command *cmd)
 {
     const char *arg_value;
-    const char *target;
 
-    if (cmd->argc == 1 || (cmd->argc == 2 && strcmp(cmd->argv->value, ";") == 0))
-    {
-        target = get_env_var(data->env, "HOME");
-        if (!target)
-        {
-            fprintf(stderr, "cd: HOME not set\n");
-            return (NULL);
-        }
-        return (target);
-    }
-    if (cmd->argc == 2)
+    if (cmd->argc == 2 && ft_strcmp(cmd->argv->value, ";") != 0)
     {
         arg_value = cmd->argv->value;
-        if (strcmp(arg_value, ";") != 0)
-        {
-            return (determine_target(data, arg_value));
-        }
-        else
-        {
-            printf("cd: Unexpected ';'\n");
-            return (NULL);
-        }
+        return determine_target(data, arg_value);
     }
-    printf("cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
-    return (NULL);
+    else if (cmd->argc == 2 && ft_strcmp(cmd->argv->value, ";") == 0)
+    {
+        printf("cd: Unexpected ';'\n");
+        return NULL;
+    }
+    else
+    {
+        printf("cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
+        return NULL;
+    }
 }
+
 
