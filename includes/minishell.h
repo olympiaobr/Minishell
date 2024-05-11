@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 16:13:21 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 19:03:42 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@
 # include <sys/wait.h>
 # include <signal.h>
 
+
+extern volatile sig_atomic_t heredoc_interrupted_flag;
+extern volatile sig_atomic_t heredoc_mode;
 typedef enum token_type
 {
 	T_COMMAND,  //general command
@@ -198,7 +201,7 @@ void handle_sigquit(int signum);
 void setup_interactive_signals(void);
 void setup_noninteractive_signals(void);
 void signal_setup(int mode);
-
+void heredoc_signals();
 //free functions
 void free_tokens(t_data *data);
 void free_commands(t_command *commands);
