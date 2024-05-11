@@ -131,58 +131,43 @@ void restore_redirections(t_data *data, int cmd_index, int io[2], int backup_fds
 int call_builtin(t_command *cmd, t_data *data)
 {
     if (ft_strcmp(cmd->command, "cd") == 0)
-        return cd_cmd(data, cmd);
+        return (cd_cmd(data, cmd));
     else if (ft_strcmp(cmd->command, "echo") == 0)
-        return echo_cmd(cmd);
+        return (echo_cmd(cmd));
     else if (ft_strcmp(cmd->command, "pwd") == 0)
-        return pwd_cmd();
+        return (pwd_cmd());
     else if (ft_strcmp(cmd->command, "env") == 0)
-        return env_cmd(data);
+        return (env_cmd(data));
     else if (ft_strcmp(cmd->command, "export") == 0)
-        return export_cmd(data, cmd);
+        return (export_cmd(data, cmd));
     else if (ft_strcmp(cmd->command, "unset") == 0)
-        return unset_cmd(data, cmd);
+        return (unset_cmd(data, cmd));
     else if (ft_strcmp(cmd->command, "exit") == 0)
-        return exit_cmd(data, cmd);
-    return -1;
+        return (exit_cmd(data, cmd));
+    return (-1);
 }
 
-
-int execute_builtin(t_command *cmd, t_data *data)
+int handle_redirections(t_data *data, int cmd_index, int *io_channels)
 {
-    int backup_fds[2];
-    int io_channels[2];
+    determine_io_channels(data, cmd_index, io_channels);
 
-    // backup original file descriptors
-    backup_fds[0] = dup(STDIN_FILENO);
-    backup_fds[1] = dup(STDOUT_FILENO);
-    if (backup_fds[0] == -1 || backup_fds[1] == -1)
-	{
-        perror("Failed to backup file descriptors");
-        return -1;
-    }
-    // Setup redirections
-    determine_io_channels(data, cmd->command_index, io_channels);
     if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO) == -1)
-	{
+    {
         perror("Failed to redirect standard input");
         return -1;
     }
     if (io_channels[1] != STDOUT_FILENO && dup2(io_channels[1], STDOUT_FILENO) == -1)
-	{
+    {
         perror("Failed to redirect standard output");
         return -1;
     }
-    int result = call_builtin(cmd, data);
-    restore_redirections(data, cmd->command_index, io_channels, backup_fds);
-
-    return result;
+    return 0;
 }
-
-/*
-int handle_redirections(t_data *data, int cmd_index)
+int execute_builtin(t_command *cmd, t_data *data)
 {
-    int io_channels[2], backup_fds[2];
+    int backup_fds[2];
+    int io_channels[2];
+    int result;
 
     backup_fds[0] = dup(STDIN_FILENO);
     backup_fds[1] = dup(STDOUT_FILENO);
@@ -191,34 +176,10 @@ int handle_redirections(t_data *data, int cmd_index)
         perror("Failed to backup file descriptors");
         return -1;
     }
-
-    determine_io_channels(data, cmd_index, io_channels);
-    if (io_channels[0] != STDIN_FILENO)
-	{
-        if (dup2(io_channels[0], STDIN_FILENO) == -1)
-		{
-            perror("Failed to redirect standard input");
-            // Restore and close backups before exiting
-            dup2(backup_fds[0], STDIN_FILENO);
-            dup2(backup_fds[1], STDOUT_FILENO);
-            close(backup_fds[0]);
-            close(backup_fds[1]);
-            return -1;
-        }
-    }
-    if (io_channels[1] != STDOUT_FILENO) {
-        if (dup2(io_channels[1], STDOUT_FILENO) == -1)
-		{
-            perror("Failed to redirect standard output");
-            dup2(backup_fds[0], STDIN_FILENO);
-            dup2(backup_fds[1], STDOUT_FILENO);
-            close(backup_fds[0]);
-            close(backup_fds[1]);
-            return -1;
-        }
-    }
-    return 0;
+    if (handle_redirections(data, cmd->command_index, io_channels) == -1)
+        return (-1);
+    result = call_builtin(cmd, data);
+    restore_redirections(data, cmd->command_index, io_channels, backup_fds);
+    return (result);
 }
-*/
-
 

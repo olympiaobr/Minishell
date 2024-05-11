@@ -120,7 +120,7 @@ int find_command_path(const char *command, char *dir, char *full_path)
         }
         dir = custom_strtok(NULL, ":");
     }
-    return 0;
+    return (0);
 }
 
 int check_valid_command(t_data *data)
