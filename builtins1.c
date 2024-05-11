@@ -71,22 +71,26 @@ int env_cmd(t_data *data)
     }
     return (print_environment(envp));
 }
-
 int n_option(const char *arg)
 {
-    int j;
-
     if (arg[0] != '-')
-        return (0);
+        return 0;
+    printf("Processing option: %s\n", arg);
+
+    int j;
     j = 1;
     while (arg[j] != '\0')
-	{
+    {
         if (arg[j] != 'n')
-            return (0);
+        {
+            printf("Invalid character found: %c\n", arg[j]);  // Debugging output
+            return 0;
+        }
         j++;
     }
     return (1);
 }
+
 int process_options(t_token *option)
 {
     int newline;
@@ -102,4 +106,5 @@ int process_options(t_token *option)
     }
     return (newline);
 }
+
 

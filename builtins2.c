@@ -19,24 +19,38 @@ int echo_cmd(t_command *cmd)
     int newline;
     int first;
 
-    current_arg = cmd->argv;
-    newline = process_options(cmd->option);
+    current_arg = cmd->option;
+    newline = 1;
     first = 1;
 
-    while (current_arg)
-    {
-        if (current_arg->type == T_ARGUMENT)
+    while (current_arg) {
+        if (!n_option(current_arg->value))
         {
             if (!first)
                 ft_printf(" ");
             ft_printf("%s", current_arg->value);
             first = 0;
         }
+        else
+        {
+            newline = 0;
+        }
         current_arg = current_arg->next;
     }
+
+    current_arg = cmd->argv;
+    while (current_arg)
+    {
+        if (!first)
+            ft_printf(" ");
+        ft_printf("%s", current_arg->value);
+        first = 0;
+        current_arg = current_arg->next;
+    }
+
     if (newline)
         ft_printf("\n");
-    return (0);
+    return 0;
 }
 
 char *get_env_var(char **envp, const char *name)

@@ -12,19 +12,6 @@
 
 #include "includes/minishell.h"
 
-void	quote_status(char c, int *in_quote, char *quote_char)
-{
-	if (!(*in_quote) && (c == '\'' || c == '\"'))
-	{
-		*in_quote = 1;
-		*quote_char = c;
-	}
-	else if (*in_quote && c == *quote_char)
-	{
-		*in_quote = 0;
-	}
-}
-
 int	create_and_append_token(t_token **token_list, char *input, token_type type, int is_quoted)
 {
 	t_token	*new_token;
@@ -68,7 +55,6 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	}
 	operator_str = ft_substr(str, *idx, operator_len);
 	type = determine_type(operator_str);
-	//
 	if(type == T_APPEND)
 	{
 		data->append = 1;

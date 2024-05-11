@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 13:52:27 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:03:18 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ int add_token_to_list(t_token **token_list, t_token *token)
         while (current->next) current = current->next;
         current->next = new_node;
     }
-
     return (0);
 }
 // for the options/ -
@@ -305,29 +304,27 @@ int apply_redirection(t_data *data, t_token *token)
 ///new version to be able to handle cat << EOF properly
 char *file_name = NULL;
 if(data->output_file_present == 1)
-{
-	file_name = ft_strdup(data->output_file);
-	printf("here\n");
-}
-else
-{
-	
-	if(data->heredoc == 1)
 	{
-		file_name = ft_strdup("heredoc_tempfile");
+		file_name = ft_strdup(data->output_file);
+		printf("here\n");
 	}
 	else
-	file_name = ft_strdup(token->next->value);
-}
+	{
+	
+		if(data->heredoc == 1)
+		{
+			file_name = ft_strdup("heredoc_tempfile");
+		}
+		else
+		file_name = ft_strdup(token->next->value);
+	}
+
+
+
 
     int result = setup_redirection(data, token, file_name);
     free(file_name);
     return result;
-}
-
-void ft_error(char *err)
-{
-    ft_putstr_fd(err, 2);
 }
 
 int parser(t_data *data)

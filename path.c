@@ -6,68 +6,65 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 14:36:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 13:52:18 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:02:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+int copy_env_vars(t_data *data, char **env, int count)
+{
+    int j;
+
+    j = 0;
+    while (j < count)
+    {
+        data->env[j] = ft_strdup(env[j]);
+        if (!data->env[j])
+        {
+            while (j > 0)
+            {
+                j--;
+                free(data->env[j]);
+            }
+            free(data->env);
+            perror("Error duplicating env variable");
+            return (EXIT_FAILURE);
+        }
+        j++;
+    }
+    data->env[count] = NULL;
+    return (EXIT_SUCCESS);
+}
+
 int init_env(t_data *data, char **env)
 {
-    int i = 0;
-    int j;
-    char **temp;
+    int i;
 
+    i = 0;
     while (env[i])
         i++;
-
     data->env = (char **)malloc(sizeof(char *) * (i + 1));
     if (!data->env)
     {
         perror("Error allocating memory for env");
         return (EXIT_FAILURE);
     }
-    j = 0;
-    while (j < i)
+    if (copy_env_vars(data, env, i) == EXIT_FAILURE)
     {
-        data->env[j] = ft_strdup(env[j]);
-        if (!data->env[j])
-        {
-            temp = data->env;
-            while (j > 0)
-            {
-                j--;
-                free(temp[j]);
-            }
-            free(temp);
-            perror("Error duplicating env variable");
-            return (EXIT_FAILURE);
-        }
-        j++;
+        return (EXIT_FAILURE);
     }
-    data->env[i] = NULL;
     return (EXIT_SUCCESS);
 }
 
-void append_slash(char **directory)
-{
-    char *temp;
 
-    temp = *directory;
-    *directory = ft_strjoin(temp, "/");
-    if (!(*directory))
-	{
-        perror("Error appending slash to PATH directory");
-        free(temp);
-        exit(EXIT_FAILURE);
-    }
-    free(temp);
-}
 void prepare_environment(t_data *data)
 {
     int i;
-    char *path_value = cust_getenv("PATH", data);
+    char *path_value;
+
+    path_value = cust_getenv("PATH", data);
     if (!path_value)
     {
         perror("Error: PATH variable not found.");
@@ -86,54 +83,6 @@ void prepare_environment(t_data *data)
         i++;
     }
 }
-char *cust_strstr(const char *haystack, const char *needle)
-{
-    const char *h_ptr;
-    const char *n_ptr;
-
-    if (*needle == '\0')
-    {
-        return ((char *)haystack);
-    }
-
-    while (*haystack != '\0')
-    {
-        if (*haystack == *needle)
-        {
-            h_ptr = haystack;
-            n_ptr = needle;
-            while (*h_ptr != '\0' && *n_ptr != '\0' && *h_ptr == *n_ptr)
-            {
-                h_ptr++;
-                n_ptr++;
-            }
-            if (*n_ptr == '\0')
-            {
-                return ((char *)haystack);
-            }
-        }
-        haystack++;
-    }
-    return (NULL);
-}
-
-char *cust_getenv(const char *name, t_data *data)
-{
-    int i = 0;
-    char *env_entry;
-    char *found;
-
-    while ((env_entry = data->env[i]) != NULL)
-    {
-        found = cust_strstr(env_entry, name);
-        if (found && found[ft_strlen(name)] == '=' && (found == env_entry || *(found - 1) == '\0'))
-        {
-            return (found + ft_strlen(name) + 1);
-        }
-        i++;
-    }
-    return (NULL);
-}
 
 void initialize_shell_components(t_data *data)
 {
@@ -151,16 +100,19 @@ void initialize_shell_components(t_data *data)
     data->heredoc = 0;
     data->commands = NULL;
     data->create_new_command = 0;
-   data->output_file_present = 0;
     data->max_env_size = 0;
 	data->heredoc_input = NULL;
     data->original_stdout = -1;
     data->original_stdin = -1;
     data->pipesfd = NULL;
+	data->output_file_present = 0;
 }
+
 t_data *init_data(char **envp)
 {
-    t_data *data = (t_data *)malloc(sizeof(t_data));
+    t_data *data;
+
+    data = (t_data *)malloc(sizeof(t_data));
     if (data == NULL)
     {
         perror("Error: Not enough memory to create main data structure");
@@ -173,7 +125,7 @@ t_data *init_data(char **envp)
         return NULL;
     }
     prepare_environment(data);
-	 data->exit_status = 0;
+	data->exit_status = 0;
     initialize_shell_components(data);
     return (data);
 }

@@ -13,28 +13,37 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+int is_valid_redirection(const char **curr, int sq, int dq)
+{
+    if (((sq & 1) == 0) && ((dq & 1) == 0) && (**curr == '>' || **curr == '<'))
+    {
+        return (validate_operator_sequence(curr));
+    }
+    else
+    {
+        (*curr)++;
+        return (0);
+    }
+}
+
 int redirection_error(const char *cmd)
 {
-    int sq = 0;
-    int dq = 0;
-    const char *curr = cmd;
+    int sq;
+    int dq;
+    const char *curr;
 
+    sq = 0;
+    dq = 0;
+    curr = cmd;
     while (*curr)
-	{
+    {
         count_q(*curr, &sq, &dq);
-        if (((sq & 1) == 0) && ((dq & 1) == 0) && (*curr == '>' || *curr == '<'))
-		{
-            if (validate_operator_sequence(&curr))
-			{
-                return 1;
-            }
-        }
-		else
-		{
-            curr++;
+        if (is_valid_redirection(&curr, sq, dq))
+        {
+            return (1);
         }
     }
-    return 0;
+    return (0);
 }
 
 int	validate_operator_sequence(const char **line)

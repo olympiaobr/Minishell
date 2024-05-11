@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/10 12:21:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:20:50 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ else
 				exit(EXIT_FAILURE);
 			}
 		}
+		free(argv);
 }
 
 void handle_expr_function(t_data *data)
