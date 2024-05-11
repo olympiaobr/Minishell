@@ -51,42 +51,6 @@ char *ft_strcat(char *dest, const char *src)
 	dest[i] = '\0';
 	return(dest);
 }
-size_t ft_strspn(const char *str, const char *delim)
-{
-    const char *p;
-    const char *s;
-    s = str;
-    while (*s != '\0')
-    {
-        p = delim;
-        while (*p != '\0' && *p != *s)
-            p++;
-        if (*p == '\0')
-            break;
-        s++;
-    }
-    return (s - str);
-}
-
-size_t ft_strcspn(const char *str, const char *reject)
-{
-    const char *s;
-    const char *r;
-    s = str;
-    while (*s != '\0')
-    {
-        r = reject;
-        while (*r != '\0')
-        {
-            if (*s == *r)
-                return (s - str);
-            r++;
-        }
-        s++;
-    }
-    return (s - str);
-}
-
 
 char *custom_strtok(char *str, const char *delim)
 {
@@ -195,17 +159,6 @@ int check_valid_command(t_data *data)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*
 void parsing(t_data *data)
 {
@@ -217,5 +170,41 @@ void parsing(t_data *data)
 	{
 		ft_printf("Valid command.\n");
 	}
+}
+
+size_t ft_strspn(const char *str, const char *delim)
+{
+    const char *p;
+    const char *s;
+    s = str;
+    while (*s != '\0')
+    {
+        p = delim;
+        while (*p != '\0' && *p != *s)
+            p++;
+        if (*p == '\0')
+            break;
+        s++;
+    }
+    return (s - str);
+}
+
+size_t ft_strcspn(const char *str, const char *reject)
+{
+    const char *s;
+    const char *r;
+    s = str;
+    while (*s != '\0')
+    {
+        r = reject;
+        while (*r != '\0')
+        {
+            if (*s == *r)
+                return (s - str);
+            r++;
+        }
+        s++;
+    }
+    return (s - str);
 }
 */
