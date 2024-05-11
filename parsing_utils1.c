@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/05 18:32:49 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 13:04:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 13:52:27 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,23 +305,20 @@ int apply_redirection(t_data *data, t_token *token)
 ///new version to be able to handle cat << EOF properly
 char *file_name = NULL;
 if(data->output_file_present == 1)
+{
+	file_name = ft_strdup(data->output_file);
+	printf("here\n");
+}
+else
+{
+	
+	if(data->heredoc == 1)
 	{
-		file_name = ft_strdup(data->output_file);
-		printf("here\n");
+		file_name = ft_strdup("heredoc_tempfile");
 	}
 	else
-	{
-	
-		if(data->heredoc == 1)
-		{
-			file_name = ft_strdup("heredoc_tempfile");
-		}
-		else
-		file_name = ft_strdup(token->next->value);
-	}
-
-
-
+	file_name = ft_strdup(token->next->value);
+}
 
     int result = setup_redirection(data, token, file_name);
     free(file_name);

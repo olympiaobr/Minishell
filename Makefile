@@ -6,13 +6,13 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 10:49:49 by jasnguye          #+#    #+#              #
-#    Updated: 2024/04/15 11:15:59 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/05/11 13:59:13 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME    =   minishell
 CC      =   cc
-CFLAGS  =   -Wall -Werror -Wextra -Imlx -g
+CFLAGS  =   -Wall -Werror -Wextra -g -f
 LIBS    =    Libft/libft.a
 
 SRCS	=	main.c lexer.c \
