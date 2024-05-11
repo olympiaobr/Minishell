@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 15:23:23 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 20:05:14 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 20:11:54 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,4 +109,7 @@ void heredoc_signals(void)
     sigemptyset(&action_tstp.sa_mask);
     action_tstp.sa_flags = 0;
     sigaction(SIGTSTP, &action_tstp, NULL);
+}
+void flush_output(void) {
+    write(STDOUT_FILENO, "", 0);
 }

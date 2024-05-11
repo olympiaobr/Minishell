@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 19:03:42 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 20:12:35 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,6 +201,7 @@ void setup_interactive_signals(void);
 void setup_noninteractive_signals(void);
 void signal_setup(int mode);
 void heredoc_signals();
+void flush_output(void);
 //free functions
 void free_tokens(t_data *data);
 void free_commands(t_command *commands);

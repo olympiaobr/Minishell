@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/11 20:08:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 20:12:16 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void run_shell(t_data *data)
 				{
 					//check_for_heredoc(data);
                 	reset_shell_state(data);
-                	fflush(stdout);
+					flush_output();
                 	continue;
             	}
 				data->heredoc = 0;
