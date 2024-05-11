@@ -93,7 +93,7 @@ const char *parse_cd_target(t_data *data, t_command *cmd)
     const char *arg_value;
     const char *target;
 
-    if (cmd->argc == 1)
+    if (cmd->argc == 1 || (cmd->argc == 2 && strcmp(cmd->argv->value, ";") == 0))
     {
         target = get_env_var(data->env, "HOME");
         if (!target)
@@ -103,8 +103,17 @@ const char *parse_cd_target(t_data *data, t_command *cmd)
     if (cmd->argc == 2)
     {
         arg_value = cmd->argv->value;
-        return (determine_target(data, arg_value));
+        if (strcmp(arg_value, ";") != 0)
+        {
+            return (determine_target(data, arg_value));
+        }
+        else
+        {
+            printf("cd: Unexpected ';'\n");
+            return (NULL);
+        }
     }
     printf("cd: Incorrect usage. Expected one argument or none, but got %d.\n", cmd->argc - 1);
     return (NULL);
 }
+

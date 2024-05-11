@@ -73,9 +73,14 @@ void lexing_input(t_data *data)
     }
     free(data->user_input);
     data->user_input = trimmed_input;
+	if (ft_strncmp(data->user_input, "cd ;", 4) == 0 && ft_strlen(data->user_input) == 4)
+    {
+        process_input(data, data->user_input);
+        return;
+    }
     if (check_special_chars(data->user_input))
 	{
-        ft_printf("Error: Special characters such as '\\' or ';' not allowed.\n");
+        ft_printf("Error: Special characters such as '\\' or ';' not allowed/ Command not found.\n");
 		free_tokens(data);
         return;
     }
