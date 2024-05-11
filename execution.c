@@ -15,108 +15,105 @@
 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
-	/*
-		char *path = cmd->path;
-		printf("the path is: %s\n", path);
-		char *argv[] = {path, "heredoc_tempfile", NULL};
-
-		int pipe_fd[2];
-        if (pipe(pipe_fd) == -1)
-        {
-            perror("pipe");
-            exit(EXIT_FAILURE);
-        } */
-char **argv;
-char *path;
-
-if (data->output_file_present == 1)
-{
-    path = cmd->path;
+    char **argv;
+    char *path = cmd->path;
     printf("the path is: %s\n", path);
-    char *output_file = data->output_file;
-    argv = malloc(3 * sizeof(char *));
+    argv = malloc(2 * sizeof(char *));
     if (argv == NULL)
     {
-        // Handle memory allocation failure
         perror("Failed to allocate memory for argv");
         exit(EXIT_FAILURE);
     }
     argv[0] = path;
-    argv[1] = output_file;
-    argv[2] = NULL;
-}
-else
-{
-    path = cmd->path;
-    printf("the path is: %s\n", path);
-    argv = malloc(3 * sizeof(char *));
-    if (argv == NULL)
+    argv[1] = NULL;
+
+    int pipe_fd[2];
+    if (pipe(pipe_fd) == -1)
     {
-        // Handle memory allocation failure
-        perror("Failed to allocate memory for argv");
+        perror("pipe");
         exit(EXIT_FAILURE);
     }
-    argv[0] = path;
-    argv[1] = "heredoc_tempfile";
-    argv[2] = NULL;
-}
 
-		int pipe_fd[2];
-        if (pipe(pipe_fd) == -1)
+    pid_t pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+    else if (pid == 0)  // Child process
+    {
+        // Close the write end of the pipe in the child process
+        close(pipe_fd[1]);
+
+        // Redirect standard input to the read end of the pipe
+        if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
         {
-            perror("pipe");
+            perror("dup2");
             exit(EXIT_FAILURE);
         }
-        // Fork a child process to handle the command
-        pid_t pid = fork();
-        if (pid == -1)
-        {
-            perror("fork");
-            exit(EXIT_FAILURE);
-        }
-        else if (pid == 0)  // Child process
-        {
-            // Close the write end of the pipe
-            close(pipe_fd[1]);
 
-            // Redirect standard input to the read end of the pipe
-            if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+        // Close the now redundant original read end of the pipe
+        close(pipe_fd[0]);
+
+        // Handle output redirection if an output file is specified
+        if (data->output_file)
+        {
+            int flags = O_WRONLY | O_CREAT;
+            if (data->append)
+                flags |= O_APPEND;
+            else
+                flags |= O_TRUNC;
+
+            int fd = open(data->output_file, flags, 0644);
+            if (fd == -1)
             {
-                perror("dup2");
+                perror("open output file");
                 exit(EXIT_FAILURE);
             }
-
-            // Close the read end of the pipe
-			close(pipe_fd[0]);
-            // Execute the command
-            execve(path, argv, NULL);
-            perror("execve");
-            exit(EXIT_FAILURE);
+            if (dup2(fd, STDOUT_FILENO) == -1)
+            {
+                perror("dup2 for output file");
+                close(fd);
+                exit(EXIT_FAILURE);
+            }
+            close(fd);
         }
-        else  // Parent process
-        {
-            // Close the read end of the pipe
-            close(pipe_fd[0]);
+        // Execute the command
+        execve(path, argv, NULL);
+        perror("execve");
+        exit(EXIT_FAILURE);
+    }
+    else  // Parent process
+    {
+        // Close the read end of the pipe in the parent process
+        close(pipe_fd[0]);
 
-            // Write heredoc input to the pipe
-			printf("heredoc input: %s\n", data->heredoc_input);
-			ssize_t bytes_written =write(pipe_fd[1], data->heredoc_input, ft_strlen(data->heredoc_input));
+        // Write the heredoc input to the write end of the pipe
+        if (data->heredoc_input)
+        {
+            ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, strlen(data->heredoc_input));
             if (bytes_written == -1)
             {
-                perror("write");//write: Bad file descriptor issue fixed by removing the first close()
+                perror("write to pipe");
                 exit(EXIT_FAILURE);
             }
-            // Close the write end of the pipe
-			close(pipe_fd[1]);
+            // Ensure the last character is a newline
+            if (data->heredoc_input[strlen(data->heredoc_input) - 1] != '\n')
+            {
+                write(pipe_fd[1], "\n", 1);
+            }
+        }
+        // Close the write end of the pipe after writing
+        close(pipe_fd[1]);
 
-            // Wait for the child process to complete
-			if(wait(NULL) == -1)
-			{
-				perror("wait");
-				exit(EXIT_FAILURE);
-			}
-		}
-		free(argv);
+        // Wait for the child process to complete
+        if (wait(NULL) == -1)
+        {
+            perror("wait");
+            exit(EXIT_FAILURE);
+        }
+    }
+    free(argv);
 }
 
 void handle_expr_function(t_data *data)
