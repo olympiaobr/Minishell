@@ -97,7 +97,10 @@ const char *parse_cd_target(t_data *data, t_command *cmd)
     {
         target = get_env_var(data->env, "HOME");
         if (!target)
-            target = "/";
+        {
+            fprintf(stderr, "cd: HOME not set\n");
+            return (NULL);
+        }
         return (target);
     }
     if (cmd->argc == 2)
