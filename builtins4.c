@@ -13,6 +13,23 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+const char *parse_cd_target(t_data *data, t_command *cmd)
+{
+    const char *target;
+
+    if (cmd->argc == 1 || (cmd->argc == 2 && ft_strcmp(cmd->argv->value, ";") == 0))
+    {
+        target = get_env_var(data->env, "HOME");
+        if (!target)
+        {
+            printf("cd: HOME not set\n");
+            return NULL;
+        }
+        return target;
+    }
+    return handle_cd_arguments(data, cmd);
+}
+
 int update_cd_env(t_data *data, const char *oldpwd)
 {
     char *newpwd;
@@ -51,8 +68,8 @@ int cd_cmd(t_data *data, t_command *cmd)
         return (EXIT_FAILURE);
     if (chdir(target) != 0)
     {
-        perror("cd failed");
-        return EXIT_FAILURE;
+        printf("cd: %s: No such file or directory\n", target);
+        return (EXIT_FAILURE);
     }
     oldpwd = get_env_var(data->env, "PWD");
     return (update_cd_env(data, oldpwd));
@@ -93,31 +110,4 @@ int exit_cmd(t_data *data, t_command *cmd)
     }
     exit(exit_status);
     return (0);
-}
-
-void remove_var(t_data *data, const char *var_name)
-{
-    int len;
-    char **current;
-
-    len = ft_strlen(var_name);
-    current = data->env;
-    while (*current && ft_strncmp(*current, var_name, len))
-    {
-        current++;
-    }
-    if (*current && (*current)[len] == '=')
-    {
-        free(*current);
-        while (*(current + 1))
-        {
-            *current = *(current + 1);
-            current++;
-        }
-        *current = NULL;
-    }
-    else
-    {
-        ft_printf("Variable not found.\n");
-    }
 }

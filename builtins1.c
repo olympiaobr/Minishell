@@ -92,18 +92,22 @@ int	n_option(const char *arg)
 	return (1);
 }
 
-int	process_options(t_token *option)
+int print_arg(t_token *current_arg, int *first, int newline)
 {
-	int	newline;
-
-	newline = 1;
-	while (option)
-	{
-		if (n_option(option->value))
-		{
-			newline = 0;
-		}
-		option = option->next;
-	}
-	return (newline);
+    while (current_arg)
+    {
+        if (!n_option(current_arg->value))
+        {
+            if (!(*first))
+                ft_printf(" ");
+            ft_printf("%s", current_arg->value);
+            *first = 0;
+        }
+        else
+        {
+            newline = 0;
+        }
+        current_arg = current_arg->next;
+    }
+    return (newline);
 }

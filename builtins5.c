@@ -13,6 +13,33 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
+void remove_var(t_data *data, const char *var_name)
+{
+    int len;
+    char **current;
+
+    len = ft_strlen(var_name);
+    current = data->env;
+    while (*current && ft_strncmp(*current, var_name, len))
+    {
+        current++;
+    }
+    if (*current && (*current)[len] == '=')
+    {
+        free(*current);
+        while (*(current + 1))
+        {
+            *current = *(current + 1);
+            current++;
+        }
+        *current = NULL;
+    }
+    else
+    {
+        ft_printf("Variable not found.\n");
+    }
+}
+
 int valid_identifier(const char *name)
 {
     const char *valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
@@ -91,17 +118,5 @@ void handle_export_operation(t_data *data, t_token *arg)
             process_var_update(data, var_name, value);
         }
         arg = arg->next;
-    }
-}
-
-void display_all_env_vars(char **env)
-{
-    int i;
-
-	i = 0;
-    while (env[i] != NULL)
-    {
-        printf("declare -x %s\n", env[i]);
-        i++;
     }
 }
