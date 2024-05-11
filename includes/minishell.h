@@ -206,6 +206,7 @@ void flush_output(void);
 //free functions
 void free_tokens(t_data *data);
 void free_commands(t_command *commands);
+void free_token_chain(t_token *token);
 void free_all(t_data *data);
 
 
