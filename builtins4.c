@@ -45,7 +45,6 @@ int cd_cmd(t_data *data, t_command *cmd)
 {
     const char *target;
     const char *oldpwd;
-    int result;
 
     target = parse_cd_target(data, cmd);
     if (!target)
@@ -56,8 +55,7 @@ int cd_cmd(t_data *data, t_command *cmd)
         return EXIT_FAILURE;
     }
     oldpwd = get_env_var(data->env, "PWD");
-    result = update_cd_env(data, oldpwd);
-    return (result);
+    return (update_cd_env(data, oldpwd));
 }
 
 int validate_num(const char *str)
