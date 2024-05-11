@@ -31,6 +31,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
     if (pipe(pipe_fd) == -1)
     {
         perror("pipe");
+        free(argv); // Free argv before exiting
         exit(EXIT_FAILURE);
     }
 
@@ -38,24 +39,20 @@ void handle_heredocs(t_data *data, t_command *cmd)
     if (pid == -1)
     {
         perror("fork");
+        free(argv); // Free argv before exiting
+        close(pipe_fd[0]); // Close pipe ends before exiting
+        close(pipe_fd[1]);
         exit(EXIT_FAILURE);
     }
     else if (pid == 0)  // Child process
     {
-        // Close the write end of the pipe in the child process
-        close(pipe_fd[1]);
-
-        // Redirect standard input to the read end of the pipe
+        close(pipe_fd[1]); // Close the write end of the pipe in the child process
         if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
         {
             perror("dup2");
             exit(EXIT_FAILURE);
         }
-
-        // Close the now redundant original read end of the pipe
-        close(pipe_fd[0]);
-
-        // Handle output redirection if an output file is specified
+        close(pipe_fd[0]); // Close the now redundant original read end of the pipe
         if (data->output_file)
         {
             int flags = O_WRONLY | O_CREAT;
@@ -63,7 +60,6 @@ void handle_heredocs(t_data *data, t_command *cmd)
                 flags |= O_APPEND;
             else
                 flags |= O_TRUNC;
-
             int fd = open(data->output_file, flags, 0644);
             if (fd == -1)
             {
@@ -73,22 +69,18 @@ void handle_heredocs(t_data *data, t_command *cmd)
             if (dup2(fd, STDOUT_FILENO) == -1)
             {
                 perror("dup2 for output file");
-                close(fd);
+                close(fd); // Close file descriptor before exiting
                 exit(EXIT_FAILURE);
             }
-            close(fd);
+            close(fd); // Close file descriptor after dup2
         }
-        // Execute the command
-        execve(path, argv, NULL);
+        execve(path, argv, NULL); // Execute the command
         perror("execve");
         exit(EXIT_FAILURE);
     }
     else  // Parent process
     {
-        // Close the read end of the pipe in the parent process
-        close(pipe_fd[0]);
-
-        // Write the heredoc input to the write end of the pipe
+        close(pipe_fd[0]); // Close the read end of the pipe in the parent process
         if (data->heredoc_input)
         {
             ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, strlen(data->heredoc_input));
@@ -97,23 +89,21 @@ void handle_heredocs(t_data *data, t_command *cmd)
                 perror("write to pipe");
                 exit(EXIT_FAILURE);
             }
-            // Ensure the last character is a newline
             if (data->heredoc_input[strlen(data->heredoc_input) - 1] != '\n')
             {
                 write(pipe_fd[1], "\n", 1);
             }
+            free(data->heredoc_input);  // Free after writing to the pipe
+            data->heredoc_input = NULL;
         }
-        // Close the write end of the pipe after writing
-        close(pipe_fd[1]);
-
-        // Wait for the child process to complete
+        close(pipe_fd[1]); // Close the write end of the pipe after writing
         if (wait(NULL) == -1)
         {
             perror("wait");
             exit(EXIT_FAILURE);
         }
     }
-    free(argv);
+    free(argv); // Free argv in the parent after all operations
 }
 
 void handle_expr_function(t_data *data)

@@ -32,6 +32,11 @@ void reset_shell_state(t_data *data)
     data->input_file = NULL;
     free(data->output_file);
     data->output_file = NULL;
+    if (data->heredoc_input != NULL)
+    {
+        free(data->heredoc_input);
+        data->heredoc_input = NULL;
+    }
     data->std_input_fd = STDIN_FILENO;
     data->std_output_fd = STDOUT_FILENO;
     data->append = 0;
@@ -61,7 +66,7 @@ void run_shell(t_data *data)
 				data->output_file_present = 0;
 				check_for_heredoc(data);
 				parser(data);
-				
+
 				execution(data);
                 //signal handling for heredoc here?
                 reset_shell_state(data);

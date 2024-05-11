@@ -21,6 +21,8 @@
 void write_to_heredoc_file(t_data *data, char *delimiter)
 {
     char *input;
+    char *new_line = "\n";
+    size_t new_input_length;
 
     while (1)
     {
@@ -41,16 +43,23 @@ void write_to_heredoc_file(t_data *data, char *delimiter)
         }
         else
         {
-            char *temp = ft_strjoin(data->heredoc_input, "\n");
-            char *new_input = ft_strjoin(temp, input);
-            free(temp);
+            new_input_length = ft_strlen(data->heredoc_input) + ft_strlen(input) + ft_strlen(new_line) + 1;
+            char *temp = malloc(new_input_length);
+            if (temp == NULL)
+            {
+                fprintf(stderr, "Memory allocation failed\n");
+                exit(EXIT_FAILURE);
+            }
+            ft_strcpy(temp, data->heredoc_input);
+            ft_strcat(temp, new_line);
+            ft_strcat(temp, input);
             free(data->heredoc_input);
-            data->heredoc_input = new_input;
+            data->heredoc_input = temp;
         }
-
         free(input);
     }
 }
+
 
 void check_for_output_file(t_data *data)
 {
@@ -58,7 +67,7 @@ void check_for_output_file(t_data *data)
 	data->output_file = NULL;
 	while(current != NULL)
 	{
-		if(current->type == T_OUT)
+		if (current->type == T_OUT)
 		{
 			data->output_file = current->next->value;
 			data->output_file_present = 1;
