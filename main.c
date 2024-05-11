@@ -6,12 +6,14 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/10 16:18:21 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/11 20:08:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Libft/libft.h"
 #include "includes/minishell.h"
+
+volatile sig_atomic_t heredoc_mode = 0;
 
 void reset_shell_state(t_data *data)
 {
@@ -41,6 +43,8 @@ void reset_shell_state(t_data *data)
     data->std_output_fd = STDOUT_FILENO;
     data->append = 0;
     data->heredoc = 0;
+	heredoc_mode = 0;
+	heredoc_interrupted_flag = 0;
     initialize_shell_components(data);
 }
 
@@ -60,13 +64,22 @@ void run_shell(t_data *data)
             add_history(data->user_input);
             lexing_input(data);
             setup_noninteractive_signals();
+			
             if(data->heredoc == 1)
 			{
+				heredoc_signals();
+				heredoc_mode = 1;
+				if (heredoc_interrupted_flag == 1)
+				{
+					//check_for_heredoc(data);
+                	reset_shell_state(data);
+                	fflush(stdout);
+                	continue;
+            	}
 				data->heredoc = 0;
 				data->output_file_present = 0;
 				check_for_heredoc(data);
 				parser(data);
-
 				execution(data);
                 //signal handling for heredoc here?
                 reset_shell_state(data);
