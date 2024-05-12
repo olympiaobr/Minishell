@@ -165,6 +165,10 @@ char *custom_strtok(char *str, const char *delim);
 
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
+char *init_path_vars(t_data *data, char *cwd);
+int check_command_path(t_token *current, char *cwd, t_data *data);
+int check_builtin_command(t_token *current);
+int find_command_path(const char *command, char *dir, char *full_path);
 int check_builtin(const char *command);
 int execute_builtin(t_command *cmd, t_data *data);
 int cd_cmd(t_data *data, t_command *cmd);

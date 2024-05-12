@@ -13,100 +13,72 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-int	ft_strcmp(const char *s1, const char *s2)
+int	find_command(t_token *current, char *dir, t_data *data)
 {
-	while (*s1 && (*s1 == *s2))
+	char	full_path[1024];
+
+	if (find_command_path(current->value, dir, full_path))
 	{
-		s1++;
-		s2++;
+		if (data->commands->path)
+			free(data->commands->path);
+		data->commands->path = ft_strdup(full_path);
+		return (1);
 	}
-	return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
+	return (0);
 }
 
-char	*ft_strcpy(char *dest, const char *src)
+int	process_command(t_token *current, char *cwd, char *dir, t_data *data)
 {
-	int	i;
+	int	command_result;
 
-	i = 0;
-	while (src[i] != '\0')
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
+	command_result = check_builtin_command(current);
+	if (command_result == 0)
+		command_result = check_command_path(current, cwd, data);
+	if (command_result == 0)
+		command_result = find_command(current, dir, data);
+	return (command_result);
 }
 
-char	*ft_strcat(char *dest, const char *src)
+int	process_cmd(t_data *data, char *cwd, char *path_copy)
 {
-	int	i;
-	int	j;
+	t_token	*current;
+	char	*dir;
+	int		command_result;
 
-	i = 0;
-	j = 0;
-	while (dest[i] != '\0')
+	current = data->token_list;
+	dir = custom_strtok(path_copy, ":");
+	while (current)
 	{
-		i++;
-	}
-	while (src[j] != '\0')
-	{
-		dest[i] = src[j];
-		i++;
-		j++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
-size_t	ft_strspn(const char *str, const char *delim)
-{
-	const char	*p;
-	const char	*s;
-
-	s = str;
-	while (*s != '\0')
-	{
-		p = delim;
-		while (*p != '\0' && *p != *s)
-			p++;
-		if (*p == '\0')
-			break ;
-		s++;
-	}
-	return (s - str);
-}
-
-size_t	ft_strcspn(const char *str, const char *reject)
-{
-	const char	*s;
-	const char	*r;
-
-	s = str;
-	while (*s != '\0')
-	{
-		r = reject;
-		while (*r != '\0')
+		if (current->type == T_COMMAND)
 		{
-			if (*s == *r)
-				return (s - str);
-			r++;
+			command_result = process_command(current, cwd, dir, data);
+			if (command_result)
+			{
+				return (1);
+			}
 		}
-		s++;
+		current = current->next;
 	}
-	return (s - str);
+	return (0);
 }
 
-/*
-void	parsing(t_data *data)
+int	check_valid_command(t_data *data)
 {
-	if(check_valid_command(data) != 1)
+	char	cwd[1024];
+	char	*path_copy;
+	int		result;
+
+	path_copy = init_path_vars(data, cwd);
+	if (path_copy == NULL)
+		return (-1);
+	result = process_cmd(data, cwd, path_copy);
+	free(path_copy);
+	if (result)
 	{
-		ft_printf("Not a valid command.\n");
+		return (1);
 	}
 	else
 	{
-		ft_printf("Valid command.\n");
+		return (-1);
 	}
 }
-
-*/
