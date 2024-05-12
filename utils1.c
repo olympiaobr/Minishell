@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 15:22:21 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/06 16:01:11 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:59:39 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,17 @@ void	free_all(t_data *data)
 	free_array(data->path_dirs);
 	data->path_dirs = NULL;
 	free_data_resources(data);
+}
+void free_pipesfd(t_data *data)
+{
+	if(data->pipesfd != NULL)
+	{
+		int i = 0;
+		while(i < data->count_cmd - 1)
+		{
+			free(data->pipesfd[i]);
+			i++;
+		}
+		free(data->pipesfd);
+	}
 }

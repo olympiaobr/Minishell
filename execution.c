@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 17:55:22 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 21:05:58 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,96 +275,130 @@ void handle_expr_function(t_data *data)
 				parent_process_expr(data, pid);
 }
 
-
-void execute_external_command(t_data *data, t_command *cmd)
+int validate_command(t_command *cmd) 
 {
-        if (!cmd->path || access(cmd->path, X_OK) != 0)
-		{
-            perror("Invalid command path or command is not executable");
-            return;
-        }
-        int io[2];
-        determine_io_channels(data, cmd->command_index, io);
+    if (!cmd->path || access(cmd->path, X_OK) != 0) {
+        perror("Invalid command path or command is not executable");
+        return 0;
+    }
+    return 1;
+}
 
-        if (io[0] < 0 || io[1] < 0)
-        {
-        ft_printf("Error: Invalid IO channels determined.\n");
+int validate_io_channels(int *io) 
+{
+    if (io[0] < 0 || io[1] < 0) {
+        fprintf(stderr, "Error: Invalid IO channels determined.\n");
+        return 0;
+    }
+    return 1;
+}
+
+int count_arguments(t_command *cmd) 
+{
+    int argc = 1; // Count the command itself
+    if (cmd->option != NULL) {
+        argc++;
+    }
+    t_token *arg = cmd->argv;
+    while (arg) {
+        argc++;
+        arg = arg->next;
+    }
+    return argc;
+}
+
+char **create_argv(t_command *cmd) 
+{
+    int argc = count_arguments(cmd);
+    char **argv = malloc(sizeof(char *) * (argc + 1));
+    if (!argv) {
+        perror("Memory allocation failed for argv");
+        return NULL;
+    }
+
+    int i = 0;
+    argv[i++] = cmd->command;
+    if (cmd->option != NULL) {
+        argv[i++] = cmd->option->value;
+    }
+
+    t_token *arg = cmd->argv;
+    while (arg) {
+        argv[i++] = arg->value;
+        arg = arg->next;
+    }
+    argv[i] = NULL;
+
+    return argv;
+}
+
+
+
+void setup_io_channels(int *io) 
+{
+    if (io[0] != STDIN_FILENO) {
+        dup2(io[0], STDIN_FILENO);
+        close(io[0]);
+    }
+    if (io[1] != STDOUT_FILENO) {
+        dup2(io[1], STDOUT_FILENO);
+        close(io[1]);
+    }
+}
+
+void execute_command(t_command *cmd, char **argv, char **env) 
+{
+    execve(cmd->path, argv, env);
+    perror("Execve failed");
+    exit(EXIT_FAILURE);
+}
+
+void handle_parent_process(t_data *data, pid_t pid) 
+{
+    int status = 0;
+    int ret;
+    while ((ret = waitpid(pid, &status, 0)) == -1) {
+    }
+    if (ret == -1) {
+        perror("waitpid failed");
+    } else if (WIFEXITED(status)) {
+        data->exit_status = WEXITSTATUS(status);
+    }
+}
+
+void execute_external_command(t_data *data, t_command *cmd) 
+{
+    if (!validate_command(cmd)) 
         return;
-        }
-        int argc = 1;
-        if (cmd->option != NULL)
-		{
-            argc++;
-        }
-        t_token *arg = cmd->argv;
-        while (arg)
-		{
-            argc++;
-            arg = arg->next;
-        }
-
-        char **argv = malloc(sizeof(char *) * (argc + 1));
-        if (!argv)
-		{
-            perror("Memory allocation failed for argv");
-            return;
-        }
-
-        argv[0] = cmd->command;
-        int i = 1;
-        if (cmd->option != NULL)
-		{
-            argv[i++] = cmd->option->value;
-        }
-        arg = cmd->argv;
-    	while (arg)
-		{
-        	argv[i++] = arg->value;
-        	arg = arg->next;
-    	}
-    	argv[i] = NULL;
-
-        pid_t pid = fork();
-        if (pid == -1)
-		{
-            perror("Fork failed");
-            free(argv);
-            return;
-        }
-        if (pid == 0)
-		{ // Child process
-            if (io[0] != STDIN_FILENO)
-			{
-                dup2(io[0], STDIN_FILENO);
-                close(io[0]);
-            }
-            if (io[1] != STDOUT_FILENO)
-			{
-                dup2(io[1], STDOUT_FILENO);
-                close(io[1]);
-            }
-            execve(cmd->path, argv, data->env);
-            perror("Execve failed");
-            exit(EXIT_FAILURE);
-        }
-        else
-        {  // Parent process
-            int status = 0;
-            int ret;
-
-            while ((ret = waitpid(pid, &status, 0)) == -1)
-            {
-            }
-            if (ret == -1)
-            {
-             perror("waitpid failed");
-            }
-            else if (WIFEXITED(status)) {
-            data->exit_status = WEXITSTATUS(status);
-        }
+    int io[2];
+    determine_io_channels(data, cmd->command_index, io);
+    if (!validate_io_channels(io)) 
+        return;
+    char **argv = create_argv(cmd);
+    if (!argv) 
+        return;
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("Fork failed");
+        free(argv);
+        return;
+    }
+    if (pid == 0)  // Child process
+	{
+        setup_io_channels(io);
+        execute_command(cmd, argv, data->env);
+    } 
+	else // Parent process
+	{
+        handle_parent_process(data, pid);
         free(argv);
     }
 }
+
+
+
+
+
 
 void execute_simple_command(t_data *data, t_command *cmd)
 {
@@ -372,37 +406,25 @@ void execute_simple_command(t_data *data, t_command *cmd)
 
     if (check_builtin(cmd->command))
 	{
-		//ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
-		exit_status = execute_builtin(cmd, data);
+		exit_status = execute_builtin(cmd, data);//ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
         data->exit_status = exit_status;
         return;
     }
     if (data->heredoc == 1)
-	{
         handle_heredocs(data, cmd);
-    }
 	else if (ft_strcmp(data->token_list->value, "expr") == 0 && data->token_list->next &&
                ft_strcmp(data->token_list->next->next->value, "+") == 0)
-	{
        	handle_expr_function(data);
-    }
 	else
-	{
-        execute_external_command(data, cmd);
-    }
-    ft_printf("Debug: After executing command, std_input_fd = %d, std_output_fd = %d\n", data->std_input_fd, data->std_output_fd);
-
-    // Close and reset the input and output file descriptors if they were redirected
-    if (data->std_input_fd != STDIN_FILENO)
+        execute_external_command(data, cmd);//ft_printf("Debug: After executing command, std_input_fd = %d, std_output_fd = %d\n", data->std_input_fd, data->std_output_fd);
+	if (data->std_input_fd != STDIN_FILENO)   //Close and reset the input and output file descriptors if they were redirected
     {
-        ft_printf("Debug: Closing std_input_fd = %d\n", data->std_input_fd);
-        close(data->std_input_fd);
+        close(data->std_input_fd);//ft_printf("Debug: Closing std_input_fd = %d\n", data->std_input_fd);
         data->std_input_fd = STDIN_FILENO;
     }
     if (data->std_output_fd != STDOUT_FILENO)
     {
-        ft_printf("Debug: Closing std_output_fd = %d\n", data->std_output_fd);
-        close(data->std_output_fd);
+        close(data->std_output_fd);//ft_printf("Debug: Closing std_output_fd = %d\n", data->std_output_fd);
         data->std_output_fd = STDOUT_FILENO;
     }
 }
@@ -411,17 +433,14 @@ void execute_simple_command(t_data *data, t_command *cmd)
 void execution(t_data *data)
 {
     if (!data || !data->commands || !data->commands->command)
-    {
         return;
-    }
     if (check_valid_command(data) != 1)
 	{
         ft_printf("%s: command not found\n", data->commands->command);
         data->exit_status = 127;
         return;
     }
-    count_commands(data);
-    //ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
+    count_commands(data);  //ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
     if (operators_setup(data) != 0)
 	{
         ft_printf("Failed to setup redirections.\n");
@@ -434,20 +453,8 @@ void execution(t_data *data)
         execute_pipeline(data, data->commands);
     }
 	else
-	{
-        //ft_printf("Debug: Executing simple command...\n");
-        execute_simple_command(data, data->commands);
-    }
+        execute_simple_command(data, data->commands);  //ft_printf("Debug: Executing simple command...\n");
     free_commands(data->commands);
     data->commands = NULL;
-	if(data->pipesfd != NULL)
-	{
-		int i = 0;
-		while(i < data->count_cmd - 1)
-		{
-			free(data->pipesfd[i]);
-			i++;
-		}
-		free(data->pipesfd);
-	}
+	free_pipesfd(data);
 }
