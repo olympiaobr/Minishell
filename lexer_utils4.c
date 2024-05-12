@@ -19,7 +19,7 @@ void	process_characters(char *str, size_t *idx, int *in_quote,
 	while (str[*idx])
 	{
 		if (str[*idx] == '\\' && *in_quote && *quote_char == '\"' && (str[*idx
-				+ 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
+					+ 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
 		{
 			(*idx) += 2;
 			continue ;
@@ -41,14 +41,14 @@ char	*determine_word(char *str, size_t start_idx, size_t length,
 	char	*temp;
 
 	if (quote_char && str[start_idx] == quote_char && str[start_idx + length
-		- 1] == quote_char)
+			- 1] == quote_char)
 	{
 		start_idx++;
 		length -= 2;
 	}
 	word = ft_substr(str, start_idx, length);
 	if (quote_char && str[start_idx - 1] != quote_char && str[start_idx
-		+ length] != quote_char)
+			+ length] != quote_char)
 	{
 		temp = edge_case(word);
 		free(word);
