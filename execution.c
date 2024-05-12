@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/11 14:20:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 11:37:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ void execution(t_data *data)
         return;
     }
     count_commands(data);
-    ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
+    //ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
     if (operators_setup(data) != 0)
 	{
         ft_printf("Failed to setup redirections.\n");
