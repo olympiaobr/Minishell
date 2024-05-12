@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 15:14:37 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:39:19 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void check_error(int fd)
         exit(EXIT_FAILURE);
     }
 }
-void child_process(t_data *data, char *path, char **argv, int *pipe_fd)
+void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd)
 {
 	int fd;
 	int flags;
@@ -54,7 +54,7 @@ void child_process(t_data *data, char *path, char **argv, int *pipe_fd)
     exit(EXIT_FAILURE);
 }
 
-void parent_process(t_data *data, int *pipe_fd)
+void parent_process_heredoc(t_data *data, int *pipe_fd)
 {
 	   close(pipe_fd[0]); // Close the read end of the pipe in the parent process
         if (data->heredoc_input)
@@ -92,11 +92,11 @@ void execute_heredoc(t_data *data, char **argv, int *pipe_fd, char *path)
     }
     else if (pid == 0)  // Child process
     {
-		child_process(data, path, argv, pipe_fd);
+		child_process_heredoc(data, path, argv, pipe_fd);
     }
     else  // Parent process
     {
-		parent_process(data, pipe_fd);
+		parent_process_heredoc(data, pipe_fd);
     }
     free(argv); // Free argv in the parent after all operations
 }
@@ -220,43 +220,56 @@ void handle_heredocs(t_data *data, t_command *cmd)
 
  */
 
+void parent_process_expr(t_data *data, pid_t pid)
+{
+	int status;
+	waitpid(pid, &status, 0);  // Wait for the child process to finish
+    if (WIFEXITED(status))
+    {
+        int exit_status = WEXITSTATUS(status);//get exit status
+		data->exit_status = exit_status;
+    }
+}
+void child_process_expr(t_data *data)
+{
+	char *argv[5];
+	char *exit_status_str_1;
+    char *exit_status_str_2;
 
-
+	exit_status_str_1 = ft_itoa(data->exit_status);
+	exit_status_str_2 = ft_itoa(data->exit_status);
+    if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
+	{
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+	argv[0] = "/usr/bin/expr";
+    argv[1] = exit_status_str_1;
+    argv[2] = "+";
+    argv[3] = exit_status_str_2;
+    argv[4] = NULL;
+    execve("/usr/bin/expr", argv, NULL);
+    perror("execve");
+    exit(EXIT_FAILURE);
+   	free(exit_status_str_1);
+    free(exit_status_str_2);
+}
 
 void handle_expr_function(t_data *data)
 {
 			pid_t pid = fork();
+			
 			if(pid == -1)
 			{
 				perror("fork");
 				exit(EXIT_FAILURE);
 			}
 			if(pid == 0) //in the child
-			{
-				char *exit_status_str_1 = ft_itoa(data->exit_status);
-    			char *exit_status_str_2 = ft_itoa(data->exit_status);
-    			if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
-				{
-        			perror("Memory allocation failed");
-        			exit(EXIT_FAILURE);
-    			}
-    			char *argv[] = {"/usr/bin/expr", exit_status_str_1, "+", exit_status_str_2, NULL};
-    			execve("/usr/bin/expr", argv, NULL);
-    			perror("execve");
-    			exit(EXIT_FAILURE);
-   				free(exit_status_str_1);
-    			free(exit_status_str_2);
+			{	
+				child_process_expr(data);
 			}
 			else //parent
-			{
-				int status;
-				waitpid(pid, &status, 0);  // Wait for the child process to finish
-            	if (WIFEXITED(status))
-           		{
-                	int exit_status = WEXITSTATUS(status);//get exit status
-					data->exit_status = exit_status;
-           		}
-			}
+				parent_process_expr(data, pid);
 }
 
 
@@ -365,7 +378,7 @@ void execute_simple_command(t_data *data, t_command *cmd)
 	{
         handle_heredocs(data, cmd);
     }
-	else if (ft_strcmp(data->token_list->value, "expr") == 0 &&
+	else if (ft_strcmp(data->token_list->value, "expr") == 0 && data->token_list->next &&
                ft_strcmp(data->token_list->next->next->value, "+") == 0)
 	{
        	handle_expr_function(data);
