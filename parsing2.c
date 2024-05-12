@@ -48,67 +48,104 @@ int find_command_path(const char *command, char *dir, char *full_path)
     return (0);
 }
 
-int check_valid_command(t_data *data)
+char *init_path_vars(t_data *data, char *cwd)
 {
-    t_token *current = data->token_list;
-    char *path = cust_getenv("PATH", data);
+    char *path;
     char *path_copy;
-    char *dir;
-    char full_path[1024];
-    char cwd[1024];
-    int result = -1;
 
+	path = cust_getenv("PATH", data);
     if (!path)
         path = "";
     path_copy = ft_strdup(path);
     if (!path_copy)
-        return -1;
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
+        return NULL;
+    if (getcwd(cwd, 1024) == NULL)
     {
         free(path_copy);
-        return -1;
+        return NULL;
     }
+    return path_copy;
+}
+
+int check_builtin_command(t_token *current)
+{
+    if (check_builtin(current->value))
+        return 1;
+    return 0;
+}
+int check_command_path(t_token *current, char *cwd, t_data *data)
+{
+    char full_path[1024];
+
+    if (current->value[0] == '/' || ft_strncmp(current->value, "./", 2) == 0 || ft_strncmp(current->value, "../", 3) == 0)
+    {
+        if (current->value[0] != '/')
+        {
+            ft_strcpy(full_path, cwd);
+            if (full_path[ft_strlen(full_path) - 1] != '/')
+                ft_strcat(full_path, "/");
+            ft_strcat(full_path, current->value);
+        }
+        else
+        {
+            ft_strcpy(full_path, current->value);
+        }
+        if (access(full_path, X_OK) == 0)
+        {
+            if (data->commands->path)
+                free(data->commands->path);
+            data->commands->path = ft_strdup(full_path);
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
+int find_command(t_token *current, char *dir, t_data *data)
+{
+    char full_path[1024];
+
+    if (find_command_path(current->value, dir, full_path))
+    {
+        if (data->commands->path)
+            free(data->commands->path);
+        data->commands->path = ft_strdup(full_path);
+        return 1;
+    }
+    return 0;
+}
+
+static int process_command(t_token *current, char *cwd, char *dir, t_data *data)
+{
+    int command_result;
+
+    command_result = check_builtin_command(current);
+    if (command_result == 0)
+        command_result = check_command_path(current, cwd, data);
+    if (command_result == 0)
+        command_result = find_command(current, dir, data);
+    return command_result;
+}
+int check_valid_command(t_data *data)
+{
+    t_token *current;
+    char cwd[1024];
+    char *path_copy;
+    char *dir;
+    int result = -1;
+
+    current = data->token_list;
+    path_copy = init_path_vars(data, cwd);
+    if (path_copy == NULL)
+        return -1;
     dir = custom_strtok(path_copy, ":");
     while (current)
     {
         if (current->type == T_COMMAND)
         {
-            if (check_builtin(current->value))
+            if (process_command(current, cwd, dir, data))
             {
-                free(path_copy);
-                return 1;
-            }
-            if (current->value[0] == '/' || ft_strncmp(current->value, "./", 2) == 0 || ft_strncmp(current->value, "../", 3) == 0)
-            {
-                if (current->value[0] != '/')
-                {
-                    ft_strcpy(full_path, cwd);
-                    if (full_path[ft_strlen(full_path) - 1] != '/')
-                        ft_strcat(full_path, "/");
-                    ft_strcat(full_path, current->value);
-                }
-                else
-                {
-                    ft_strcpy(full_path, current->value);
-                }
-                if (access(full_path, X_OK) == 0)
-                {
-                    if (data->commands->path)
-                    {
-                        free(data->commands->path);
-                    }
-                    data->commands->path = ft_strdup(full_path);
-                    free(path_copy);
-                    return 1;
-                }
-            }
-            if (find_command_path(current->value, dir, full_path))
-            {
-                if (data->commands->path)
-                {
-                    free(data->commands->path);
-                }
-                data->commands->path = ft_strdup(full_path);
                 free(path_copy);
                 return 1;
             }
@@ -118,3 +155,8 @@ int check_valid_command(t_data *data)
     free(path_copy);
     return result;
 }
+
+
+
+
+
