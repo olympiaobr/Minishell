@@ -23,7 +23,7 @@ SRCS	=	main.c lexer.c \
 			parsing.c parsing2.c parsing3.c\
 			heredoc.c\
 			parsing_utils1.c parsing_utils2.c parsing4.c\
-			parsing5.c\
+			parsing5.c lexer_utils5.c\
 			path.c execution.c execution2.c execution3.c execution4.c\
 			builtins1.c builtins2.c builtins3.c builtins4.c builtins5.c\
 			utils1.c utils2.c signals.c lexer_utils4.c\
