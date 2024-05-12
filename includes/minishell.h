@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 20:12:35 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:17:44 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@
 # include <signal.h>
 
 
-extern volatile sig_atomic_t heredoc_interrupted_flag;
-extern volatile sig_atomic_t heredoc_mode;
+extern int heredoc_interrupted;
+
 typedef enum token_type
 {
 	T_COMMAND,  //general command
