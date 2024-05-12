@@ -38,8 +38,8 @@ char *determine_word(char *str, size_t start_idx, size_t length, char quote_char
 
     if (quote_char && str[start_idx] == quote_char && str[start_idx + length - 1] == quote_char)
 	{
-        start_idx++; // Skip the starting quote
-        length -= 2; // Exclude both quotes
+        start_idx++;
+        length -= 2;
     }
     word = ft_substr(str, start_idx, length);
     if (quote_char && str[start_idx - 1] != quote_char && str[start_idx + length] != quote_char)
@@ -66,7 +66,7 @@ int set_quoted_flag(char quote_char)
 }
 void adjust_indices(size_t *start_idx, size_t *length, char quote_char, char *str, size_t *idx, int in_quote) {
     if (quote_char && str[*start_idx] == quote_char && str[*idx - 1] == quote_char && !in_quote && *length >= 2) {
-        (*start_idx)++;  // Skip the starting quote
+        (*start_idx)++; 
         (*length) -= 2;  // Reduce length to remove both quotes
     }
 }

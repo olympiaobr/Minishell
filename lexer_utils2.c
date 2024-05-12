@@ -12,7 +12,8 @@
 
 #include "includes/minishell.h"
 
-int	create_and_append_token(t_token **token_list, char *input, token_type type, int is_quoted)
+int	create_and_append_token(t_token **token_list, char *input, token_type type,
+		int is_quoted)
 {
 	t_token	*new_token;
 
@@ -50,54 +51,60 @@ void	tokenize_operator(t_data *data, char *str, size_t *idx)
 	free(operator_str);
 	*idx += operator_len;
 }
-void update_quote_state(int *in_quote, char *quote_char, char current_char)
+
+void	update_quote_state(int *in_quote, char *quote_char, char current_char)
 {
-    if (!*in_quote)
-    {
-        *in_quote = 1;
-        *quote_char = current_char;
-    }
-    else
-    {
-        *in_quote = 0;
-        *quote_char = '\0';
-    }
+	if (!*in_quote)
+	{
+		*in_quote = 1;
+		*quote_char = current_char;
+	}
+	else
+	{
+		*in_quote = 0;
+		*quote_char = '\0';
+	}
 }
 
-void parse_quotes(char *str, char *result, int *index)
+void	parse_quotes(char *str, char *result, int *index)
 {
-    int j = 0;
-    int in_quote = 0;
-    char quote_char = '\0';
+	int		j;
+	int		in_quote;
+	char	quote_char;
 
-    while (str[j] != '\0')
-    {
-        if ((!in_quote && (str[j] == '\'' || str[j] == '\"')) || (in_quote && str[j] == quote_char))
-        {
-            update_quote_state(&in_quote, &quote_char, str[j]);
-        }
-        else
-        {
-            result[*index] = str[j];
-            (*index)++;
-        }
-        j++;
-    }
+	j = 0;
+	in_quote = 0;
+	quote_char = '\0';
+	while (str[j] != '\0')
+	{
+		if ((!in_quote && (str[j] == '\'' || str[j] == '\"')) || (in_quote
+				&& str[j] == quote_char))
+		{
+			update_quote_state(&in_quote, &quote_char, str[j]);
+		}
+		else
+		{
+			result[*index] = str[j];
+			(*index)++;
+		}
+		j++;
+	}
 }
 
-char *edge_case(char *str)
+char	*edge_case(char *str)
 {
-    size_t len = strlen(str);
-    char *result = malloc(len + 1);
-    if (!result)
-    {
-        return NULL;
-    }
+	size_t	len;
+	char	*result;
+	int		i;
 
-    int i = 0;
-    parse_quotes(str, result, &i);
-
-    result[i] = '\0';
-    return result;
+	len = strlen(str);
+	result = malloc(len + 1);
+	if (!result)
+	{
+		return (NULL);
+	}
+	i = 0;
+	parse_quotes(str, result, &i);
+	result[i] = '\0';
+	return (result);
 }
-
