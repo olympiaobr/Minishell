@@ -60,3 +60,18 @@ char	*trim_value(const char *val)
 {
 	return (ft_strtrim(val, " \t\n\v\f\r"));
 }
+
+token_type	determine_type(char *operator)
+{
+	if (ft_strncmp(operator, "|", 1) == 0)
+		return (T_PIPE);
+	if (ft_strncmp(operator, "<<", 2) == 0)
+		return (T_HEREDOC);
+	if (ft_strncmp(operator, ">>", 2) == 0)
+		return (T_APPEND);
+	if (ft_strncmp(operator, "<", 1) == 0)
+		return (T_IN);
+	if (ft_strncmp(operator, ">", 1) == 0)
+		return (T_OUT);
+	return (T_COMMAND);
+}

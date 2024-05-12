@@ -107,6 +107,7 @@ void process_input(t_data *data, char *str);
 t_token	*allocate_token(token_type type, char *val, int is_quoted);
 void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
+ char *edge_case(char *str);
  char	*extract_next_word(char *str);
 t_token *init_token(token_type type, char *value, int is_quoted);
 char	*trim_value(const char *val);
