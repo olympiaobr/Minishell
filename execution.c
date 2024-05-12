@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 15:39:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:18:13 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,28 +56,31 @@ void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd)
 
 void parent_process_heredoc(t_data *data, int *pipe_fd)
 {
-	   close(pipe_fd[0]); // Close the read end of the pipe in the parent process
-        if (data->heredoc_input)
-        {
-            ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, strlen(data->heredoc_input));
-            if (bytes_written == -1)
-            {
-                perror("write to pipe");
-                exit(EXIT_FAILURE);
-            }
-            if (data->heredoc_input[strlen(data->heredoc_input) - 1] != '\n')
-            {
-                write(pipe_fd[1], "\n", 1);
-            }
-            free(data->heredoc_input);  // Free after writing to the pipe
-            data->heredoc_input = NULL;
-        }
-        close(pipe_fd[1]); // Close the write end of the pipe after writing
-        if (wait(NULL) == -1)
-        {
-            perror("wait");
-            exit(EXIT_FAILURE);
-        }
+	ssize_t bytes_written;
+
+	close(pipe_fd[0]); // Close the read end of the pipe in the parent process
+    if (data->heredoc_input)
+    {
+		bytes_written = write(pipe_fd[1],
+				data->heredoc_input, strlen(data->heredoc_input));
+    	if (bytes_written == -1)
+    	{
+        	perror("write to pipe");
+        	exit(EXIT_FAILURE);
+    	}
+    	if (data->heredoc_input[strlen(data->heredoc_input) - 1] != '\n')
+    	{
+        	write(pipe_fd[1], "\n", 1);
+    	}
+    	free(data->heredoc_input);  // Free after writing to the pipe
+    	data->heredoc_input = NULL;
+    }
+    close(pipe_fd[1]); // Close the write end of the pipe after writing
+    if (wait(NULL) == -1)
+    {
+        perror("wait");
+        exit(EXIT_FAILURE);
+    }
 }
 void execute_heredoc(t_data *data, char **argv, int *pipe_fd, char *path)
 {

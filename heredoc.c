@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 16:05:25 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:20:40 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void append_input(t_data *data, char *input, char *new_line, size_t new_input_length)
 {
-	 new_input_length = ft_strlen(data->heredoc_input) + ft_strlen(input) + ft_strlen(new_line) + 1;
+	new_input_length = ft_strlen(data->heredoc_input)
+		+ ft_strlen(input) + ft_strlen(new_line) + 1;
             char *temp = malloc(new_input_length);
             if (temp == NULL)
             {
