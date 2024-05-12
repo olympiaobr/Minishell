@@ -28,7 +28,7 @@ int	tokenize_word(t_data *data, char *str, size_t *idx,
 	process_characters(str, idx, &in_quote, &quote_char);
 	length = *idx - start_idx;
 	if (quote_char && str[start_idx] == quote_char && str[*idx
-		- 1] == quote_char && length >= 2)
+			- 1] == quote_char && length >= 2)
 	{
 		start_idx++;
 		length -= 2;
@@ -54,25 +54,25 @@ t_token	*get_last_token(t_token *token_list)
 	return (last_token);
 }
 
-void update_expectations(t_data *data, int *expect_command, token_type *type)
+void update_expectations(t_data *data)
 {
     t_token *last_token = get_last_token(data->token_list);
     if (last_token)
     {
         if (last_token->type == T_HEREDOC)
         {
-            *expect_command = 0;
-            *type = T_DELIMITER;
+            data->expect_command = 0;  // or global_expect_command = 0;
+            data->type = T_DELIMITER;  // or global_type = T_DELIMITER;
         }
         else if (last_token->type == T_PIPE || last_token->type == T_OUT
                  || last_token->type == T_IN || last_token->type == T_APPEND)
         {
-            *expect_command = 1;
-            *type = T_COMMAND;
+            data->expect_command = 1;  // or global_expect_command = 1;
+            data->type = T_COMMAND;  // or global_type = T_COMMAND;
         }
         else
         {
-            *type = T_ARGUMENT;
+            data->type = T_ARGUMENT;  // or global_type = T_ARGUMENT;
         }
     }
 }
