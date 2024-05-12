@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 14:39:02 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/11 20:12:16 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:17:05 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void reset_shell_state(t_data *data)
     data->append = 0;
     data->heredoc = 0;
 	heredoc_mode = 0;
-	heredoc_interrupted_flag = 0;
+	heredoc_interrupted= 0;
     initialize_shell_components(data);
 }
 
@@ -69,7 +69,7 @@ void run_shell(t_data *data)
 			{
 				heredoc_signals();
 				heredoc_mode = 1;
-				if (heredoc_interrupted_flag == 1)
+				if (heredoc_interrupted == 1)
 				{
 					//check_for_heredoc(data);
                 	reset_shell_state(data);

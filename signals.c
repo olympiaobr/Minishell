@@ -6,25 +6,25 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 15:23:23 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 20:11:54 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:19:11 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Libft/libft.h"
 #include "includes/minishell.h"
-volatile sig_atomic_t heredoc_interrupted_flag = 0;
+int heredoc_interrupted = 0;
 
 void catch_sigint(int sig)
 {
    (void)sig;
-	if(sig == SIGINT) // does not work
+	/* if(sig == SIGINT) // does not work
 	{
 		if(heredoc_mode == 1)
 		{
-			heredoc_interrupted_flag = 1;
+			heredoc_interrupted = 1;
 		}
 		
-	}
+	} */
 	
 	ft_putchar_fd('\n', STDOUT_FILENO);
     rl_on_new_line();
