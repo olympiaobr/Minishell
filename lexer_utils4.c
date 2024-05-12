@@ -19,7 +19,8 @@ void	process_characters(char *str, size_t *idx, int *in_quote,
 	while (str[*idx])
 	{
 		if (str[*idx] == '\\' && *in_quote && *quote_char == '\"' && (str[*idx
-					+ 1] == '$' || str[*idx + 1] == '\"' || str[*idx + 1] == '\\'))
+					+ 1] == '$' || str[*idx + 1] == '\"'
+				|| str[*idx + 1] == '\\'))
 		{
 			(*idx) += 2;
 			continue ;
