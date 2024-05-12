@@ -30,11 +30,11 @@ extern int heredoc_interrupted;
 
 typedef enum token_type
 {
-	T_COMMAND,  //general command
+	T_COMMAND,
 	T_PIPE,
-	T_IN,  // <
-	T_OUT,  // >
-	T_HEREDOC,  // <<
+	T_IN,
+	T_OUT,
+	T_HEREDOC,
 	T_APPEND,  // >>
 	T_ARGUMENT,  //command arguments
 	T_ENV,
@@ -57,7 +57,7 @@ typedef struct s_command
 	t_token	*argv;
 	t_token *option;
 
-	struct s_command *next; //array of command arguments
+	struct s_command *next;
 	int		argc;     //number of command arguments
 	//bool built-in?
 	char *path;
@@ -92,6 +92,8 @@ typedef struct data_all
 	int **pipesfd;
 	int max_env_size;
 	int output_file_present;
+	int         expect_command;
+    token_type  type;
 }	t_data;
 
 //lexing functions
@@ -112,7 +114,7 @@ void	process_characters(char *str, size_t *idx, int *in_quote,
 		char *quote_char);
 char	*determine_word(char *str, size_t start_idx, size_t length,
 		char quote_char);
-void	update_expectations(t_data *data, int *expect_command, token_type *type);
+void update_expectations(t_data *data);
 int	handle_token_finalization(t_data *data, char *word, char quote_char,
 		token_type expected_type);
 int	process_chars(t_data *data, char *str, size_t *idx, token_type type);
