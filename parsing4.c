@@ -57,47 +57,49 @@ void setup_append_mode(t_data *data, int fd, token_type type)
     }
 }
 
-// sets up redir for input/output based on the token's type and opens the associated file descriptor.
-int setup_redirection(t_data *data, t_token *token, char *filename)
-{
-    int flags;
+int determine_flags(token_type type) {
+    if (type == T_OUT) {
+        return O_WRONLY | O_CREAT | O_TRUNC;
+    } else if (type == T_APPEND) {
+        return O_WRONLY | O_CREAT | O_APPEND;
+    } else if (type == T_IN || type == T_HEREDOC) {
+        return O_RDONLY;
+    }
+    return 0; // Default to no flags if the type is unrecognized
+}
 
-    if (token->type == T_OUT)
-    {
-        flags = O_WRONLY | O_CREAT | O_TRUNC;
-    }
-    else if (token->type == T_APPEND)
-    {
-        // Set flags for append
-        flags = O_WRONLY | O_CREAT | O_APPEND;
-    }
-    else if (token->type == T_IN || token->type == T_HEREDOC) {
-        // Flags for input redirection
-        flags = O_RDONLY;
-    }
-    printf("filename in setup redirection: %s\n", filename);
+int open_redirection_file(char *filename, int flags) {
     char *file_path = ft_strdup(filename);
-    if (!file_path)
-    {
+    if (!file_path) {
         perror("Failed to allocate memory for file path");
         return -1;
     }
     int fd = open(file_path, flags, 0644);
-    if (fd < 0)
-    {
+    if (fd < 0) {
         free(file_path);
+        perror("Failed to open file");
         return -1;
     }
-    clear_previous_redirections(data, token);
-    if (token->type == T_IN || token->type == T_HEREDOC)
-    {
-        data->input_file = file_path;
-        data->std_input_fd = fd;
+    free(file_path); // Free the duplicated path after opening the file
+    return fd;
+}
+
+int setup_redirection(t_data *data, t_token *token, char *filename) {
+    int fd;
+    int flags = determine_flags(token->type); // Determine the appropriate flags for opening the file
+
+    if ((fd = open_redirection_file(filename, flags)) < 0) {
+        return -1; // File opening failed
     }
-    else
-    {
+
+    clear_previous_redirections(data, token); // Clear any existing redirections based on token type
+
+    if (token->type == T_IN || token->type == T_HEREDOC) {
+        data->input_file = ft_strdup(filename);
+        data->std_input_fd = fd;
+    } else {
         setup_append_mode(data, fd, token->type);
-        data->output_file = file_path;
+        data->output_file = ft_strdup(filename);
     }
     return 0;
 }

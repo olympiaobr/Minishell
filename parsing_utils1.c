@@ -25,7 +25,7 @@ t_command	*init_command(char *command)
 	}
 	ft_memset(cmd, 0, sizeof(t_command));
 	if (command)
-		cmd->command = strdup(command);
+		cmd->command = ft_strdup(command);
 	else
 		cmd->command = NULL;
 	cmd->argv = NULL;
