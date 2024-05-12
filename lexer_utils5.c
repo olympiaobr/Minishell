@@ -28,7 +28,7 @@ int	tokenize_word(t_data *data, char *str, size_t *idx,
 	process_characters(str, idx, &in_quote, &quote_char);
 	length = *idx - start_idx;
 	if (quote_char && str[start_idx] == quote_char && str[*idx
-		- 1] == quote_char && length >= 2)
+			- 1] == quote_char && length >= 2)
 	{
 		start_idx++;
 		length -= 2;
