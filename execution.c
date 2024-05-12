@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 16:18:13 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 17:55:22 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ void execute_external_command(t_data *data, t_command *cmd)
 
         if (io[0] < 0 || io[1] < 0)
         {
-        fprintf(stderr, "Error: Invalid IO channels determined.\n");
+        ft_printf("Error: Invalid IO channels determined.\n");
         return;
         }
         int argc = 1;

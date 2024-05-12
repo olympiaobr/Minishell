@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/12 16:20:40 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 17:55:37 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void append_input(t_data *data, char *input, char *new_line, size_t new_input_le
             char *temp = malloc(new_input_length);
             if (temp == NULL)
             {
-                fprintf(stderr, "Memory allocation failed\n");
+                ft_printf("Memory allocation failed\n");
                 exit(EXIT_FAILURE);
             }
             ft_strcpy(temp, data->heredoc_input);

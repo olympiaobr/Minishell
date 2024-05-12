@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 11:54:01 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/24 11:54:03 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/12 17:54:37 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	set_env_var(t_data *data, const char *name, const char *value)
 	if (!name || !value || name[0] == '\0' || name[0] == '=' || strchr(name,
 			'=') != NULL)
 	{
-		fprintf(stderr, "Invalid environment variable name\n");
+		ft_printf("Invalid environment name\n");
 		return (-1);
 	}
 	name_len = ft_strlen(name);
