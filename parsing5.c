@@ -13,7 +13,6 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-// Determines the correct file open flags based on the token's type and calls setup_redirection to apply these settings.
 int apply_redirection(t_data *data, t_token *token)
 {
     char *file_name = NULL;
@@ -36,16 +35,58 @@ int apply_redirection(t_data *data, t_token *token)
     return result;
 }
 
+int process_command_and_args(t_data *data, t_token *current_token, t_command **current_cmd, int *new_cmd)
+{
+    int process_result = process_commands(data, current_token, current_cmd);
+    if (process_result != 0)
+    {
+        ft_error("Error: Failed to process command or argument.\n");
+        return 1;
+    }
+    if (current_token->type == T_COMMAND)
+    {
+        *new_cmd = 0;
+    }
+    return 0;
+}
+
+int handle_redir(t_data *data, t_token *current_token)
+{
+    if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
+    {
+        return apply_redirection(data, current_token);
+    }
+    return 0;
+}
+int handle_token(t_data *data, t_token *current_token, t_command **current_cmd, int *new_cmd)
+{
+    if (!data || !current_token || !current_cmd || !new_cmd)
+        return -1;
+
+    if (*new_cmd || current_token->type == T_COMMAND || current_token->type == T_ARGUMENT)
+    {
+        if (process_command_and_args(data, current_token, current_cmd, new_cmd) != 0)
+            return 1;
+    }
+    else
+    {
+        if (handle_redir(data, current_token) != 0)
+            return 1;
+    }
+    return 0;
+}
 
 int parser(t_data *data)
 {
     if (!data || !data->token_list)
         return -1;
+    t_command *current_cmd;
+    t_token *current_token;
+    int new_cmd;
 
-    t_command *current_cmd = NULL;
-    t_token *current_token = data->token_list;
-    int new_cmd = 1; // Flag to indicate when to start processing a new command
-
+    current_cmd = NULL;
+    current_token = data->token_list;
+    new_cmd = 1;
     while (current_token != NULL)
     {
         if (current_token->type == T_PIPE)
@@ -54,29 +95,8 @@ int parser(t_data *data)
         }
         else
         {
-            // Process commands or arguments
-            if (new_cmd || current_token->type == T_COMMAND || current_token->type == T_ARGUMENT)
-            {
-                // Delegate to process_commands for command creation and argument linking
-                int process_result = process_commands(data, current_token, &current_cmd);
-                if (process_result != 0)
-                {
-                    ft_error("Error: Failed to process command or argument.\n");
-                    return 1;
-                }
-                if (current_token->type == T_COMMAND)
-                {
-                    new_cmd = 0;
-                }
-            }
-            else if (current_token->type == T_IN || current_token->type == T_OUT || current_token->type == T_APPEND || current_token->type == T_HEREDOC)
-            {
-
-                if (apply_redirection(data, current_token) != 0)
-                {
-                    return (1);
-                }
-            }
+            if (handle_token(data, current_token, &current_cmd, &new_cmd) != 0)
+                return 1;
         }
         current_token = current_token->next;
     }
