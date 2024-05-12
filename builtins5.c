@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 13:50:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 16:29:34 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 17:58:47 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,7 @@ int	unset_cmd(t_data *data, t_command *cmd)
 	{
 		if (!valid_identifier(arg->value))
 		{
-			fprintf(stderr, "unset: '%s' is not a valid identifier\n",
-				arg->value);
+			ft_printf("unset: %s is not a valid identifier\n", arg->value);
 		}
 		else
 		{
