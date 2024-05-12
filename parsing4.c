@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing4.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 12:40:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 12:40:06 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:00:02 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ int	open_redir_file(char *filename, int flags)
 	int		fd;
 
 	file_path = ft_strdup(filename);
+	printf("file name is: %s\n", filename);
 	if (!file_path)
 	{
 		perror("Failed to allocate memory for file path");
@@ -89,7 +90,7 @@ int	open_redir_file(char *filename, int flags)
 	if (fd < 0)
 	{
 		free(file_path);
-		perror("Failed to open file");
+		//perror("Failed to open file");
 		return (-1);
 	}
 	free(file_path);
