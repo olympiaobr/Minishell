@@ -102,13 +102,23 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type, 
 token_type	determine_type(char *operator);
 void tokenize_operator(t_data *data, char *str, size_t *idx);
 int tokenize_word(t_data *data, char *str, size_t *idx, token_type expected_type);
-// void tokenize_rest(t_data *data, char *str, size_t *idx);
 void process_input(t_data *data, char *str);
 t_token	*allocate_token(token_type type, char *val, int is_quoted);
 void	append_token(t_token **token_list, t_token *new_token);
  int	shell_operators(int c);
  char *edge_case(char *str);
  char	*extract_next_word(char *str);
+void	process_characters(char *str, size_t *idx, int *in_quote,
+		char *quote_char);
+char	*determine_word(char *str, size_t start_idx, size_t length,
+		char quote_char);
+void	update_expectations(t_data *data, int *expect_command, token_type *type);
+int	handle_token_finalization(t_data *data, char *word, char quote_char,
+		token_type expected_type);
+int	process_chars(t_data *data, char *str, size_t *idx, token_type type);
+void	handle_operator(t_data *data, char *str, size_t *idx);
+
+
 t_token *init_token(token_type type, char *value, int is_quoted);
 char	*trim_value(const char *val);
 
@@ -138,7 +148,6 @@ t_data *init_data(char **envp);
 
 //parsing functions
 int parser(t_data *data);
-void tokenize_path(const char *input);
 int set_command(t_command *cmd_struct, t_token *current_token);
 int add_token_to_list(t_token **token_list, t_token *token);
 int add_option_to_command(t_command *cmd, t_token *token);
