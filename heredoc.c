@@ -6,44 +6,15 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 12:42:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/11 14:30:13 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:05:25 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 
-//if there is << call this function heredoc()
-//look what is after << that will be the delimiter
-//it then calls a different function that -> > input (infinite loop)
-//then we read until the delimiters appears again and we tokenize this input
-//error check if there is no second appearance of the delimiter
-
-void write_to_heredoc_file(t_data *data, char *delimiter)
+void append_input(t_data *data, char *input, char *new_line, size_t new_input_length)
 {
-    char *input;
-    char *new_line = "\n";
-    size_t new_input_length;
-
-    while (1)
-    {
-        input = readline("> ");
-        if (input == NULL)
-        {
-            continue;
-        }
-        if (ft_strcmp(input, delimiter) == 0)
-        {
-            free(input);
-            break;
-        }
-
-        if (data->heredoc_input == NULL)
-        {
-            data->heredoc_input = ft_strdup(input);
-        }
-        else
-        {
-            new_input_length = ft_strlen(data->heredoc_input) + ft_strlen(input) + ft_strlen(new_line) + 1;
+	 new_input_length = ft_strlen(data->heredoc_input) + ft_strlen(input) + ft_strlen(new_line) + 1;
             char *temp = malloc(new_input_length);
             if (temp == NULL)
             {
@@ -55,6 +26,30 @@ void write_to_heredoc_file(t_data *data, char *delimiter)
             ft_strcat(temp, input);
             free(data->heredoc_input);
             data->heredoc_input = temp;
+}
+
+void write_to_heredoc_file(t_data *data, char *delimiter)
+{
+    char *input;
+    char *new_line = "\n";
+    size_t new_input_length;
+
+	new_input_length = 0;
+    while (1)
+    {
+        input = readline("> ");
+        if (input == NULL)
+            continue;
+        if (ft_strcmp(input, delimiter) == 0)
+        {
+            free(input);
+            break;
+        }
+        if (data->heredoc_input == NULL)
+            data->heredoc_input = ft_strdup(input);
+        else
+        {
+			append_input(data, input, new_line, new_input_length);
         }
         free(input);
     }
