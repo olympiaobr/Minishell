@@ -74,7 +74,7 @@ void	adjust_indices(size_t *start_idx, size_t *length, char quote_char,
 		char *str)
 {
 	if (quote_char && str[*start_idx] == quote_char && str[*start_idx + *length
-		- 1] == quote_char)
+			- 1] == quote_char)
 	{
 		(*start_idx)++;
 		(*length) -= 2;
