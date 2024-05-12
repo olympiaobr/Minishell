@@ -6,13 +6,125 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/11 14:20:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 15:39:19 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
+void check_error(int fd)
+{
+	if (fd == -1)
+    {
+        perror("open output file");
+        exit(EXIT_FAILURE);
+    }
+    if (dup2(fd, STDOUT_FILENO) == -1)
+    {
+        perror("dup2 for output file");
+        close(fd); // Close file descriptor before exiting
+        exit(EXIT_FAILURE);
+    }
+}
+void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd)
+{
+	int fd;
+	int flags;
 
+	close(pipe_fd[1]); // Close the write end of the pipe in the child process
+    if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
+    {
+        perror("dup2");
+        exit(EXIT_FAILURE);
+    }
+    close(pipe_fd[0]); // Close the now redundant original read end of the pipe
+    if (data->output_file)
+    {
+        flags = O_WRONLY | O_CREAT;
+        if (data->append)
+            flags |= O_APPEND;
+        else
+            flags |= O_TRUNC;
+        fd = open(data->output_file, flags, 0644);
+		check_error(fd);
+        close(fd); // Close file descriptor after dup2
+    }
+    execve(path, argv, NULL); // Execute the command
+    perror("execve");
+    exit(EXIT_FAILURE);
+}
+
+void parent_process_heredoc(t_data *data, int *pipe_fd)
+{
+	   close(pipe_fd[0]); // Close the read end of the pipe in the parent process
+        if (data->heredoc_input)
+        {
+            ssize_t bytes_written = write(pipe_fd[1], data->heredoc_input, strlen(data->heredoc_input));
+            if (bytes_written == -1)
+            {
+                perror("write to pipe");
+                exit(EXIT_FAILURE);
+            }
+            if (data->heredoc_input[strlen(data->heredoc_input) - 1] != '\n')
+            {
+                write(pipe_fd[1], "\n", 1);
+            }
+            free(data->heredoc_input);  // Free after writing to the pipe
+            data->heredoc_input = NULL;
+        }
+        close(pipe_fd[1]); // Close the write end of the pipe after writing
+        if (wait(NULL) == -1)
+        {
+            perror("wait");
+            exit(EXIT_FAILURE);
+        }
+}
+void execute_heredoc(t_data *data, char **argv, int *pipe_fd, char *path)
+{
+	pid_t pid = fork();
+    if (pid == -1)
+    {
+        perror("fork");
+        free(argv); // Free argv before exiting
+        close(pipe_fd[0]); // Close pipe ends before exiting
+        close(pipe_fd[1]);
+        exit(EXIT_FAILURE);
+    }
+    else if (pid == 0)  // Child process
+    {
+		child_process_heredoc(data, path, argv, pipe_fd);
+    }
+    else  // Parent process
+    {
+		parent_process_heredoc(data, pipe_fd);
+    }
+    free(argv); // Free argv in the parent after all operations
+}
+void handle_heredocs(t_data *data, t_command *cmd)
+{
+    char **argv;
+	int pipe_fd[2];
+    char *path;
+
+	path = cmd->path; //  printf("the path is: %s\n", path);
+    argv = malloc(2 * sizeof(char *));
+    if (argv == NULL)
+    {
+        perror("Failed to allocate memory for argv");
+        exit(EXIT_FAILURE);
+    }
+    argv[0] = path;
+    argv[1] = NULL;
+    if (pipe(pipe_fd) == -1)
+    {
+        perror("pipe");
+        free(argv); 
+        exit(EXIT_FAILURE);
+    }
+	execute_heredoc(data, argv, pipe_fd, path);
+} 
+
+/* 
 void handle_heredocs(t_data *data, t_command *cmd)
 {
     char **argv;
@@ -104,42 +216,60 @@ void handle_heredocs(t_data *data, t_command *cmd)
         }
     }
     free(argv); // Free argv in the parent after all operations
+} 
+
+ */
+
+void parent_process_expr(t_data *data, pid_t pid)
+{
+	int status;
+	waitpid(pid, &status, 0);  // Wait for the child process to finish
+    if (WIFEXITED(status))
+    {
+        int exit_status = WEXITSTATUS(status);//get exit status
+		data->exit_status = exit_status;
+    }
+}
+void child_process_expr(t_data *data)
+{
+	char *argv[5];
+	char *exit_status_str_1;
+    char *exit_status_str_2;
+
+	exit_status_str_1 = ft_itoa(data->exit_status);
+	exit_status_str_2 = ft_itoa(data->exit_status);
+    if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
+	{
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+	argv[0] = "/usr/bin/expr";
+    argv[1] = exit_status_str_1;
+    argv[2] = "+";
+    argv[3] = exit_status_str_2;
+    argv[4] = NULL;
+    execve("/usr/bin/expr", argv, NULL);
+    perror("execve");
+    exit(EXIT_FAILURE);
+   	free(exit_status_str_1);
+    free(exit_status_str_2);
 }
 
 void handle_expr_function(t_data *data)
 {
 			pid_t pid = fork();
+			
 			if(pid == -1)
 			{
 				perror("fork");
 				exit(EXIT_FAILURE);
 			}
 			if(pid == 0) //in the child
-			{
-				char *exit_status_str_1 = ft_itoa(data->exit_status);
-    			char *exit_status_str_2 = ft_itoa(data->exit_status);
-    			if (exit_status_str_1 == NULL || exit_status_str_2 == NULL)
-				{
-        			perror("Memory allocation failed");
-        			exit(EXIT_FAILURE);
-    			}
-    			char *argv[] = {"/usr/bin/expr", exit_status_str_1, "+", exit_status_str_2, NULL};
-    			execve("/usr/bin/expr", argv, NULL);
-    			perror("execve");
-    			exit(EXIT_FAILURE);
-   				free(exit_status_str_1);
-    			free(exit_status_str_2);
+			{	
+				child_process_expr(data);
 			}
 			else //parent
-			{
-				int status;
-				waitpid(pid, &status, 0);  // Wait for the child process to finish
-            	if (WIFEXITED(status))
-           		{
-                	int exit_status = WEXITSTATUS(status);//get exit status
-					data->exit_status = exit_status;
-           		}
-			}
+				parent_process_expr(data, pid);
 }
 
 
@@ -248,11 +378,11 @@ void execute_simple_command(t_data *data, t_command *cmd)
 	{
         handle_heredocs(data, cmd);
     }
-	else if (ft_strcmp(data->token_list->value, "expr") == 0 &&
+	else if (ft_strcmp(data->token_list->value, "expr") == 0 && data->token_list->next &&
                ft_strcmp(data->token_list->next->next->value, "+") == 0)
-				{
-       				 handle_expr_function(data);
-    			}
+	{
+       	handle_expr_function(data);
+    }
 	else
 	{
         execute_external_command(data, cmd);
@@ -288,7 +418,7 @@ void execution(t_data *data)
         return;
     }
     count_commands(data);
-    ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
+    //ft_printf("Debug: Number of commands counted = %d\n", data->count_cmd);
     if (operators_setup(data) != 0)
 	{
         ft_printf("Failed to setup redirections.\n");
