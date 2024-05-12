@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins5.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 13:50:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/10 13:50:06 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/12 16:29:34 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,12 @@ void	remove_var(t_data *data, const char *var_name)
 
 int	valid_identifier(const char *name)
 {
-	const char	*valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
+	const char	*valid_chars;
 
+	valid_chars = 
+		"abcdefghijklmnopqrstuvwxyz"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"0123456789_";
 	if (!name || *name == '\0' || (!ft_isalpha(*name) && *name != '_'))
 		return (0);
 	name++;

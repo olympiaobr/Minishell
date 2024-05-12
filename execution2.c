@@ -6,43 +6,37 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/11 13:05:30 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 17:32:03 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
 
+void open_input_file(t_data *data)
+{
+	data->std_input_fd = open(data->input_file, O_RDONLY);
+    if (data->std_input_fd == -1)
+	{
+        perror("Failed to open input file");
+        data->std_input_fd = STDIN_FILENO;
+    }
+}
 int operators_setup(t_data *data)
 {
     int flags;
 
 	if (data->input_file)
 	{
-        data->std_input_fd = open(data->input_file, O_RDONLY);
-        if (data->std_input_fd == -1)
-		{
-            perror("Failed to open input file");
-            data->std_input_fd = STDIN_FILENO;
-        }
+		open_input_file(data);
     }
 	else
-	{
         data->std_input_fd = STDIN_FILENO;
-    }
-    // Handle output redirection setup
     if (data->output_file)
 	{
         flags = O_WRONLY | O_CREAT;
         if (data->append)
-		{
             flags |= O_APPEND;
-			printf("here append\n");
-        }
-		/* else
-		{
-            flags |= O_TRUNC;
-        } */
         data->std_output_fd = open(data->output_file, flags, 0644);
         if (data->std_output_fd == -1)
 		{
@@ -51,59 +45,45 @@ int operators_setup(t_data *data)
         }
     }
 	else
-	{
         data->std_output_fd = STDOUT_FILENO;
-    }
-
     return 0;
 }
 
-void determine_io_channels(t_data *data, int cmd_index, int io[2])
+void set_input_channel(t_data *data, int cmd_index, int default_input, int io[2])
 {
-    int default_input = STDIN_FILENO;
-    int default_output = STDOUT_FILENO;
-
-    // Initialize to invalid file descriptors
-    io[0] = -1;
-    io[1] = -1;
-
-    // Set input channel
-    if (cmd_index == 0)
+	 if (cmd_index == 0)
     {
         if (data->std_input_fd > 0)
-        {
             io[0] = data->std_input_fd;
-        }
         else
-        {
             io[0] = default_input;
-        }
     }
     else if (data->pipesfd && cmd_index > 0)
-    {
         io[0] = data->pipesfd[cmd_index - 1][0];
-    }
+}
+void determine_io_channels(t_data *data, int cmd_index, int io[2])
+{
+    int default_input;
+    int default_output;
 
+	default_input = STDIN_FILENO;
+	default_output = STDOUT_FILENO;
+    io[0] = -1;
+    io[1] = -1;
+    // Set input channel
+	set_input_channel(data, cmd_index, default_input, io);
     // Set output channel
     if (cmd_index == data->count_cmd - 1)
     {
         if (data->std_output_fd > 0)
-        {
             io[1] = data->std_output_fd;
-        }
         else
-        {
             io[1] = default_output;
-        }
     }
     else if (data->pipesfd && cmd_index < data->count_cmd - 1)
-    {
         io[1] = data->pipesfd[cmd_index][1];
-    }
     if (io[0] < 0 || io[1] < 0)
-    {
-        fprintf(stderr, "Error: Invalid IO channels determined for command index %d.\n", cmd_index);
-    }
+		ft_printf("Error: Invalid IO channels for cmd_ind %d.\n", cmd_index);
 }
 
 
