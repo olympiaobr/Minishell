@@ -143,6 +143,7 @@ int add_token_to_list(t_token **token_list, t_token *token);
 int add_option_to_command(t_command *cmd, t_token *token);
 t_command *init_command(char *command);
 t_command *create_command(t_data *data, t_token *token);
+void link_command(t_data *data, t_command *new_command);
 int link_arg_to_command(t_command *last_command, t_token *token);
 int process_commands(t_data *data, t_token *token, t_command **current_cmd);
 int setup_redirection(t_data *data, t_token *token, char *filename);
@@ -165,6 +166,10 @@ char *custom_strtok(char *str, const char *delim);
 
 //execution functions
 void execution(t_data *data/* , t_command *cmd */);
+char *init_path_vars(t_data *data, char *cwd);
+int check_command_path(t_token *current, char *cwd, t_data *data);
+int check_builtin_command(t_token *current);
+int find_command_path(const char *command, char *dir, char *full_path);
 int check_builtin(const char *command);
 int execute_builtin(t_command *cmd, t_data *data);
 int cd_cmd(t_data *data, t_command *cmd);

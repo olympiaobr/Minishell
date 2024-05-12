@@ -54,6 +54,7 @@ int	only_whitespaces(char *str)
 	}
 	return (1);
 }
+
 int	process_input_conditions(t_data *data)
 {
 	if (ft_strncmp(data->user_input, "cd ;", 4) == 0
@@ -64,7 +65,7 @@ int	process_input_conditions(t_data *data)
 	}
 	if (check_special_chars(data->user_input))
 	{
-		ft_printf("Error: Special characters such as '\\' or ';' not allowed/ Command not found.\n");
+		ft_printf("Error:Special chars as '\\' or ';' not allowed/ Cmd not found.\n");
 		free_tokens(data);
 		return (1);
 	}

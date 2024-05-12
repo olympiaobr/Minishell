@@ -318,26 +318,3 @@ void execution(t_data *data)
 		free(data->pipesfd);
 	}
 }
-
-/*
-void process_command_arguments(t_command *cmd)
-{
-	if (!cmd)
-		return;
-	t_token *arg = cmd->argv;
-	int index = 0;
-	printf("Processing arguments for command: %s\n", cmd->command);
-
-	// Skip the command if it's included in argv, adjust accordingly if cmd->argv directly starts from the args
-	if (arg && index == 0 && check_builtin(cmd->command))
-	{
-		arg = arg->next; // Skip the first if it includes the command
-		index++;
-	}
-	while (arg)
-	{
-		printf("Argument %d: %s (is_quoted: %d)\n", index++, arg->value, arg->is_quoted);
-		arg = arg->next;
-	}
-}
-*/
