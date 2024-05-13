@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:04:54 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 12:35:09 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:22:56 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ int	wait_for_processes(int num_processes)
 		if (WIFEXITED(status))
 		{
 			current_status = WEXITSTATUS(status);
-			printf("Process %d exited with status: %d\n", pid, current_status);
 			if (current_status > exit_status)
 				exit_status = current_status;
 		}

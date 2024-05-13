@@ -6,40 +6,12 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 13:15:10 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:22:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Libft/libft.h"
 #include "includes/minishell.h"
-
-void	execute_command(t_command *cmd, char **argv, char **env)
-{
-	execve(cmd->path, argv, env);
-	perror("Execve failed");
-	exit(EXIT_FAILURE);
-}
-
-void	handle_parent_process(t_data *data, pid_t pid)
-{
-	int	status;
-	int	ret;
-
-	status = 0;
-	ret = waitpid(pid, &status, 0);
-	while (ret == -1)
-	{
-		ret = waitpid(pid, &status, 0);
-	}
-	if (ret == -1)
-	{
-		perror("waitpid failed");
-	}
-	else if (WIFEXITED(status))
-	{
-		data->exit_status = WEXITSTATUS(status);
-	}
-}
 
 void	execute_forked_process(t_data *data, t_command *cmd, char **argv,
 		int io[2])
@@ -81,7 +53,8 @@ void	execute_external_command(t_data *data, t_command *cmd)
 		return ;
 	execute_forked_process(data, cmd, argv, io);
 }
-void reset_filedescriptors_to_standard(t_data *data)
+
+void	reset_filedescriptors_to_standard(t_data *data)
 {
 	if (data->std_input_fd != STDIN_FILENO)
 	{
@@ -94,6 +67,7 @@ void reset_filedescriptors_to_standard(t_data *data)
 		data->std_output_fd = STDOUT_FILENO;
 	}
 }
+
 void	execute_simple_command(t_data *data, t_command *cmd)
 {
 	int	exit_status;

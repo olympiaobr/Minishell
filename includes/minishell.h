@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 12:53:49 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:21:45 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,10 @@ int								wait_for_processes(int num_processes);
 void							close_all_pipes(t_data *data);
 void							close_pipes(t_data *data);
 int								count_commands(t_data *data);
+void							execute_command(t_command *cmd, 
+									char **argv, char **env);
+void							handle_parent_process(t_data *data, 
+									pid_t pid);				
 // signal functions
 void							catch_sigint(int sig);
 void							handle_sigquit(int signum);

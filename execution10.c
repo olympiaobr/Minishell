@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 11:08:57 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 12:19:38 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:23:12 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ int	create_pipes(t_data *data)
 		printf("No pipes needed.\n");
 		return (0);
 	}
-	printf("Number of pipes to create: %d\n", num_pipes);
 	data->pipesfd = malloc(num_pipes * sizeof(int *));
 	if (!data->pipesfd)
 	{
