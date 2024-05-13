@@ -44,7 +44,7 @@ int	valid_identifier(const char *name)
 {
 	const char	*valid_chars;
 
-	valid_chars = 
+	valid_chars =
 		"abcdefghijklmnopqrstuvwxyz"
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		"0123456789_";
@@ -69,7 +69,6 @@ int	unset_cmd(t_data *data, t_command *cmd)
 		}
 		else
 		{
-			//ft_printf("Unsetting variable: %s\n", arg->value);
 			remove_var(data, arg->value);
 		}
 		arg = arg->next;

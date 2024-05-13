@@ -80,7 +80,6 @@ int	open_redir_file(char *filename, int flags)
 	int		fd;
 
 	file_path = ft_strdup(filename);
-	//printf("file name is: %s\n", filename);
 	if (!file_path)
 	{
 		perror("Failed to allocate memory for file path");
