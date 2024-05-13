@@ -234,6 +234,7 @@ void free_tokens(t_data *data);
 void free_commands(t_command *commands);
 void free_token_chain(t_token *token);
 void free_all(t_data *data);
+void free_shell_resources(t_data *data);
 void free_pipesfd(t_data *data);
 
 void ft_error(char *err);

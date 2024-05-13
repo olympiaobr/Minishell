@@ -17,17 +17,9 @@ void reset_shell_state(t_data *data)
 {
     free(data->user_input);
     data->user_input = NULL;
-    t_token *current_token = data->token_list;
-    while (current_token)
-    {
-        t_token *next_token = current_token->next;
-        free(current_token->value);
-        free(current_token);
-        current_token = next_token;
-    }
-    data->token_list = NULL;
-    free_commands(data->commands);
-    data->commands = NULL;
+
+    free_shell_resources(data);
+
     free(data->input_file);
     data->input_file = NULL;
     free(data->output_file);
@@ -41,7 +33,34 @@ void reset_shell_state(t_data *data)
     data->std_output_fd = STDOUT_FILENO;
     data->append = 0;
     data->heredoc = 0;
+
     initialize_shell_components(data);
+}
+
+void shell_input(t_data *data)
+{
+    if (validate_input(data))
+    {
+        add_history(data->user_input);
+        lexing_input(data);
+        setup_noninteractive_signals();
+        if (data->heredoc == 1)
+        {
+            data->heredoc = 0;
+            data->output_file_present = 0;
+            check_for_heredoc(data);
+            parser(data);
+            execution(data);
+            setup_interactive_signals();
+            reset_shell_state(data);
+            return;
+        }
+        expansion(data);
+        parser(data);
+        execution(data);
+        setup_interactive_signals();
+    }
+    reset_shell_state(data);
 }
 
 void run_shell(t_data *data)
@@ -55,32 +74,10 @@ void run_shell(t_data *data)
             printf("exit\n");
             break;
         }
-        if (validate_input(data))
-        {
-            add_history(data->user_input);
-            lexing_input(data);
-            setup_noninteractive_signals();
-            if(data->heredoc == 1)
-			{
-				data->heredoc = 0;
-				data->output_file_present = 0;
-				check_for_heredoc(data);
-				parser(data);
-				execution(data);
-                setup_interactive_signals();
-                reset_shell_state(data);
-				continue;
-			}
-            expansion(data);
-            parser(data);
-            execution(data);
-            setup_interactive_signals();
-        }
-        reset_shell_state(data);
+        shell_input(data);
         free(data->user_input);
     }
 }
-
 
 int main(int argc, char *argv[], char **envp)
 {
@@ -100,33 +97,3 @@ int main(int argc, char *argv[], char **envp)
     free(data);
     return (EXIT_SUCCESS);
 }
-
-/*void display_commands(t_data *data)
-{
-    t_command *cmd = data->commands;
-    int i = 0;
-
-    while (cmd != NULL)
-    {
-        ft_printf("\nCommand %d: %s\n", ++i, cmd->command);
-        t_token *arg = cmd->argv;
-        while (arg != NULL)
-        {
-            ft_printf("\tArgument: %s\n", arg->value);
-            arg = arg->next;
-        }
-        t_token *opt = cmd->option;
-        while (opt != NULL)
-        {
-            ft_printf("\tOption: %s\n", opt->value);
-            opt = opt->next;
-        }
-        cmd = cmd->next;
-    }
-    if (data->input_file)
-        ft_printf("\nInput Redirection: %s\n", data->input_file);
-    if (data->output_file)
-        ft_printf("Output Redirection: %s\n", data->output_file);
-}
-*/
-

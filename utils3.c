@@ -50,3 +50,20 @@ char	*expand_non_variable(char *expanded_value, char character)
 	free(expanded_value);
 	return (temp);
 }
+void free_shell_resources(t_data *data)
+{
+    t_token *current_token = data->token_list;
+    t_token *next_token;
+
+    while (current_token)
+    {
+        next_token = current_token->next;
+        free(current_token->value);
+        free(current_token);
+        current_token = next_token;
+    }
+    data->token_list = NULL;
+
+    free_commands(data->commands);
+    data->commands = NULL;
+}
