@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 12:20:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:15:10 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,19 @@ void execute_external_command(t_data *data, t_command *cmd)
         return;
     execute_forked_process(data, cmd, argv, io);
 }
-
+void reset_filedescriptors_to_standard(t_data *data)
+{
+	if (data->std_input_fd != STDIN_FILENO)
+	{
+		close(data->std_input_fd);
+		data->std_input_fd = STDIN_FILENO;
+	}
+	if (data->std_output_fd != STDOUT_FILENO)
+	{
+		close(data->std_output_fd);
+		data->std_output_fd = STDOUT_FILENO;
+	}
+}
 void	execute_simple_command(t_data *data, t_command *cmd)
 {
 	int	exit_status;
@@ -99,16 +111,7 @@ void	execute_simple_command(t_data *data, t_command *cmd)
 		handle_expr_function(data);
 	else
 		execute_external_command(data, cmd);
-	if (data->std_input_fd != STDIN_FILENO)
-	{
-		close(data->std_input_fd);
-		data->std_input_fd = STDIN_FILENO;
-	}
-	if (data->std_output_fd != STDOUT_FILENO)
-	{
-		close(data->std_output_fd);
-		data->std_output_fd = STDOUT_FILENO;
-	}
+	reset_filedescriptors_to_standard(data);
 }
 
 void	execution(t_data *data)
