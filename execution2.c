@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 12:25:26 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:42:36 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,8 @@ int	call_builtin(t_command *cmd, t_data *data)
 int	handle_redirections(t_data *data, int cmd_index, int *io_channels)
 {
 	determine_io_channels(data, cmd_index, io_channels);
-	if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO) ==
-		-1)
+	if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO) 
+		== -1)
 	{
 		perror("Failed to redirect standard input");
 		return (-1);

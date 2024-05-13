@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 10:58:01 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 10:58:24 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:43:22 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	child_process_heredoc(t_data *data, char *path, char **argv,
 
 void	parent_process_heredoc(t_data *data, int *pipe_fd)
 {
-	ssize_t bytes_written;
+	ssize_t	bytes_written;
 
 	close(pipe_fd[0]);
 	if (data->heredoc_input)

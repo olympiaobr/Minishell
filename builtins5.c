@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 13:50:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 12:25:20 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:41:53 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ int	valid_identifier(const char *name)
 {
 	const char	*valid_chars;
 
-	valid_chars =
-		"abcdefghijklmnopqrstuvwxyz"
+	valid_chars = "abcdefghijklmnopqrstuvwxyz"
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		"0123456789_";
 	if (!name || *name == '\0' || (!ft_isalpha(*name) && *name != '_'))
