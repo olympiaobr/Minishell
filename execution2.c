@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:39:27 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 11:02:40 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:25:26 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,7 @@ void determine_io_channels(t_data *data, int cmd_index, int io[2])
 	default_output = STDOUT_FILENO;
     io[0] = -1;
     io[1] = -1;
-    // Set input channel
 	set_input_channel(data, cmd_index, default_input, io);
-    // Set output channel
     if (cmd_index == data->count_cmd - 1)
     {
         if (data->std_output_fd > 0)

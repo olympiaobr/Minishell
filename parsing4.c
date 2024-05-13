@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 12:40:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 10:48:30 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:25:41 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ int	open_redir_file(char *filename, int flags)
 	int		fd;
 
 	file_path = ft_strdup(filename);
-	//printf("file name is: %s\n", filename);
 	if (!file_path)
 	{
 		perror("Failed to allocate memory for file path");

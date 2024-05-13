@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 12:12:13 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 10:57:19 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:26:14 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ void handle_expr_function(t_data *data)
 				perror("fork");
 				exit(EXIT_FAILURE);
 			}
-			if(pid == 0) //in the child
+			if(pid == 0)
 			{
 				child_process_expr(data);
 			}
-			else //parent
+			else
 				parent_process_expr(data, pid);
 }
 
@@ -58,10 +58,10 @@ void child_process_expr(t_data *data)
 void parent_process_expr(t_data *data, pid_t pid)
 {
 	int status;
-	waitpid(pid, &status, 0);  // Wait for the child process to finish
+	waitpid(pid, &status, 0);
     if (WIFEXITED(status))
     {
-        int exit_status = WEXITSTATUS(status);//get exit status
+        int exit_status = WEXITSTATUS(status);
 		data->exit_status = exit_status;
     }
 }

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 15:49:05 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 10:54:57 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:25:31 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char **create_argv(t_command *cmd)
 }
 int count_arguments(t_command *cmd)
 {
-    int argc = 1; // Count the command itself
+    int argc = 1; 
     if (cmd->option != NULL) {
         argc++;
     }

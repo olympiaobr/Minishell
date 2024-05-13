@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 13:50:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 12:13:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:25:20 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ int	unset_cmd(t_data *data, t_command *cmd)
 		}
 		else
 		{
-			//ft_printf("Unsetting variable: %s\n", arg->value);
 			remove_var(data, arg->value);
 		}
 		arg = arg->next;
