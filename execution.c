@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 13:22:07 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:32:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,6 @@ void	execution(t_data *data)
 	}
 	if (data->count_cmd > 1)
 	{
-		ft_printf("Debug: Executing pipeline...\n");
 		create_pipes(data);
 		execute_pipeline(data, data->commands);
 	}
