@@ -22,7 +22,6 @@ void	determine_io_channels(t_data *data, int cmd_index, int io[2])
 	default_output = STDOUT_FILENO;
 	io[0] = -1;
 	io[1] = -1;
-
     set_input_channel(data, cmd_index, default_input, io);
 	if (cmd_index == data->count_cmd - 1)
 	{
@@ -78,7 +77,7 @@ int	call_builtin(t_command *cmd, t_data *data)
 int	handle_redirections(t_data *data, int cmd_index, int *io_channels)
 {
 	determine_io_channels(data, cmd_index, io_channels);
-	if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO) 
+	if (io_channels[0] != STDIN_FILENO && dup2(io_channels[0], STDIN_FILENO)
 		== -1)
 	{
 		perror("Failed to redirect standard input");

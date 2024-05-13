@@ -26,8 +26,10 @@ void	handle_parent_process(t_data *data, pid_t pid)
 	int	ret;
 
 	status = 0;
-	while ((ret = waitpid(pid, &status, 0)) == -1)
+	ret = waitpid(pid, &status, 0);
+	while (ret == -1)
 	{
+		ret = waitpid(pid, &status, 0);
 	}
 	if (ret == -1)
 	{
