@@ -17,6 +17,7 @@ void	ft_error(char *err)
 {
 	ft_putstr_fd(err, 2);
 }
+
 void	append_slash(char **directory)
 {
 	char	*temp;
@@ -69,7 +70,8 @@ char	*cust_getenv(const char *name, t_data *data)
 	char	*found;
 
 	i = 0;
-	while ((env_entry = data->env[i]) != NULL)
+	env_entry = data->env[i];
+	while (env_entry != NULL)
 	{
 		found = cust_strstr(env_entry, name);
 		if (found && found[ft_strlen(name)] == '=' && (found == env_entry
@@ -78,6 +80,7 @@ char	*cust_getenv(const char *name, t_data *data)
 			return (found + ft_strlen(name) + 1);
 		}
 		i++;
+		env_entry = data->env[i];
 	}
 	return (NULL);
 }

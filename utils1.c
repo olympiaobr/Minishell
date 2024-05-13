@@ -84,16 +84,3 @@ void	free_all(t_data *data)
 	data->path_dirs = NULL;
 	free_data_resources(data);
 }
-void free_pipesfd(t_data *data)
-{
-	if(data->pipesfd != NULL)
-	{
-		int i = 0;
-		while(i < data->count_cmd - 1)
-		{
-			free(data->pipesfd[i]);
-			i++;
-		}
-		free(data->pipesfd);
-	}
-}

@@ -135,6 +135,15 @@ void count_q(char c, int *sq, int *dq);
 
 //expansion functions
 void expansion(t_data *data);
+char	*get_value(char *variable_name, t_data *data);
+void	check_edge_case(t_data *data, t_token *current);
+int	valid_var_char(int c);
+char	*expand_non_variable(char *expanded_value, char character);
+char	*expand_value(char *expanded_value, char *value);
+char	*ft_strjoin_char(const char *str, char c);
+
+
+
 void check_quotes(t_data *data);
 
 //path
@@ -164,7 +173,6 @@ int check_valid_command(t_data *data);
 
 //heredoc functions
 void check_for_heredoc(t_data *data);
-void bla(t_data *data, t_command *cmd);
 
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
@@ -216,10 +224,7 @@ void catch_sigint(int sig);
 void handle_sigquit(int signum);
 void setup_interactive_signals(void);
 void setup_noninteractive_signals(void);
-void signal_setup(int mode);
-void heredoc_interrupt_signal(void);
 
-void flush_output(void);
 //free functions
 void free_tokens(t_data *data);
 void free_commands(t_command *commands);

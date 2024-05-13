@@ -12,26 +12,26 @@
 
 #include "libft.h"
 
-// modified for builtins
-int ft_putendl_fd(char *s, int fd)
+int	ft_putendl_fd(char *s, int fd)
 {
-    size_t len = 0;
-    char *buff;
+	size_t	len;
+	char	*buff;
+	int		result;
 
+	len = 0;
 	if (!s)
 		return (-1);
-    while (s[len] != '\0')
-        len++;
-    buff = malloc(len + 2);
-	if(!buff)
-        return (-1);
-    ft_memcpy(buff, s, len);
-    buff[len] = '\n';
-    buff[len + 1] = '\0';
-    int result = write(fd, buff, len + 1);
-    free(buff);
-
-    return (result);
+	while (s[len] != '\0')
+		len++;
+	buff = malloc(len + 2);
+	if (!buff)
+		return (-1);
+	ft_memcpy(buff, s, len);
+	buff[len] = '\n';
+	buff[len + 1] = '\0';
+	result = write(fd, buff, len + 1);
+	free(buff);
+	return (result);
 }
 /*
 void	ft_putendl_fd(char *s, int fd)
@@ -48,7 +48,7 @@ void	ft_putendl_fd(char *s, int fd)
 }
 
 
-int main(void)
+int	main(void)
 {
 	int file_descriptor = 1;
 	char *string = "hello hello";

@@ -78,13 +78,11 @@ int	n_option(const char *arg)
 
 	if (arg[0] != '-')
 		return (0);
-	printf("Processing option: %s\n", arg);
 	j = 1;
 	while (arg[j] != '\0')
 	{
 		if (arg[j] != 'n')
 		{
-			printf("Invalid character found: %c\n", arg[j]);
 			return (0);
 		}
 		j++;

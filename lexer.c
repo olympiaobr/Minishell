@@ -65,7 +65,7 @@ int	process_input_conditions(t_data *data)
 	}
 	if (check_special_chars(data->user_input))
 	{
-		ft_printf("Error:Special chars as '\\' or ';' not allowed/ Cmd not found.\n");
+		ft_printf("Error: '\\' or ';' not allowed/ Cmd not found.\n");
 		free_tokens(data);
 		return (1);
 	}

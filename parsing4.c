@@ -90,7 +90,6 @@ int	open_redir_file(char *filename, int flags)
 	if (fd < 0)
 	{
 		free(file_path);
-		//perror("Failed to open file");
 		return (-1);
 	}
 	free(file_path);
