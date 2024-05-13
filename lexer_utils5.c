@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils5.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 16:11:11 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 16:11:13 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:58:22 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "includes/minishell.h"
 
 int	tokenize_word(t_data *data, char *str, size_t *idx,
-		token_type expected_type)
+		t_token_type expected_type)
 {
 	size_t	start_idx;
 	int		in_quote;
@@ -84,7 +84,7 @@ void	handle_operator(t_data *data, char *str, size_t *idx)
 	tokenize_operator(data, str, idx);
 }
 
-int	process_chars(t_data *data, char *str, size_t *idx, token_type type)
+int	process_chars(t_data *data, char *str, size_t *idx, t_token_type type)
 {
 	if (whitespace_chars(str[*idx]))
 	{

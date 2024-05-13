@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils4.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 14:25:39 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 14:25:40 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:58:36 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	adjust_indices(size_t *start_idx, size_t *length, char quote_char,
 }
 
 int	handle_token_finalization(t_data *data, char *word, char quote_char,
-		token_type expected_type)
+		t_token_type expected_type)
 {
 	int	is_quoted;
 

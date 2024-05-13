@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 12:20:08 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:49:43 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	execute_command(t_command *cmd, char **argv, char **env)
 	exit(EXIT_FAILURE);
 }
 
-void	handle_parent_process(t_data *data, pid_t pid)
+void	handle_parent_process(t_data *data, pid_t pid, char **argv)
 {
 	int	status;
 	int	ret;
@@ -39,6 +39,7 @@ void	handle_parent_process(t_data *data, pid_t pid)
 	{
 		data->exit_status = WEXITSTATUS(status);
 	}
+	free(argv);
 }
 
 void	execute_external_command(t_data *data, t_command *cmd)
@@ -68,10 +69,7 @@ void	execute_external_command(t_data *data, t_command *cmd)
 		execute_command(cmd, argv, data->env);
 	}
 	else
-	{
-		handle_parent_process(data, pid);
-		free(argv);
-	}
+		handle_parent_process(data, pid, argv);
 }
 
 void	execute_simple_command(t_data *data, t_command *cmd)

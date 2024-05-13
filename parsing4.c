@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 12:40:04 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 12:25:41 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:58:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	clear_previous_redirections(t_data *data, t_token *token)
 	}
 }
 
-void	setup_append_mode(t_data *data, int fd, token_type type)
+void	setup_append_mode(t_data *data, int fd, t_token_type type)
 {
 	if (type == T_APPEND)
 		data->append = 1;
@@ -57,7 +57,7 @@ void	setup_append_mode(t_data *data, int fd, token_type type)
 	}
 }
 
-int	determine_flags(token_type type)
+int	determine_flags(t_token_type type)
 {
 	if (type == T_OUT)
 	{

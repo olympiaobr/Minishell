@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 11:10:20 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:53:49 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ typedef enum t_token_type
 
 typedef struct s_token
 {
-	token_type					type;
+	t_token_type					type;
 	char						*value;
 	struct s_token				*next;
 	int							is_quoted;
@@ -89,7 +89,7 @@ typedef struct data_all
 	int							max_env_size;
 	int							output_file_present;
 	int							expect_command;
-	token_type					type;
+	t_token_type					type;
 }								t_data;
 
 // lexing functions
@@ -98,15 +98,15 @@ int								whitespace_chars(char c);
 void							quote_status(char c, int *in_quote,
 									char *quote_char);
 int								create_and_append_token(t_token **token_list,
-									char *input, token_type type,
+									char *input, t_token_type type,
 									int is_quoted);
-token_type						determine_type(char *operator);
+t_token_type						determine_type(char *operator);
 void							tokenize_operator(t_data *data, char *str,
 									size_t *idx);
 int								tokenize_word(t_data *data, char *str,
-									size_t *idx, token_type expected_type);
+									size_t *idx, t_token_type expected_type);
 void							process_input(t_data *data, char *str);
-t_token							*allocate_token(token_type type, char *val,
+t_token							*allocate_token(t_token_type type, char *val,
 									int is_quoted);
 void							append_token(t_token **token_list,
 									t_token *new_token);
@@ -120,13 +120,13 @@ char							*determine_word(char *str, size_t start_idx,
 void							update_expectations(t_data *data);
 int								handle_token_finalization(t_data *data,
 									char *word, char quote_char,
-									token_type expected_type);
+									t_token_type expected_type);
 int								process_chars(t_data *data, char *str,
-									size_t *idx, token_type type);
+									size_t *idx, t_token_type type);
 void							handle_operator(t_data *data, char *str,
 									size_t *idx);
 
-t_token							*init_token(token_type type, char *value,
+t_token							*init_token(t_token_type type, char *value,
 									int is_quoted);
 char							*trim_value(const char *val);
 
