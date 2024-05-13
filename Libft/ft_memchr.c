@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 15:59:47 by jasnguye          #+#    #+#             */
-/*   Updated: 2023/11/27 19:02:00 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:26:20 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	*ft_memchr(const void *s, int c, size_t n)
 {
     int array[3] = {1, 2, 3};
     int find = 3;
-    size_t n = sizeof(array); // Correctly getting the size in bytes
+    size_t n = sizeof(array);
     void* result = ft_memchr(array, find, n);
 
     printf("Result: %p\n", result);

@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/20 12:44:06 by jasnguye          #+#    #+#             */
-/*   Updated: 2023/11/27 15:07:39 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:26:05 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ void	*ft_calloc(size_t count, size_t size)
 	printf("%p\n", result);
 	printf("%s\n", result);  
 	
-	//testing 
 	int i = 0;
 	while (i < elements * size) 
 	{

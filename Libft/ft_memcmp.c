@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:37:05 by jasnguye          #+#    #+#             */
-/*   Updated: 2023/11/27 19:01:50 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:25:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
     int array1[3] = {1, 2, 3};
     int array2[3] = {1, 2, 3};
-    size_t n = sizeof(array1); // Correctly getting the size in bytes
+    size_t n = sizeof(array1);
     int result = ft_memcmp(array1, array2, n);
 
     printf("Result: %d\n", result);
