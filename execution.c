@@ -41,67 +41,78 @@ void	handle_parent_process(t_data *data, pid_t pid)
 	}
 }
 
-void	execute_external_command(t_data *data, t_command *cmd)
+void execute_forked_process(t_data *data, t_command *cmd, char **argv, int io[2])
 {
-	int		io[2];
-	char	**argv;
-	pid_t	pid;
+    pid_t pid;
 
-	if (!validate_command(cmd))
-		return ;
-	determine_io_channels(data, cmd->command_index, io);
-	if (!validate_io_channels(io))
-		return ;
-	argv = create_argv(cmd);
-	if (!argv)
-		return ;
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("Fork failed");
-		free(argv);
-		return ;
-	}
-	if (pid == 0)
-	{
-		setup_io_channels(io);
-		execute_command(cmd, argv, data->env);
-	}
-	else
-	{
-		handle_parent_process(data, pid);
-		free(argv);
-	}
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("Fork failed");
+        free(argv);
+        return;
+    }
+    if (pid == 0)
+    {
+        setup_io_channels(io);
+        execute_command(cmd, argv, data->env);
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        handle_parent_process(data, pid);
+        free(argv);
+    }
 }
 
-void	execute_simple_command(t_data *data, t_command *cmd)
+void execute_external_command(t_data *data, t_command *cmd)
 {
-	int	exit_status;
+    int io[2];
+    char **argv;
 
-	if (check_builtin(cmd->command))
-	{
-		exit_status = execute_builtin(cmd, data);
-		data->exit_status = exit_status;
-		return ;
-	}
-	if (data->heredoc == 1)
-		handle_heredocs(data, cmd);
-	else if (ft_strcmp(data->token_list->value, "expr") == 0
-		&& data->token_list->next
-		&& ft_strcmp(data->token_list->next->next->value, "+") == 0)
-		handle_expr_function(data);
-	else
-		execute_external_command(data, cmd);
-	if (data->std_input_fd != STDIN_FILENO)
-	{
-		close(data->std_input_fd);
-		data->std_input_fd = STDIN_FILENO;
-	}
-	if (data->std_output_fd != STDOUT_FILENO)
-	{
-		close(data->std_output_fd);
-		data->std_output_fd = STDOUT_FILENO;
-	}
+    if (!validate_command(cmd))
+        return;
+    determine_io_channels(data, cmd->command_index, io);
+    if (!validate_io_channels(io))
+        return;
+    argv = create_argv(cmd);
+    if (!argv)
+        return;
+    execute_forked_process(data, cmd, argv, io);
+}
+
+void handle_command_execution(t_data *data, t_command *cmd)
+{
+    if (check_builtin(cmd->command))
+    {
+        int exit_status = execute_builtin(cmd, data);
+        data->exit_status = exit_status;
+        return;
+    }
+    if (data->heredoc == 1)
+        handle_heredocs(data, cmd);
+    else if (ft_strcmp(data->token_list->value, "expr") == 0
+             && data->token_list->next
+             && ft_strcmp(data->token_list->next->next->value, "+") == 0)
+        handle_expr_function(data);
+    else
+        execute_external_command(data, cmd);
+}
+
+void execute_simple_command(t_data *data, t_command *cmd)
+{
+    handle_command_execution(data, cmd);
+
+    if (data->std_input_fd != STDIN_FILENO)
+    {
+        close(data->std_input_fd);
+        data->std_input_fd = STDIN_FILENO;
+    }
+    if (data->std_output_fd != STDOUT_FILENO)
+    {
+        close(data->std_output_fd);
+        data->std_output_fd = STDOUT_FILENO;
+    }
 }
 
 void	execution(t_data *data)

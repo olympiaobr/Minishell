@@ -68,3 +68,23 @@ void	free_shell_resources(t_data *data)
 	free_commands(data->commands);
 	data->commands = NULL;
 }
+char **populate_argv(t_command *cmd, char **argv)
+{
+    int i;
+    t_token *arg;
+
+    i = 0;
+    argv[i++] = cmd->command;
+    if (cmd->option != NULL)
+    {
+        argv[i++] = cmd->option->value;
+    }
+    arg = cmd->argv;
+    while (arg)
+    {
+        argv[i++] = arg->value;
+        arg = arg->next;
+    }
+    argv[i] = NULL;
+    return (argv);
+}
