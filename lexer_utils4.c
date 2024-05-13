@@ -88,7 +88,6 @@ int	handle_token_finalization(t_data *data, char *word, char quote_char,
 	int	is_quoted;
 
 	is_quoted = set_quoted_flag(quote_char);
-	printf("Tokenizing: %s, is_quoted: %d\n", word, is_quoted);
 	if (create_and_append_token(&data->token_list, word, expected_type,
 			is_quoted) != 0)
 	{

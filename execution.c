@@ -12,6 +12,7 @@
 
 #include "includes/minishell.h"
 #include "Libft/libft.h"
+
 void check_error(int fd)
 {
 	if (fd == -1)
@@ -22,7 +23,7 @@ void check_error(int fd)
     if (dup2(fd, STDOUT_FILENO) == -1)
     {
         perror("dup2 for output file");
-        close(fd); // Close file descriptor before exiting
+        close(fd);
         exit(EXIT_FAILURE);
     }
 }
@@ -31,13 +32,13 @@ void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd)
 	int fd;
 	int flags;
 
-	close(pipe_fd[1]); // Close the write end of the pipe in the child process
+	close(pipe_fd[1]);
     if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
     {
         perror("dup2");
         exit(EXIT_FAILURE);
     }
-    close(pipe_fd[0]); // Close the now redundant original read end of the pipe
+    close(pipe_fd[0]);
     if (data->output_file)
     {
         flags = O_WRONLY | O_CREAT;
@@ -47,9 +48,9 @@ void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd)
             flags |= O_TRUNC;
         fd = open(data->output_file, flags, 0644);
 		check_error(fd);
-        close(fd); // Close file descriptor after dup2
+        close(fd);
     }
-    execve(path, argv, NULL); // Execute the command
+    execve(path, argv, NULL);
     perror("execve");
     exit(EXIT_FAILURE);
 }
@@ -58,7 +59,7 @@ void parent_process_heredoc(t_data *data, int *pipe_fd)
 {
 	ssize_t bytes_written;
 
-	close(pipe_fd[0]); // Close the read end of the pipe in the parent process
+	close(pipe_fd[0]);
     if (data->heredoc_input)
     {
 		bytes_written = write(pipe_fd[1],
@@ -72,10 +73,10 @@ void parent_process_heredoc(t_data *data, int *pipe_fd)
     	{
         	write(pipe_fd[1], "\n", 1);
     	}
-    	free(data->heredoc_input);  // Free after writing to the pipe
+    	free(data->heredoc_input);
     	data->heredoc_input = NULL;
     }
-    close(pipe_fd[1]); // Close the write end of the pipe after writing
+    close(pipe_fd[1]);
     if (wait(NULL) == -1)
     {
         perror("wait");
@@ -88,20 +89,20 @@ void execute_heredoc(t_data *data, char **argv, int *pipe_fd, char *path)
     if (pid == -1)
     {
         perror("fork");
-        free(argv); // Free argv before exiting
-        close(pipe_fd[0]); // Close pipe ends before exiting
+        free(argv);
+        close(pipe_fd[0]);
         close(pipe_fd[1]);
         exit(EXIT_FAILURE);
     }
-    else if (pid == 0)  // Child process
+    else if (pid == 0)
     {
 		child_process_heredoc(data, path, argv, pipe_fd);
     }
-    else  // Parent process
+    else
     {
 		parent_process_heredoc(data, pipe_fd);
     }
-    free(argv); // Free argv in the parent after all operations
+    free(argv);
 }
 void handle_heredocs(t_data *data, t_command *cmd)
 {
@@ -109,7 +110,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
 	int pipe_fd[2];
     char *path;
 
-	path = cmd->path; //  printf("the path is: %s\n", path);
+	path = cmd->path;
     argv = malloc(2 * sizeof(char *));
     if (argv == NULL)
     {
@@ -121,13 +122,13 @@ void handle_heredocs(t_data *data, t_command *cmd)
     if (pipe(pipe_fd) == -1)
     {
         perror("pipe");
-        free(argv); 
+        free(argv);
         exit(EXIT_FAILURE);
     }
 	execute_heredoc(data, argv, pipe_fd, path);
-} 
+}
 
-/* 
+/*
 void handle_heredocs(t_data *data, t_command *cmd)
 {
     char **argv;
@@ -219,7 +220,7 @@ void handle_heredocs(t_data *data, t_command *cmd)
         }
     }
     free(argv); // Free argv in the parent after all operations
-} 
+}
 
  */
 
@@ -261,21 +262,21 @@ void child_process_expr(t_data *data)
 void handle_expr_function(t_data *data)
 {
 			pid_t pid = fork();
-			
+
 			if(pid == -1)
 			{
 				perror("fork");
 				exit(EXIT_FAILURE);
 			}
 			if(pid == 0) //in the child
-			{	
+			{
 				child_process_expr(data);
 			}
 			else //parent
 				parent_process_expr(data, pid);
 }
 
-int validate_command(t_command *cmd) 
+int validate_command(t_command *cmd)
 {
     if (!cmd->path || access(cmd->path, X_OK) != 0) {
         perror("Invalid command path or command is not executable");
@@ -284,7 +285,7 @@ int validate_command(t_command *cmd)
     return 1;
 }
 
-int validate_io_channels(int *io) 
+int validate_io_channels(int *io)
 {
     if (io[0] < 0 || io[1] < 0) {
         fprintf(stderr, "Error: Invalid IO channels determined.\n");
@@ -293,7 +294,7 @@ int validate_io_channels(int *io)
     return 1;
 }
 
-int count_arguments(t_command *cmd) 
+int count_arguments(t_command *cmd)
 {
     int argc = 1; // Count the command itself
     if (cmd->option != NULL) {
@@ -307,7 +308,7 @@ int count_arguments(t_command *cmd)
     return argc;
 }
 
-char **create_argv(t_command *cmd) 
+char **create_argv(t_command *cmd)
 {
     int argc = count_arguments(cmd);
     char **argv = malloc(sizeof(char *) * (argc + 1));
@@ -334,7 +335,7 @@ char **create_argv(t_command *cmd)
 
 
 
-void setup_io_channels(int *io) 
+void setup_io_channels(int *io)
 {
     if (io[0] != STDIN_FILENO) {
         dup2(io[0], STDIN_FILENO);
@@ -346,14 +347,14 @@ void setup_io_channels(int *io)
     }
 }
 
-void execute_command(t_command *cmd, char **argv, char **env) 
+void execute_command(t_command *cmd, char **argv, char **env)
 {
     execve(cmd->path, argv, env);
     perror("Execve failed");
     exit(EXIT_FAILURE);
 }
 
-void handle_parent_process(t_data *data, pid_t pid) 
+void handle_parent_process(t_data *data, pid_t pid)
 {
     int status = 0;
     int ret;
@@ -366,16 +367,16 @@ void handle_parent_process(t_data *data, pid_t pid)
     }
 }
 
-void execute_external_command(t_data *data, t_command *cmd) 
+void execute_external_command(t_data *data, t_command *cmd)
 {
-    if (!validate_command(cmd)) 
+    if (!validate_command(cmd))
         return;
     int io[2];
     determine_io_channels(data, cmd->command_index, io);
-    if (!validate_io_channels(io)) 
+    if (!validate_io_channels(io))
         return;
     char **argv = create_argv(cmd);
-    if (!argv) 
+    if (!argv)
         return;
     pid_t pid = fork();
     if (pid == -1) {
@@ -387,7 +388,7 @@ void execute_external_command(t_data *data, t_command *cmd)
 	{
         setup_io_channels(io);
         execute_command(cmd, argv, data->env);
-    } 
+    }
 	else // Parent process
 	{
         handle_parent_process(data, pid);
