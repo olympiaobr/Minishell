@@ -41,44 +41,45 @@ void	handle_parent_process(t_data *data, pid_t pid)
 	}
 }
 
-void execute_forked_process(t_data *data, t_command *cmd, char **argv, int io[2])
+void	execute_forked_process(t_data *data, t_command *cmd, char **argv,
+		int io[2])
 {
-    pid_t pid;
+	pid_t	pid;
 
-    pid = fork();
-    if (pid == -1)
-    {
-        perror("Fork failed");
-        free(argv);
-        return;
-    }
-    if (pid == 0)
-    {
-        setup_io_channels(io);
-        execute_command(cmd, argv, data->env);
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        handle_parent_process(data, pid);
-        free(argv);
-    }
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("Fork failed");
+		free(argv);
+		return ;
+	}
+	if (pid == 0)
+	{
+		setup_io_channels(io);
+		execute_command(cmd, argv, data->env);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		handle_parent_process(data, pid);
+		free(argv);
+	}
 }
 
-void execute_external_command(t_data *data, t_command *cmd)
+void	execute_external_command(t_data *data, t_command *cmd)
 {
-    int io[2];
-    char **argv;
+	int		io[2];
+	char	**argv;
 
-    if (!validate_command(cmd))
-        return;
-    determine_io_channels(data, cmd->command_index, io);
-    if (!validate_io_channels(io))
-        return;
-    argv = create_argv(cmd);
-    if (!argv)
-        return;
-    execute_forked_process(data, cmd, argv, io);
+	if (!validate_command(cmd))
+		return ;
+	determine_io_channels(data, cmd->command_index, io);
+	if (!validate_io_channels(io))
+		return ;
+	argv = create_argv(cmd);
+	if (!argv)
+		return ;
+	execute_forked_process(data, cmd, argv, io);
 }
 void reset_filedescriptors_to_standard(t_data *data)
 {

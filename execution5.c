@@ -27,19 +27,19 @@ void	setup_io_channels(int *io)
 	}
 }
 
-char **create_argv(t_command *cmd)
+char	**create_argv(t_command *cmd)
 {
-    int argc;
-    char **argv;
+	int		argc;
+	char	**argv;
 
-    argc = count_arguments(cmd);
-    argv = malloc(sizeof(char *) * (argc + 1));
-    if (!argv)
-    {
-        perror("Memory allocation failed for argv");
-        return (NULL);
-    }
-    return populate_argv(cmd, argv);
+	argc = count_arguments(cmd);
+	argv = malloc(sizeof(char *) * (argc + 1));
+	if (!argv)
+	{
+		perror("Memory allocation failed for argv");
+		return (NULL);
+	}
+	return (populate_argv(cmd, argv));
 }
 
 int	count_arguments(t_command *cmd)
