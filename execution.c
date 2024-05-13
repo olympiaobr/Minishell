@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 10:59:09 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:15:51 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void execute_simple_command(t_data *data, t_command *cmd)
 
     if (check_builtin(cmd->command))
 	{
-		exit_status = execute_builtin(cmd, data);//ft_printf("Debug: Executing built-in command: %s\n", cmd->command);
+		exit_status = execute_builtin(cmd, data);
         data->exit_status = exit_status;
         return;
     }
@@ -78,15 +78,15 @@ void execute_simple_command(t_data *data, t_command *cmd)
                ft_strcmp(data->token_list->next->next->value, "+") == 0)
        	handle_expr_function(data);
 	else
-        execute_external_command(data, cmd);//ft_printf("Debug: After executing command, std_input_fd = %d, std_output_fd = %d\n", data->std_input_fd, data->std_output_fd);
-	if (data->std_input_fd != STDIN_FILENO)   //Close and reset the input and output file descriptors if they were redirected
+        execute_external_command(data, cmd);
+	if (data->std_input_fd != STDIN_FILENO)   
     {
-        close(data->std_input_fd);//ft_printf("Debug: Closing std_input_fd = %d\n", data->std_input_fd);
+        close(data->std_input_fd);
         data->std_input_fd = STDIN_FILENO;
     }
     if (data->std_output_fd != STDOUT_FILENO)
     {
-        close(data->std_output_fd);//ft_printf("Debug: Closing std_output_fd = %d\n", data->std_output_fd);
+        close(data->std_output_fd);
         data->std_output_fd = STDOUT_FILENO;
     }
 }
@@ -110,7 +110,7 @@ void execution(t_data *data)
     }
     if (data->count_cmd > 1)
 	{
-        ft_printf("Debug: Executing pipeline...\n");
+        //ft_printf("Debug: Executing pipeline...\n");
         create_pipes(data);
         execute_pipeline(data, data->commands);
     }

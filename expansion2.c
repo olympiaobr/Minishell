@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/13 10:21:34 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/13 10:21:37 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:34:29 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	handle_variable(t_data *data, t_token **current, char **expanded_value,
 	if ((*current)->value[0] == '$' && (*current)->value[1] == '?'
 		&& ft_strcmp(data->token_list->value, "expr") != 0)
 	{
-		ft_printf("exit status: %d", data->exit_status);
+		ft_printf("%d", data->exit_status);
 		*i = find_end_of_variable(*current, *i) - 1;
 	}
 	else
