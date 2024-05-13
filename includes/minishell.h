@@ -244,6 +244,7 @@ int								create_pipes(t_data *data);
 int								count_commands(t_data *data);
 
 void							setup_io_channels(int *io);
+char **populate_argv(t_command *cmd, char **argv);
 char							**create_argv(t_command *cmd);
 int								count_arguments(t_command *cmd);
 int								validate_io_channels(int *io);

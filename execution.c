@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 11:14:25 by jasnguye          #+#    #+#             */
-/*   Updated: 2024/05/13 12:49:43 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:20:08 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	execute_command(t_command *cmd, char **argv, char **env)
 	exit(EXIT_FAILURE);
 }
 
-void	handle_parent_process(t_data *data, pid_t pid, char **argv)
+void	handle_parent_process(t_data *data, pid_t pid)
 {
 	int	status;
 	int	ret;
@@ -39,7 +39,6 @@ void	handle_parent_process(t_data *data, pid_t pid, char **argv)
 	{
 		data->exit_status = WEXITSTATUS(status);
 	}
-	free(argv);
 }
 
 void execute_forked_process(t_data *data, t_command *cmd, char **argv, int io[2])
@@ -82,38 +81,34 @@ void execute_external_command(t_data *data, t_command *cmd)
     execute_forked_process(data, cmd, argv, io);
 }
 
-void handle_command_execution(t_data *data, t_command *cmd)
+void	execute_simple_command(t_data *data, t_command *cmd)
 {
-    if (check_builtin(cmd->command))
-    {
-        int exit_status = execute_builtin(cmd, data);
-        data->exit_status = exit_status;
-        return;
-    }
-    if (data->heredoc == 1)
-        handle_heredocs(data, cmd);
-    else if (ft_strcmp(data->token_list->value, "expr") == 0
-             && data->token_list->next
-             && ft_strcmp(data->token_list->next->next->value, "+") == 0)
-        handle_expr_function(data);
-    else
-        execute_external_command(data, cmd);
-}
+	int	exit_status;
 
-void execute_simple_command(t_data *data, t_command *cmd)
-{
-    handle_command_execution(data, cmd);
-
-    if (data->std_input_fd != STDIN_FILENO)
-    {
-        close(data->std_input_fd);
-        data->std_input_fd = STDIN_FILENO;
-    }
-    if (data->std_output_fd != STDOUT_FILENO)
-    {
-        close(data->std_output_fd);
-        data->std_output_fd = STDOUT_FILENO;
-    }
+	if (check_builtin(cmd->command))
+	{
+		exit_status = execute_builtin(cmd, data);
+		data->exit_status = exit_status;
+		return ;
+	}
+	if (data->heredoc == 1)
+		handle_heredocs(data, cmd);
+	else if (ft_strcmp(data->token_list->value, "expr") == 0
+		&& data->token_list->next
+		&& ft_strcmp(data->token_list->next->next->value, "+") == 0)
+		handle_expr_function(data);
+	else
+		execute_external_command(data, cmd);
+	if (data->std_input_fd != STDIN_FILENO)
+	{
+		close(data->std_input_fd);
+		data->std_input_fd = STDIN_FILENO;
+	}
+	if (data->std_output_fd != STDOUT_FILENO)
+	{
+		close(data->std_output_fd);
+		data->std_output_fd = STDOUT_FILENO;
+	}
 }
 
 void	execution(t_data *data)
