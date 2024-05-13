@@ -34,31 +34,29 @@ typedef enum token_type
 	T_IN,
 	T_OUT,
 	T_HEREDOC,
-	T_APPEND,  // >>
-	T_ARGUMENT,  //command arguments
+	T_APPEND,
+	T_ARGUMENT,
 	T_ENV,
 	T_FILE,
-	T_DELIMITER// for heredoc
-}					token_type;
+	T_DELIMITER
+}	token_type;
 
 typedef struct s_token
 {
 	token_type		type;
 	char			*value;
 	struct s_token	*next;
-	/*bool			single_quotes;*/
 	 int is_quoted;
 }					t_token;
 
 typedef struct s_command
 {
-	char	*command; //command name like ls, cd,..
+	char	*command;
 	t_token	*argv;
 	t_token *option;
 
 	struct s_command *next;
-	int		argc;     //number of command arguments
-	//bool built-in?
+	int		argc;
 	char *path;
 	char **argv_array;
 	int command_index;
@@ -72,16 +70,15 @@ typedef struct data_all
 	t_token *current_token;
 	char	*std_input;
 	char	*std_output;
-    char    *input_file;    // For < redirection
-    char    *output_file;   // For > or >> redirection
-	int original_stdout; // Store the original STDOUT file descriptor
-    int original_stdin;  // Store the original STDIN file descriptor
-	int      std_input_fd;   // File descriptor for input redirection
-    int      std_output_fd;  // File descriptor for output redirection
-    int     append;         // Flag for append mode (>>)
-    int     heredoc;        // Flag for heredoc (<<)
-	char **path_dirs;  // stores parsed PATH directories
-    // char *path;        // stores duplicated PATH env var
+    char    *input_file;
+    char    *output_file;
+	int original_stdout;
+    int original_stdin;
+	int      std_input_fd;
+    int      std_output_fd;
+    int     append;
+    int     heredoc;
+	char **path_dirs;
 	char **env;
 	char *heredoc_input;
 	t_command *commands;
