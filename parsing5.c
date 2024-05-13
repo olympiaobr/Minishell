@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing5.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 13:01:01 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 13:01:03 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:33:59 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	apply_redirection(t_data *data, t_token *token)
 	if (data->output_file_present == 1)
 	{
 		file_name = ft_strdup(data->output_file);
-		printf("here output file present\n");
 	}
 	else if (data->heredoc == 1 && token->type == T_HEREDOC)
 	{
