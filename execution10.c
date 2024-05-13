@@ -94,7 +94,6 @@ int	create_pipes(t_data *data)
 		printf("No pipes needed.\n");
 		return (0);
 	}
-	printf("Number of pipes to create: %d\n", num_pipes);
 	data->pipesfd = malloc(num_pipes * sizeof(int *));
 	if (!data->pipesfd)
 	{

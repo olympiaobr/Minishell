@@ -32,7 +32,6 @@ int	wait_for_processes(int num_processes)
 		if (WIFEXITED(status))
 		{
 			current_status = WEXITSTATUS(status);
-			printf("Process %d exited with status: %d\n", pid, current_status);
 			if (current_status > exit_status)
 				exit_status = current_status;
 		}
