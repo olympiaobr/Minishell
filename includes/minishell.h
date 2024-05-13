@@ -25,7 +25,7 @@
 # include <sys/wait.h>
 # include <signal.h>
 
-extern volatile sig_atomic_t heredoc_state;
+extern volatile sig_atomic_t g_heredoc_state;
 
 typedef enum token_type
 {
@@ -173,6 +173,8 @@ int check_valid_command(t_data *data);
 
 //heredoc functions
 void check_for_heredoc(t_data *data);
+int	handle_input(t_data *data, char *delimiter, char *new_line);
+
 
 //added helper functions
 int ft_strcmp(const char *s1, const char *s2);
@@ -224,6 +226,8 @@ void catch_sigint(int sig);
 void handle_sigquit(int signum);
 void setup_interactive_signals(void);
 void setup_noninteractive_signals(void);
+void	signals_heredoc(void);
+
 
 //free functions
 void free_tokens(t_data *data);
