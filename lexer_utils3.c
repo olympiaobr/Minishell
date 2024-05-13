@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils3.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: olobresh <olobresh@student.42berlin.d      +#+  +:+       +#+        */
+/*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 11:40:33 by olobresh          #+#    #+#             */
-/*   Updated: 2024/03/27 11:40:35 by olobresh         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:57:24 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*trim_value(const char *val)
 	return (ft_strtrim(val, " \t\n\v\f\r"));
 }
 
-token_type	determine_type(char *operator)
+t_token_type	determine_type(char *operator)
 {
 	if (ft_strncmp(operator, "|", 1) == 0)
 		return (T_PIPE);

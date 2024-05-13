@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:19 by olobresh          #+#    #+#             */
-/*   Updated: 2024/04/22 16:11:32 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:56:45 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	whitespace_chars(char c)
 		|| c == '\r');
 }
 
-t_token	*init_token(token_type type, char *value, int is_quoted)
+t_token	*init_token(t_token_type type, char *value, int is_quoted)
 {
 	t_token	*t;
 
@@ -39,7 +39,7 @@ t_token	*init_token(token_type type, char *value, int is_quoted)
 	return (t);
 }
 
-t_token	*allocate_token(token_type type, char *val, int is_quoted)
+t_token	*allocate_token(t_token_type type, char *val, int is_quoted)
 {
 	char	*trimmed_val;
 	t_token	*token;

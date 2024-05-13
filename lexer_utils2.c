@@ -6,13 +6,13 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 13:25:25 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/03 17:18:47 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 12:57:07 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
 
-int	create_and_append_token(t_token **token_list, char *input, token_type type,
+int	create_and_append_token(t_token **token_list, char *input, t_token_type type,
 		int is_quoted)
 {
 	t_token	*new_token;
@@ -29,7 +29,7 @@ int	create_and_append_token(t_token **token_list, char *input, token_type type,
 void	tokenize_operator(t_data *data, char *str, size_t *idx)
 {
 	size_t		operator_len;
-	token_type	type;
+	t_token_type	type;
 	char		*operator_str;
 
 	operator_len = 1;
