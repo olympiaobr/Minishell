@@ -12,8 +12,8 @@
 
 #include "includes/minishell.h"
 
-int	create_and_append_token(t_token **token_list, char *input, t_token_type type,
-		int is_quoted)
+int	create_and_append_token(t_token **token_list, char *input,
+		t_token_type type, int is_quoted)
 {
 	t_token	*new_token;
 
@@ -28,9 +28,9 @@ int	create_and_append_token(t_token **token_list, char *input, t_token_type type
 
 void	tokenize_operator(t_data *data, char *str, size_t *idx)
 {
-	size_t		operator_len;
+	size_t			operator_len;
 	t_token_type	type;
-	char		*operator_str;
+	char			*operator_str;
 
 	operator_len = 1;
 	if (shell_operators(str[*idx + 1]))

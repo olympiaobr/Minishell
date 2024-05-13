@@ -43,7 +43,7 @@ typedef enum t_token_type
 
 typedef struct s_token
 {
-	t_token_type					type;
+	t_token_type				type;
 	char						*value;
 	struct s_token				*next;
 	int							is_quoted;
@@ -89,7 +89,7 @@ typedef struct data_all
 	int							max_env_size;
 	int							output_file_present;
 	int							expect_command;
-	t_token_type					type;
+	t_token_type				type;
 }								t_data;
 
 // lexing functions
@@ -100,7 +100,7 @@ void							quote_status(char c, int *in_quote,
 int								create_and_append_token(t_token **token_list,
 									char *input, t_token_type type,
 									int is_quoted);
-t_token_type						determine_type(char *operator);
+t_token_type					determine_type(char *operator);
 void							tokenize_operator(t_data *data, char *str,
 									size_t *idx);
 int								tokenize_word(t_data *data, char *str,
@@ -244,7 +244,7 @@ int								create_pipes(t_data *data);
 int								count_commands(t_data *data);
 
 void							setup_io_channels(int *io);
-char **populate_argv(t_command *cmd, char **argv);
+char							**populate_argv(t_command *cmd, char **argv);
 char							**create_argv(t_command *cmd);
 int								count_arguments(t_command *cmd);
 int								validate_io_channels(int *io);
