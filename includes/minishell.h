@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 18:17:44 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:41:17 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ void free_tokens(t_data *data);
 void free_commands(t_command *commands);
 void free_token_chain(t_token *token);
 void free_all(t_data *data);
-
+void free_pipesfd(t_data *data);
 
 void ft_error(char *err);
 #endif
