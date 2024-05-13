@@ -6,7 +6,7 @@
 /*   By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 16:22:41 by olobresh          #+#    #+#             */
-/*   Updated: 2024/05/12 18:41:17 by jasnguye         ###   ########.fr       */
+/*   Updated: 2024/05/13 11:10:20 by jasnguye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,6 +218,31 @@ void execute_pipeline(t_data *data, t_command *cmd);
 
 int operators_setup(t_data *data);
 int create_pipes(t_data *data);
+int count_commands(t_data *data);
+
+void setup_io_channels(int *io);
+char **create_argv(t_command *cmd);
+int count_arguments(t_command *cmd);
+int validate_io_channels(int *io);
+int validate_command(t_command *cmd);
+void handle_expr_function(t_data *data);
+void child_process_expr(t_data *data);
+void parent_process_expr(t_data *data, pid_t pid);
+void handle_heredocs(t_data *data, t_command *cmd);
+void execute_heredoc(t_data *data, char **argv, int *pipe_fd, char *path);
+void parent_process_heredoc(t_data *data, int *pipe_fd);
+void child_process_heredoc(t_data *data, char *path, char **argv, int *pipe_fd);
+void check_error(int fd);
+void open_input_file(t_data *data);
+int operators_setup(t_data *data);
+void set_input_channel(t_data *data, int cmd_index, int default_input, int io[2]);
+char *get_cmd_fullpath(char *command, char *path_env);
+char **prepare_command_args(t_command *cmd);
+char **prepare_command_space(t_command *cmd);
+void wait_and_close_pipes(t_data *data, int num_processes);
+int wait_for_processes(int num_processes);
+void close_all_pipes(t_data *data);
+void close_pipes(t_data *data);
 int count_commands(t_data *data);
 //signal functions
 void catch_sigint(int sig);

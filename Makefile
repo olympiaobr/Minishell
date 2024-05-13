@@ -6,7 +6,7 @@
 #    By: jasnguye <jasnguye@student.42berlin.de>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/27 10:49:49 by jasnguye          #+#    #+#              #
-#    Updated: 2024/05/11 14:05:18 by jasnguye         ###   ########.fr        #
+#    Updated: 2024/05/13 11:10:37 by jasnguye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,8 @@ SRCS	=	main.c lexer.c \
 			parsing_utils1.c parsing_utils2.c parsing4.c\
 			parsing5.c lexer_utils5.c lexer_utils6.c\
 			path.c execution.c execution2.c execution3.c execution4.c\
+			execution5.c execution6.c execution7.c execution8.c\
+			execution9.c execution10.c\
 			builtins1.c builtins2.c builtins3.c builtins4.c builtins5.c\
 			utils1.c utils2.c signals.c lexer_utils4.c\
 			utils3.c\
