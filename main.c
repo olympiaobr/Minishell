@@ -13,8 +13,6 @@
 #include "Libft/libft.h"
 #include "includes/minishell.h"
 
-volatile sig_atomic_t heredoc_mode = 0;
-
 void reset_shell_state(t_data *data)
 {
     free(data->user_input);
@@ -43,8 +41,6 @@ void reset_shell_state(t_data *data)
     data->std_output_fd = STDOUT_FILENO;
     data->append = 0;
     data->heredoc = 0;
-	heredoc_mode = 0;
-	heredoc_interrupted= 0;
     initialize_shell_components(data);
 }
 
@@ -64,24 +60,14 @@ void run_shell(t_data *data)
             add_history(data->user_input);
             lexing_input(data);
             setup_noninteractive_signals();
-			
             if(data->heredoc == 1)
 			{
-				heredoc_signals();
-				heredoc_mode = 1;
-				if (heredoc_interrupted == 1)
-				{
-					//check_for_heredoc(data);
-                	reset_shell_state(data);
-					flush_output();
-                	continue;
-            	}
 				data->heredoc = 0;
 				data->output_file_present = 0;
 				check_for_heredoc(data);
 				parser(data);
 				execution(data);
-                //signal handling for heredoc here?
+                setup_interactive_signals();
                 reset_shell_state(data);
 				continue;
 			}
@@ -94,6 +80,7 @@ void run_shell(t_data *data)
         free(data->user_input);
     }
 }
+
 
 int main(int argc, char *argv[], char **envp)
 {
